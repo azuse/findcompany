@@ -51,13 +51,7 @@ for item in data["postList"]:
 
 
     sql = u"INSERT INTO baiduzhaopin(postId, name, publishDate, workPlace, workYears, recruitNum, education, serviceCondition, workContent, orgName, postType) VALUES({0},'{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}'); ".format(postId, name, publishDate, workPlace, workYears, recruitNum, education, serviceCondition, workContent, orgName, postType)
-    try:
-        # 执行sql语句
-        print(sql)
-        cursor.execute("SELECT * FROM baiduzhaopin")
-        if(cursor._rows != ()):
-            print(cursor._rows[0])
-            continue
-    except:
-        pass
+    cursor.execute(sql)
+    db.commit()
+    
     
