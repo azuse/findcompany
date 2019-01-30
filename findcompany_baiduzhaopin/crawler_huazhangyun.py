@@ -141,8 +141,13 @@ def huazhan_search_company_detail(id):
     try:
         r = requests.post(url, data=data, headers=headers, proxies=proxies)
         time.sleep(time_sleep)
-    except BaseException as err:
-        print("time out "+ err)
+    except ConnectionError as err:
+        print("ConnectionError: '{0}'".format(err))
+        return
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+        return
+
 
     r.encoding = 'utf-8'
     rdata = json.loads(r.text)
@@ -179,6 +184,11 @@ def huazhan_search_company_list(keyword, page, sort):
         time.sleep(time_sleep)
     except ConnectionError as err:
         print("ConnectionError: '{0}'".format(err))
+        return
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+        return
+
 
     r.encoding = 'utf-8'
     rdata = json.loads(r.text)
@@ -220,4 +230,4 @@ if __name__ == "__main__":
         "http":None,
         "https":None
     }
-    huazhanyun("物联网", 0, 1000, 1)
+    huazhanyun("物联网", 48, 1000, 1)
