@@ -13,16 +13,19 @@ from bs4 import BeautifulSoup
 import re
 import sys
 
-time_sleep = 1
+time_sleep = 10
 
 # 失败处理 超过20次休眠90秒
 fail_count = 0
 fail_count_limit = 10
-fail_sleep = 900
+fail_sleep = 100
+
+#proxies for inside intel
+proxies = {"http": "http://child-prc.intel.com:913",
+               "https": "http://child-prc.intel.com:913"}
+# proxies = {"http": "socks5://127.0.0.1:1080","https": "socks5://127.0.0.1:1080"}
 
 # 百度招聘mysql插入函数
-
-
 class mysql_baiduzhaopin:
 
     def __init__(self, user, password, database):
@@ -87,10 +90,10 @@ class mysql_baiduzhaopin:
 
     # 将查到的company官网链接插入数据库
     def insertCompany(self, company, cid, url):
-        sql = """INSERT INTO company (cid, company, url) VALUES ('{0}', '{1}'  ,'{2}');""" .format(
+        sql = """INSERT INTO companyHomepage (cid, company, url) VALUES ('{0}', '{1}'  ,'{2}');""" .format(
             cid, company, url)
         self.cursor.execute(
-            "SELECT COUNT(cid) FROM company WHERE cid LIKE '{0}';".format(cid))
+            "SELECT COUNT(cid) FROM companyHomepage WHERE cid LIKE '{0}';".format(cid))
         if self.cursor._rows[0] != (0,):
             return 0
 
@@ -136,8 +139,7 @@ def getToken(query, city):
                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36}"
                }
 
-    proxies = {"http": "http://child-prc.intel.com:913",
-               "https": "http://child-prc.intel.com:913"}
+    global proxies
     while 1:
         try:
             r = requests.get(url, headers=headers, proxies=proxies)
@@ -200,8 +202,7 @@ def baiduzhaopin(query, city, num):
                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36}"
                    }
 
-        proxies = {"http": "http://child-prc.intel.com:913",
-                   "https": "http://child-prc.intel.com:913"}
+        global proxies
 
         try:
             r = requests.get(url, proxies=proxies, headers=headers)
@@ -258,8 +259,7 @@ def baiducompany(cid, company):
                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36}"
                }
 
-    proxies = {"http": "http://child-prc.intel.com:913",
-               "https": "http://child-prc.intel.com:913"}
+    global proxies
 
     try:
         r = requests.get(url, proxies=proxies)
@@ -301,49 +301,46 @@ def findCompanyUrl():
 
 
 if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        print("python3 baiduzhaopin.py company -> get company homesite url")
+        print("python3 baiduzhaopin.py zhaopin -> get zhaopin information from baidu zhaopin")
+        sys.exit()
+    
+    if len(sys.argv) > 2:
+        if sys.argv[2] == "no-proxy" or sys.argv[1] == "no-proxy":
+            print("no proxy on")
+            proxies = {
+                "http": None,
+                "https": None,
+                }
+        elif sys.argv[1] == "help":
+            print("python3 baiduzhaopin.py company -> get company homesite url")
+            print("python3 baiduzhaopin.py zhaopin -> get zhaopin information from baidu zhaopin")
+            print("python3 baiduzhaopin.py [company/zhaopin] no-proxy -> disable intel proxy")
+    
+        else:
+            print("using intel proxy...(use no-proxy to disable)")
+
     if(sys.argv[1] == "zhaopin"):
-        ret = baiduzhaopin("计算机视觉", "深圳", 1000)
-        print(ret)
-        ret = baiduzhaopin("计算机", "深圳", 1000)
-        print(ret)
-        ret = baiduzhaopin("物联网", "深圳", 1000)
-        print(ret)
-        ret = baiduzhaopin("智能", "深圳", 1000)
-        print(ret)
-        ret = baiduzhaopin("无人", "深圳", 1000)
-        print(ret)
-        ret = baiduzhaopin("高科技", "深圳", 1000)
-        print(ret)
+        baiduzhaopin("计算机视觉", "深圳", 1000)
+        
+        baiduzhaopin("物联网", "深圳", 1000)
+    
 
-        ret = baiduzhaopin("计算机视觉", "北京", 1000)
-        print(ret)
-        ret = baiduzhaopin("计算机", "北京", 1000)
-        print(ret)
-        ret = baiduzhaopin("物联网", "北京", 1000)
-        print(ret)
-        ret = baiduzhaopin("智能", "北京", 1000)
-        print(ret)
-        ret = baiduzhaopin("无人", "北京", 1000)
-        print(ret)
-        ret = baiduzhaopin("高科技", "北京", 1000)
-        print(ret)
+        baiduzhaopin("计算机视觉", "北京", 1000)
+        
+        baiduzhaopin("物联网", "北京", 1000)
 
-        ret = baiduzhaopin("计算机视觉", "上海", 1000)
-        print(ret)
-        ret = baiduzhaopin("计算机", "上海", 1000)
-        print(ret)
-        ret = baiduzhaopin("物联网", "上海", 1000)
-        print(ret)
-        ret = baiduzhaopin("智能", "上海", 1000)
-        print(ret)
-        ret = baiduzhaopin("无人", "上海", 1000)
-        print(ret)
-        ret = baiduzhaopin("高科技", "上海", 1000)
-        print(ret)
+        baiduzhaopin("计算机视觉", "上海", 1000)
+        
+        baiduzhaopin("物联网", "上海", 1000)
+        
     elif(sys.argv[1] == "company"):
        while 1:
             findCompanyUrl()
-        
     else:
         print("python3 baiduzhaopin.py company -> get company homesite url")
         print("python3 baiduzhaopin.py zhaopin -> get zhaopin information from baidu zhaopin")
+        print("python3 baiduzhaopin.py [company/zhaopin] no-proxy -> disable intel proxy")
+
+    
