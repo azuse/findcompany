@@ -12,37 +12,43 @@ import string
 from bs4 import BeautifulSoup
 import re
 import sys
+from optparse import OptionParser
+import configparser, os
+import pprint
 
-time_sleep = 5
+# time_sleep = 5
 
-insert_count = 0
+# insert_count = 0
 
-# 失败处理 超过20次休眠90秒
-fail_count = 0
-fail_count_limit = 10
-fail_sleep = 100
+# # 失败处理 超过20次休眠90秒
+# fail_count = 0
+# fail_count_limit = 10
+# fail_sleep = 100
 
-headers = {
-    "Accept"	:"*/*",
-    "Accept-Encoding"	:"gzip, deflate",
-    "Accept-Language"	:"en-US,en;q=0.5",
-    "Connection"	:"keep-alive",
-    "Content-Length"	:"109",
-    "Content-Type"	:"application/x-www-form-urlencoded; charset=UTF-8",
-    "Cookie":"Hm_lpvt_d9f99ed0a40e413ff5b942f6723d305e=1548809153;Hm_lvt_d9f99ed0a40e413ff5b942f6723d305e=1548311420,1548749185;huazhan_log=d6101ec6b0aa6663c40f3f1743dff411;PHPSESSID=oscm9a5mrdnkm4l37br1jtnrk6",
-    "Host"	:"yun.ihuazhan.net",
-    "Referer"	:"http://yun.ihuazhan.net/Index/enterprise?type=1&keyword=%E7%89%A9%E8%81%94%E7%BD%91",
-    "User-Agent"	:"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0",
-    "X-Requested-With"	:"XMLHttpRequest"
-}
+# headers = {
+#     "Accept"	:"*/*",
+#     "Accept-Encoding"	:"gzip, deflate",
+#     "Accept-Language"	:"en-US,en;q=0.5",
+#     "Connection"	:"keep-alive",
+#     "Content-Length"	:"109",
+#     "Content-Type"	:"application/x-www-form-urlencoded; charset=UTF-8",
+    
+#     "Cookie":"Hm_lpvt_d9f99ed0a40e413ff5b942f6723d305e=1548899666;Hm_lvt_d9f99ed0a40e413ff5b942f6723d305e=1548899205;huazhan_log=49a9ef170a32a16bbf7cdb60eaed0af5;PHPSESSID=79a5va20f9vc6e8raqc62q1uf3",
+#     "Host"	:"yun.ihuazhan.net",
+#     "Referer"	:"http://yun.ihuazhan.net/Index/enterprise?type=1&keyword=%E7%89%A9%E8%81%94%E7%BD%91",
+#     "User-Agent"	:"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0",
+#     "X-Requested-With"	:"XMLHttpRequest"
+# }
 
 #proxies for inside intel
-proxies = {"http": "http://child-prc.intel.com:913",
-               "https": "http://child-prc.intel.com:913"}
+# proxies = {"http": "http://child-prc.intel.com:913",
+#                "https": "http://child-prc.intel.com:913"}
+# proxies = {"http": None,
+#                "https": None}
 
-db_username = "root"
-db_password = "misakaxindex"
-db_dbname = "findcompany"
+# db_username = "root"
+# db_password = "misakaxindex"
+# db_dbname = "findcompany"
 
 ## 找出最合适的联系人 ##
 ## 经理 重要度 +2
@@ -98,8 +104,11 @@ class mysql_huazhan:
         regcapital = detail.get("regcapital","")
 
         # 正向搜索有手机号的联系人
-        contect_main = find_main_contect(contects)
-        
+        if contects != None:
+            contect_main = find_main_contect(contects)
+        else :
+            contect_main = dict()
+
         contect_main_name = contect_main.get('name', "")
         contect_main_phone = contect_main.get('phone', "")
         contect_main_tel = contect_main.get('tel', "")
@@ -126,7 +135,7 @@ class mysql_huazhan:
             return 0
 
 
-db = mysql_huazhan(db_username, db_password, db_dbname)
+# db = mysql_huazhan(db_username, db_password, db_dbname)
 
 def huazhan_search_company_detail(id):
     url = "http://yun.ihuazhan.net/Index/eDetail"
@@ -149,6 +158,7 @@ def huazhan_search_company_detail(id):
         return
 
 
+    print("-------------------------------enterprise detail 200")
     r.encoding = 'utf-8'
     rdata = json.loads(r.text)
 
@@ -158,6 +168,9 @@ def huazhan_search_company_detail(id):
     if ret:
         insert_count += 1
         print("company inserted! total "+ str(insert_count))
+    else :
+        print("company already exist")
+    return ret
 
 def huazhan_search_company_list(keyword, page, sort):
     url = "http://yun.ihuazhan.net/Index/enterpriseAjax"
@@ -171,7 +184,8 @@ def huazhan_search_company_list(keyword, page, sort):
         "sort":	sort,
         ## islink=1 限定有联系方式的公司 ##
         "islink":	1,
-        "isurl":	0,
+        ## isurl=1 由企业网址的公司
+        "isurl":	1,
         "istrack":	0,
         "special":	0,
         "type":	1,
@@ -189,12 +203,17 @@ def huazhan_search_company_list(keyword, page, sort):
         print("Unexpected error:", sys.exc_info()[0])
         return
 
-
+    print("-------------------------------enterprise index 200---------page "+ str(page))
     r.encoding = 'utf-8'
+    if r.status_code == 403:
+        print("error: site return 403")
+        sys.exit(1)
     rdata = json.loads(r.text)
-
+    inserted = 0
     for item in rdata["data"]:
-        huazhan_search_company_detail(item["id"])
+        ret = huazhan_search_company_detail(item["id"])
+        inserted += ret
+    return inserted
 
 ## ========================
 ## |  华展云搜索主程序       |
@@ -205,10 +224,18 @@ def huazhan_search_company_list(keyword, page, sort):
 ## | sortType = 2 时间排序  |
 ## ========================
 def huazhanyun(keyword, page_start, page_end, sortType):
-    i = page_start
-    while i < page_end:
-        huazhan_search_company_list(keyword, i, sortType)
-        i += 1
+    i = page_end
+    inserted = 0
+    while i > page_start:
+        if sortType == "time":
+            ret = huazhan_search_company_list(keyword, i, 2)
+            inserted += ret
+            i -= 1
+        if sortType == "auto":
+            ret = huazhan_search_company_list(keyword, i, 1)
+            inserted += ret
+            i -= 1
+    return "查找结束: {0} {1} {2} {4} 插入结果: {4}".format(keyword, page_start, page_end, sortType, inserted)
 
 
 areaid = {
@@ -230,4 +257,75 @@ if __name__ == "__main__":
         "http":None,
         "https":None
     }
-    huazhanyun("物联网", 48, 1000, 1)
+
+    usage = "usage: python3 crawler_huazhanyun.py "
+    parser = OptionParser()
+    parser.add_option("-p", "--proxy", help="select a proxy", metavar="intel / socks5 / noproxy", default="intel", dest="proxy_select")
+    parser.add_option("-c","--config", help="select a config file", metavar="crawler_config.json", default="crawler_config.json", dest="config_path")
+    parser.add_option("-t","--timesleep", help="timesleep seconds", metavar="10", default="-1", dest="time_sleep")
+    (opt, args) = parser.parse_args()
+
+    print('info: using config file: '+ opt.config_path)
+    config = json.load(open(opt.config_path))
+    ######## HUAZHAN ##########
+    if opt.time_sleep == -1:
+        time_sleep = int(config['HUAZHAN']['time_sleep'])
+    else:
+        time_sleep = opt.time_sleep
+    # 失败处理 超过20次休眠90秒
+    fail_count = 0
+    fail_count_limit = int(config['HUAZHAN']['fail_count_limit'])
+    fail_sleep = int(config['HUAZHAN']['fail_sleep'])
+
+    keywords = config['HUAZHAN']['keywords']
+
+    page_start = int(config['HUAZHAN']['page_start'])
+    page_end = int(config['HUAZHAN']['page_end'])
+
+    sort_type = config['HUAZHAN']['sort_type']
+    ######## MYSQL #########
+    db_username = config['MYSQL']['db_username']
+    db_password = config['MYSQL']['db_password']
+    db_dbname = config['MYSQL']['db_dbname']
+
+    db = mysql_huazhan(db_username, db_password, db_dbname)
+
+    #proxies for inside intel
+    opt.proxy_select = config['DEFAULT'].get("proxy", opt.proxy_select)
+
+    # headers={
+    #         "Accept"	:"*/*",
+    #         "Accept-Encoding"	:"gzip, deflate",
+    #         "Accept-Language"	:"en-US,en;q=0.5",
+    #         "Connection"	:"keep-alive",
+    #         "Content-Length"	:"109",
+    #         "Content-Type"	:"application/x-www-form-urlencoded; charset=UTF-8",
+            
+    #         "Cookie":"Hm_lpvt_d9f99ed0a40e413ff5b942f6723d305e=1548899666;Hm_lvt_d9f99ed0a40e413ff5b942f6723d305e=1548899205;huazhan_log=49a9ef170a32a16bbf7cdb60eaed0af5;PHPSESSID=79a5va20f9vc6e8raqc62q1uf3",
+    #         "Host"	:"yun.ihuazhan.net",
+    #         "Referer"	:"http://yun.ihuazhan.net/Index/enterprise?type=1&keyword=%E7%89%A9%E8%81%94%E7%BD%91",
+    #         "User-Agent"	:"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0",
+    #         "X-Requested-With"	:"XMLHttpRequest"
+    #     }
+    headers = config['HUAZHAN']['headers']
+
+    if(opt.proxy_select == "intel"):
+        print("info: using intel proxy")
+        proxies = {"http": "http://child-prc.intel.com:913",
+               "https": "http://child-prc.intel.com:913"}
+    elif(opt.proxy_select == "socks5"):
+        print("info: using socks5 proxy")
+        proxies = {"http": "socks5://127.0.0.1:1080","https": "socks5://127.0.0.1:1080"}
+    elif(opt.proxy_select == "noproxy"):
+        print("info: using no proxy")
+        proxies = {"http":None, "https": None}
+
+    print("-----------start crawling-----------")
+    i = 0
+    ret = dict()
+    for keyword in keywords:
+        ret[i] = huazhanyun(keyword, page_start, page_end, sort_type)
+        i+=1
+
+    print("-----------crawl ended----------")
+    pprint(ret)
