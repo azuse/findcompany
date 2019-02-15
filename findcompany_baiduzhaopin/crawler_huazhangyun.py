@@ -16,39 +16,14 @@ from optparse import OptionParser
 import configparser, os
 import pprint
 
-# time_sleep = 5
+insert_count = 0
 
-# insert_count = 0
+def urlparse(url):
+    url = url.replace("http://","")
+    url = url.replace("https://","")
+    url = url.replace("/","")
+    return url
 
-# # 失败处理 超过20次休眠90秒
-# fail_count = 0
-# fail_count_limit = 10
-# fail_sleep = 100
-
-# headers = {
-#     "Accept"	:"*/*",
-#     "Accept-Encoding"	:"gzip, deflate",
-#     "Accept-Language"	:"en-US,en;q=0.5",
-#     "Connection"	:"keep-alive",
-#     "Content-Length"	:"109",
-#     "Content-Type"	:"application/x-www-form-urlencoded; charset=UTF-8",
-    
-#     "Cookie":"Hm_lpvt_d9f99ed0a40e413ff5b942f6723d305e=1548899666;Hm_lvt_d9f99ed0a40e413ff5b942f6723d305e=1548899205;huazhan_log=49a9ef170a32a16bbf7cdb60eaed0af5;PHPSESSID=79a5va20f9vc6e8raqc62q1uf3",
-#     "Host"	:"yun.ihuazhan.net",
-#     "Referer"	:"http://yun.ihuazhan.net/Index/enterprise?type=1&keyword=%E7%89%A9%E8%81%94%E7%BD%91",
-#     "User-Agent"	:"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0",
-#     "X-Requested-With"	:"XMLHttpRequest"
-# }
-
-#proxies for inside intel
-# proxies = {"http": "http://child-prc.intel.com:913",
-#                "https": "http://child-prc.intel.com:913"}
-# proxies = {"http": None,
-#                "https": None}
-
-# db_username = "root"
-# db_password = "misakaxindex"
-# db_dbname = "findcompany"
 
 ## 找出最合适的联系人 ##
 ## 经理 重要度 +2
@@ -82,6 +57,8 @@ def find_main_contect(contects):
 
     return contects[max_priority_contect]
 
+def 
+
 class mysql_huazhan:
     def __init__(self, user, password, database):
         self.db = pymysql.connect(host='localhost',
@@ -98,6 +75,7 @@ class mysql_huazhan:
         location = detail.get('areas', "")
         address = detail.get('address', "")
         url = detail.get('url', "")
+        url = urlparse(url)
         # 产品介绍 #
         product = detail.get('prodcut', "")
         # regcaptal 注册资本#
@@ -135,8 +113,6 @@ class mysql_huazhan:
             return 0
 
 
-# db = mysql_huazhan(db_username, db_password, db_dbname)
-
 def huazhan_search_company_detail(id):
     url = "http://yun.ihuazhan.net/Index/eDetail"
     global headers
@@ -172,6 +148,7 @@ def huazhan_search_company_detail(id):
         print("company already exist")
     return ret
 
+
 def huazhan_search_company_list(keyword, page, sort):
     url = "http://yun.ihuazhan.net/Index/enterpriseAjax"
     global headers
@@ -198,10 +175,10 @@ def huazhan_search_company_list(keyword, page, sort):
         time.sleep(time_sleep)
     except ConnectionError as err:
         print("ConnectionError: '{0}'".format(err))
-        return
+        return 0
     except:
         print("Unexpected error:", sys.exc_info()[0])
-        return
+        return 0
 
     print("-------------------------------enterprise index 200---------page "+ str(page))
     r.encoding = 'utf-8'
@@ -249,8 +226,8 @@ areaid = {
     '辽宁':"eKdKEEmz",
     '安徽':"ebwwEEmN",
     '吉林':"eKETKEm6"
-
 }
+
 
 if __name__ == "__main__":
     proxies={
@@ -268,10 +245,10 @@ if __name__ == "__main__":
     print('info: using config file: '+ opt.config_path)
     config = json.load(open(opt.config_path))
     ######## HUAZHAN ##########
-    if opt.time_sleep == -1:
+    if opt.time_sleep == '-1':
         time_sleep = int(config['HUAZHAN']['time_sleep'])
     else:
-        time_sleep = opt.time_sleep
+        time_sleep = int(opt.time_sleep)
     # 失败处理 超过20次休眠90秒
     fail_count = 0
     fail_count_limit = int(config['HUAZHAN']['fail_count_limit'])
@@ -293,20 +270,6 @@ if __name__ == "__main__":
     #proxies for inside intel
     opt.proxy_select = config['DEFAULT'].get("proxy", opt.proxy_select)
 
-    # headers={
-    #         "Accept"	:"*/*",
-    #         "Accept-Encoding"	:"gzip, deflate",
-    #         "Accept-Language"	:"en-US,en;q=0.5",
-    #         "Connection"	:"keep-alive",
-    #         "Content-Length"	:"109",
-    #         "Content-Type"	:"application/x-www-form-urlencoded; charset=UTF-8",
-            
-    #         "Cookie":"Hm_lpvt_d9f99ed0a40e413ff5b942f6723d305e=1548899666;Hm_lvt_d9f99ed0a40e413ff5b942f6723d305e=1548899205;huazhan_log=49a9ef170a32a16bbf7cdb60eaed0af5;PHPSESSID=79a5va20f9vc6e8raqc62q1uf3",
-    #         "Host"	:"yun.ihuazhan.net",
-    #         "Referer"	:"http://yun.ihuazhan.net/Index/enterprise?type=1&keyword=%E7%89%A9%E8%81%94%E7%BD%91",
-    #         "User-Agent"	:"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0",
-    #         "X-Requested-With"	:"XMLHttpRequest"
-    #     }
     headers = config['HUAZHAN']['headers']
 
     if(opt.proxy_select == "intel"):
