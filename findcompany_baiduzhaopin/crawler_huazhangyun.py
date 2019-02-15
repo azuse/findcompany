@@ -128,10 +128,10 @@ def huazhan_search_company_detail(id):
         time.sleep(time_sleep)
     except ConnectionError as err:
         print("ConnectionError: '{0}'".format(err))
-        return
+        return 0
     except:
         print("Unexpected error:", sys.exc_info()[0])
-        return
+        return 0
 
 
     print("-------------------------------enterprise detail 200")
@@ -239,7 +239,7 @@ if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option("-p", "--proxy", help="select a proxy", metavar="intel / socks5 / noproxy", default="intel", dest="proxy_select")
     parser.add_option("-c","--config", help="select a config file", metavar="crawler_config.json", default="crawler_config.json", dest="config_path")
-    parser.add_option("-t","--timesleep", help="timesleep seconds", metavar="10", default="-1", dest="time_sleep")
+    parser.add_option("-t","--timesleep", help="timesleep seconds", metavar="10", default=-1, dest="time_sleep")
     (opt, args) = parser.parse_args()
 
     print('info: using config file: '+ opt.config_path)
