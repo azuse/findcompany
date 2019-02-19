@@ -27,8 +27,8 @@
         "fail_count_limit" : 10,
         "fail_sleep" : 100,
 
-        "keywords" : ["计算机视觉", "物联网"],
-        "page_start": 38,
+        "keywords" : ["物联网","物联网"],
+        "page_start": 0,
         "page_end": 500,
         "sort_type":"time",
         "headers":  {

@@ -17,6 +17,7 @@ import configparser, os
 import pprint
 
 insert_count = 0
+time_sleep = 20
 
 def urlparse(url):
     url = url.replace("http://","")
@@ -57,7 +58,6 @@ def find_main_contect(contects):
 
     return contects[max_priority_contect]
 
-def 
 
 class mysql_huazhan:
     def __init__(self, user, password, database):
@@ -73,7 +73,8 @@ class mysql_huazhan:
         location = detail.get('areas', "")
         address = detail.get('address', "")
         url = detail.get('url', "")
-        url = urlparse(url)
+        if(url != None):
+            url = urlparse(url)
         # 产品介绍 #
         product = detail.get('prodcut', "")
         # regcaptal 注册资本#
@@ -131,13 +132,13 @@ def huazhan_search_company_detail(id):
     }
 
     try:
-        r = requests.post(url, data=data, headers=headers, proxies=proxies)
+        r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout = 10)
         time.sleep(time_sleep)
     except ConnectionError as err:
-        print("ConnectionError: '{0}'".format(err))
+        print("ConnectionError in huazhan_search_company_detail: '{0}'".format(err))
         return 0
     except:
-        print("Unexpected error:", sys.exc_info()[0])
+        print("Unexpected error in huazhan_search_company_detail:", sys.exc_info()[0])
         return 0
 
 
@@ -178,13 +179,14 @@ def huazhan_search_company_list(keyword, page, sort):
     global proxies
 
     try:
-        r = requests.post(url, data=data, headers=headers, proxies=proxies)
+        r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout = 10)
         time.sleep(time_sleep)
     except ConnectionError as err:
-        print("ConnectionError: '{0}'".format(err))
+        print("ConnectionError in huazhan_search_company_list: '{0}'".format(err))
         return 0
     except:
-        print("Unexpected error:", sys.exc_info()[0])
+        print("Unexpected error in huazhan_search_company_list:", sys.exc_info()[0])
+        pprint.pprint(r.text)
         return 0
 
     print("-------------------------------enterprise index 200---------page "+ str(page))
@@ -274,7 +276,7 @@ if __name__ == "__main__":
     print('info: using config file: '+ opt.config_path)
     config = json.load(open(opt.config_path))
     ######## HUAZHAN ##########
-    if opt.time_sleep == '-1':
+    if opt.time_sleep == -1:
         time_sleep = int(config['HUAZHAN']['time_sleep'])
     else:
         time_sleep = int(opt.time_sleep)
