@@ -57,8 +57,6 @@ def find_main_contect(contects):
 
     return contects[max_priority_contect]
 
-def 
-
 class mysql_huazhan:
     def __init__(self, user, password, database):
         self.user = user
@@ -131,7 +129,7 @@ def huazhan_search_company_detail(id):
     }
 
     try:
-        r = requests.post(url, data=data, headers=headers, proxies=proxies)
+        r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=10)
         time.sleep(time_sleep)
     except ConnectionError as err:
         print("ConnectionError: '{0}'".format(err))
@@ -178,7 +176,7 @@ def huazhan_search_company_list(keyword, page, sort):
     global proxies
 
     try:
-        r = requests.post(url, data=data, headers=headers, proxies=proxies)
+        r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=10)
         time.sleep(time_sleep)
     except ConnectionError as err:
         print("ConnectionError: '{0}'".format(err))
@@ -311,6 +309,8 @@ if __name__ == "__main__":
     elif(opt.proxy_select == "noproxy"):
         print("info: using no proxy")
         proxies = {"http":None, "https": None}
+
+    
     print("-----------    login in  -----------")
     huazhan_login()
     print("-----------start crawling-----------")
