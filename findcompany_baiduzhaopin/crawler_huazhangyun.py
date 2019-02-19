@@ -18,7 +18,7 @@ import pprint
 
 # time_sleep = 5
 
-# insert_count = 0
+insert_count = 0
 
 # # 失败处理 超过20次休眠90秒
 # fail_count = 0
@@ -119,11 +119,11 @@ class mysql_huazhan:
         contect_all_json = json.dumps(contects)
         exhibitions_json = json.dumps(exhibitions)
 
-        sql = """INSERT INTO huazhan_company (huazhan_id, company, tag, location, address, homePage, product, regCapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw) 
+        sql = """INSERT INTO company (huazhan_id, company, tag, location, address, homePage, product, regCapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw) 
                     VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}')""" \
                     .format(id, name, tag, location, address, url, product, regcapital, contect_main_name, contect_main_position, contect_main_phone, contect_main_tel, contect_main_qq, contect_main_email, contect_all_json, exhibitions_json, raw)
         self.cursor.execute(
-            "SELECT COUNT(huazhan_id) FROM huazhan_company WHERE huazhan_id LIKE '{0}';".format(id))
+            "SELECT COUNT(huazhan_id) FROM company WHERE huazhan_id LIKE '{0}';".format(id))
         if self.cursor._rows[0] != (0,):
             return 0
 
@@ -152,10 +152,10 @@ def huazhan_search_company_detail(id):
         time.sleep(time_sleep)
     except ConnectionError as err:
         print("ConnectionError: '{0}'".format(err))
-        return
+        return 0
     except:
         print("Unexpected error:", sys.exc_info()[0])
-        return
+        return 0
 
 
     print("-------------------------------enterprise detail 200")
@@ -198,18 +198,25 @@ def huazhan_search_company_list(keyword, page, sort):
         time.sleep(time_sleep)
     except ConnectionError as err:
         print("ConnectionError: '{0}'".format(err))
-        return
+        return 0
     except:
         print("Unexpected error:", sys.exc_info()[0])
-        return
+        return 0
 
     print("-------------------------------enterprise index 200---------page "+ str(page))
     r.encoding = 'utf-8'
     if r.status_code == 403:
         print("error: site return 403")
         sys.exit(1)
-    rdata = json.loads(r.text)
+    print(r.text)
+    try:
+        rdata = json.loads(r.text)
+    except:
+        return 0 
     inserted = 0
+    if not rdata["data"]:
+        inserted = -1
+        return inserted
     for item in rdata["data"]:
         ret = huazhan_search_company_detail(item["id"])
         inserted += ret
@@ -224,19 +231,34 @@ def huazhan_search_company_list(keyword, page, sort):
 ## | sortType = 2 时间排序  |
 ## ========================
 def huazhanyun(keyword, page_start, page_end, sortType):
-    i = page_end
+    i = page_start
     inserted = 0
-    while i > page_start:
+    while i < page_end:
         if sortType == "time":
             ret = huazhan_search_company_list(keyword, i, 2)
+            if ret == -1:
+                print("last page")
+                break
             inserted += ret
-            i -= 1
+            i += 1
         if sortType == "auto":
+            if ret == -1:
+                print("last page")
+                break
             ret = huazhan_search_company_list(keyword, i, 1)
             inserted += ret
-            i -= 1
+            i += 1
     return "查找结束: {0} {1} {2} {4} 插入结果: {4}".format(keyword, page_start, page_end, sortType, inserted)
 
+def huazhan_login():
+    url = "http://yun.ihuazhan.net/Login/loginCheck"
+    global headers
+    data = {
+        "userName":"18100837642",
+        "password":"intel@123"
+    }
+    r = requests.post(url, data=data, headers=headers)
+    print(r.text)
 
 areaid = {
     '北京':"e3EbEKiJ",
@@ -262,7 +284,7 @@ if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option("-p", "--proxy", help="select a proxy", metavar="intel / socks5 / noproxy", default="intel", dest="proxy_select")
     parser.add_option("-c","--config", help="select a config file", metavar="crawler_config.json", default="crawler_config.json", dest="config_path")
-    parser.add_option("-t","--timesleep", help="timesleep seconds", metavar="10", default="-1", dest="time_sleep")
+    parser.add_option("-t","--timesleep", help="timesleep seconds", metavar="10", default=-1, dest="time_sleep")
     (opt, args) = parser.parse_args()
 
     print('info: using config file: '+ opt.config_path)
@@ -271,7 +293,7 @@ if __name__ == "__main__":
     if opt.time_sleep == -1:
         time_sleep = int(config['HUAZHAN']['time_sleep'])
     else:
-        time_sleep = opt.time_sleep
+        time_sleep = int(opt.time_sleep)
     # 失败处理 超过20次休眠90秒
     fail_count = 0
     fail_count_limit = int(config['HUAZHAN']['fail_count_limit'])
@@ -319,7 +341,8 @@ if __name__ == "__main__":
     elif(opt.proxy_select == "noproxy"):
         print("info: using no proxy")
         proxies = {"http":None, "https": None}
-
+    print("-----------    login in  -----------")
+    huazhan_login()
     print("-----------start crawling-----------")
     i = 0
     ret = dict()
