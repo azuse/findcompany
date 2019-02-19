@@ -1,6 +1,6 @@
 {
     "DEFAULT":{
-        "proxy": "intel"
+        "proxy": "noproxy"
     },
     "BAIDU":{
         "time_sleep" : 10,       
@@ -23,13 +23,13 @@
                     }
     },
     "HUAZHAN":{
-        "time_sleep" : 10,
+        "time_sleep" : 20,
         "fail_count_limit" : 10,
         "fail_sleep" : 100,
 
         "keywords" : ["计算机视觉", "物联网"],
-        "page_start": 1,
-        "page_end": 10,
+        "page_start": 38,
+        "page_end": 500,
         "sort_type":"time",
         "headers":  {
                         "Accept"	:"*/*",
@@ -39,7 +39,7 @@
                         "Content-Length"	:"109",
                         "Content-Type"	:"application/x-www-form-urlencoded; charset=UTF-8",
                         
-                        "Cookie":"Hm_lpvt_d9f99ed0a40e413ff5b942f6723d305e=1548899666;Hm_lvt_d9f99ed0a40e413ff5b942f6723d305e=1548899205;huazhan_log=49a9ef170a32a16bbf7cdb60eaed0af5;PHPSESSID=79a5va20f9vc6e8raqc62q1uf3",
+                        "Cookie":"PHPSESSID=prfc69n8gpcv8fpiae12idpt60;",
                         "Host"	:"yun.ihuazhan.net",
                         "Referer"	:"http://yun.ihuazhan.net/Index/enterprise?type=1&keyword=%E7%89%A9%E8%81%94%E7%BD%91",
                         "User-Agent"	:"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0",

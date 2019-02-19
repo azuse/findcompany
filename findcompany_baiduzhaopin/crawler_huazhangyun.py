@@ -61,12 +61,10 @@ def
 
 class mysql_huazhan:
     def __init__(self, user, password, database):
-        self.db = pymysql.connect(host='localhost',
-                                  user=user,
-                                  passwd=password,
-                                  db=database,
-                                  charset='utf8')
-        self.cursor = self.db.cursor()
+        self.user = user
+        self.password = password
+        self.database = database
+        
     
     def insert_company(self, detail, contects, exhibitions, raw):
         id = detail.get('id', "")
@@ -97,19 +95,28 @@ class mysql_huazhan:
         contect_all_json = json.dumps(contects)
         exhibitions_json = json.dumps(exhibitions)
 
-        sql = """INSERT INTO huazhan_company (huazhan_id, company, tag, location, address, homePage, product, regCapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw) 
+        sql = """INSERT INTO company (huazhan_id, company, tag, location, address, homePage, product, regCapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw) 
                     VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}')""" \
                     .format(id, name, tag, location, address, url, product, regcapital, contect_main_name, contect_main_position, contect_main_phone, contect_main_tel, contect_main_qq, contect_main_email, contect_all_json, exhibitions_json, raw)
+        self.db = pymysql.connect(host='localhost',
+                                  user=self.user,
+                                  passwd=self.password,
+                                  db=self.database,
+                                  charset='utf8')
+        self.cursor = self.db.cursor()
+        
         self.cursor.execute(
-            "SELECT COUNT(huazhan_id) FROM huazhan_company WHERE huazhan_id LIKE '{0}';".format(id))
+            "SELECT COUNT(huazhan_id) FROM company WHERE huazhan_id LIKE '{0}';".format(id))
         if self.cursor._rows[0] != (0,):
             return 0
 
         try:
             self.cursor.execute(sql)
             self.db.commit()
+            self.db.close()
             return 1
         except:
+            self.db.close()
             return 0
 
 
@@ -185,8 +192,15 @@ def huazhan_search_company_list(keyword, page, sort):
     if r.status_code == 403:
         print("error: site return 403")
         sys.exit(1)
-    rdata = json.loads(r.text)
+    print(r.text)
+    try:
+        rdata = json.loads(r.text)
+    except:
+        return 0 
     inserted = 0
+    if not rdata["data"]:
+        inserted = -1
+        return inserted
     for item in rdata["data"]:
         ret = huazhan_search_company_detail(item["id"])
         inserted += ret
@@ -201,19 +215,34 @@ def huazhan_search_company_list(keyword, page, sort):
 ## | sortType = 2 时间排序  |
 ## ========================
 def huazhanyun(keyword, page_start, page_end, sortType):
-    i = page_end
+    i = page_start
     inserted = 0
-    while i > page_start:
+    while i < page_end:
         if sortType == "time":
             ret = huazhan_search_company_list(keyword, i, 2)
+            if ret == -1:
+                print("last page")
+                break
             inserted += ret
-            i -= 1
+            i += 1
         if sortType == "auto":
+            if ret == -1:
+                print("last page")
+                break
             ret = huazhan_search_company_list(keyword, i, 1)
             inserted += ret
-            i -= 1
+            i += 1
     return "查找结束: {0} {1} {2} {4} 插入结果: {4}".format(keyword, page_start, page_end, sortType, inserted)
 
+def huazhan_login():
+    url = "http://yun.ihuazhan.net/Login/loginCheck"
+    global headers
+    data = {
+        "userName":"18100837642",
+        "password":"intel@123"
+    }
+    r = requests.post(url, data=data, headers=headers)
+    print(r.text)
 
 areaid = {
     '北京':"e3EbEKiJ",
@@ -282,7 +311,8 @@ if __name__ == "__main__":
     elif(opt.proxy_select == "noproxy"):
         print("info: using no proxy")
         proxies = {"http":None, "https": None}
-
+    print("-----------    login in  -----------")
+    huazhan_login()
     print("-----------start crawling-----------")
     i = 0
     ret = dict()
