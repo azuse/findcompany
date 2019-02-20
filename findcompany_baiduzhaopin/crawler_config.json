@@ -1,9 +1,9 @@
 {
     "DEFAULT":{
-        "proxy": "noproxy"
+        "proxy": "intel"
     },
     "BAIDU":{
-        "time_sleep" : 10,       
+        "time_sleep" : 5,       
         "fail_count_limit" : 10 , 
         "fail_sleep" : 100,
 

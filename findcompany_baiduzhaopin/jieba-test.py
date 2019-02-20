@@ -109,9 +109,6 @@ for item in data:
 
         if(re.match(regex, url) is None):
             continue 
-
-        print("getting url " + url)
-
         #### using selenium ####
 
         # driver.get(url)
@@ -123,6 +120,9 @@ for item in data:
         # jieba_tf_idf(text)
 
         #### using request ####
+        print("getting url " + url)
+
+       
         try:
             r = requests.get(url, timeout = 5)
             r.encoding = "utf-8"

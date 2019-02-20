@@ -302,7 +302,7 @@ if __name__ == "__main__":
         time_sleep = int(config['BAIDU']['time_sleep'])
     else:
         time_sleep = int(opt.time_sleep)
-        print("info: time sleep set to " + opt.time_sleep)
+    print("info: time sleep set to " + opt.time_sleep)
     # 失败处理 超过20次休眠90秒
     fail_count = 0
     fail_count_limit = int(config['BAIDU']['fail_count_limit'])
