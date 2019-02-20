@@ -46,14 +46,19 @@ class db:
         self.cursor.execute(
             "SELECT COUNT(huazhan_id) FROM company WHERE huazhan_id LIKE '{0}';".format(id))
         if self.cursor._rows[0] != (0,):
+            print("info:  公司已存在")
             return 0
 
         try:
             self.cursor.execute(sql)
             self.db.commit()
             self.db.close()
+            print("info:  插入成功")
             return 1
         except:
+            print("info:  插入失败")
+            print(sql)
+            print("Unexpected error:", sys.exc_info()[0])
             self.db.close()
             return 0
 
@@ -263,7 +268,7 @@ if __name__ == "__main__":
                 city = item.get("city", "")
                 loc = item.get("loc", "")
                 detail = bd.baiduzhaopin_detail(loc)
-                searchKeywords = jieba_tf_idf(detail, topK=10)
+                # searchKeywords = jieba_tf_idf(detail, topK=10)
 
                 # homepage = baidu_search_homepage(company)
                 # if(homepage.find("http://") == -1 and homepage.find("https://") == -1):
@@ -280,14 +285,15 @@ if __name__ == "__main__":
                     detail = ret3["detail"]
                     contects = ret3["cur"]
                     exhibitions = ret3["pro"]
-                    raw = ret3.text
+                    raw = json.dumps(ret3)
 
                     id = detail.get('id', "")
                     name = detail.get('name', "")
+                    print(name)
                     tag = detail.get('trades', "")
                     location = detail.get('areas', "")
                     address = detail.get('address', "")
-                    url = detail.get('url', "")
+                    homepage = detail.get('url', "")
 
                     # 产品介绍 #
                     product = detail.get('prodcut', "")

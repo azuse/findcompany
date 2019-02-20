@@ -1,9 +1,9 @@
 {
     "DEFAULT":{
-        "proxy": "intel"
+        "proxy": "noproxy"
     },
     "BAIDU":{
-        "time_sleep" : 5,       
+        "time_sleep" : 1,       
         "fail_count_limit" : 10 , 
         "fail_sleep" : 100,
 
@@ -23,7 +23,7 @@
                     }
     },
     "HUAZHAN":{
-        "time_sleep" : 20,
+        "time_sleep" : 1,
         "fail_count_limit" : 10,
         "fail_sleep" : 100,
 
