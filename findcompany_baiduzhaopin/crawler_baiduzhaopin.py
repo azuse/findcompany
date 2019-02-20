@@ -16,6 +16,13 @@ from optparse import OptionParser
 import configparser, os
 import pprint
 
+def urlparse(url):
+    url = url.replace("http://","")
+    url = url.replace("https://","")
+    url = url.replace("/","")
+    return url
+
+
 # 百度招聘mysql插入函数
 class mysql_baiduzhaopin:
 
@@ -57,6 +64,7 @@ class mysql_baiduzhaopin:
         location = data.get("location", "")
 
         url = data.get("pc_url", "")
+        url = urlparse(url)
 
         companyaddress = data.get("companyaddress", "")
         companydescription = data.get("companydescription", "")
@@ -95,6 +103,7 @@ class mysql_baiduzhaopin:
         except:
             return 0
 
+
 def fail():
     global fail_count
     global fail_count_limit
@@ -105,24 +114,16 @@ def fail():
         time.sleep(fail_sleep)
         fail_count = 0
 
+
 def getToken(query, city):
     global time_sleep
+    global headers
+    global proxies
 
     print("info: 获取token")
     url = "http://zhaopin.baidu.com/quanzhi?query=" + \
         parse.quote(query)+"&city="+parse.quote(city)
-    # headers = {"Accept": "*/*",
-    #            "Accept-Encoding": "gzip, deflate, br",
-    #                "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-    #                "Connection": "keep-alive",
-    #                "Cookie": "BAIDUID=D218FD911DA27FA9E5C8A9B6B3F62C92:FG=1; BIDUPSID=D218FD911DA27FA9E5C8A9B6B3F62C92; PSTM=1548381180; delPer=0; PSINO=5; H_PS_PSSID=26525_1443_21105_28328_22158",
-    #                "DNT": "1",
-    #                "Host": "zhaopin.baidu.com",
-    #                "Referer": "http://zhaopin.baidu.com/quanzhi?query="+parse.quote(query)+"&city="+parse.quote(city),
-    #                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36}"
-    #            }
-    global headers
-    global proxies
+    
     while 1:
         try:
             r = requests.get(url, headers=headers, proxies=proxies)
@@ -131,6 +132,7 @@ def getToken(query, city):
             break
         except:
             print("error: 获取token时网络错误,重试")
+            print("Unexpected error:", sys.exc_info()[0])
             fail()
             time.sleep(time_sleep)
 
@@ -151,6 +153,7 @@ def getToken(query, city):
     print("info: new token:"+token)
     return token
 
+
 # =========================
 # | 百度招聘api查询函数      |
 # | query   查询关键词      |
@@ -163,7 +166,6 @@ def baiduzhaopin(query, city, num):
     pn = 0
     token = getToken(query, city)
     while pn < num:
-
         # #####IMPORTANT#####
         # token 必须要有 不让强制搜索"招聘",但是token的值无所谓
         # api后台有校验,校验过程不清楚,校验失败query会强制变成"招聘"
@@ -171,17 +173,6 @@ def baiduzhaopin(query, city, num):
 
         url = "http://zhaopin.baidu.com/api/qzasync?query=" + parse.quote(query) + "&city=" + parse.quote(
             city) + "&is_adq=1&pcmod=1&token=" + token + "&pn=" + str(pn) + "&rn=" + str(rn) + "&sort_type=1&sort_key=5"
-
-        # headers = {"Accept": "*/*",
-        #            "Accept-Encoding": "gzip, deflate, br",
-        #            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-        #            "Connection": "keep-alive",
-        #            "Cookie": "BAIDUID=D218FD911DA27FA9E5C8A9B6B3F62C92:FG=1; BIDUPSID=D218FD911DA27FA9E5C8A9B6B3F62C92; PSTM=1548381180; delPer=0; PSINO=5; H_PS_PSSID=26525_1443_21105_28328_22158",
-        #            "DNT": "1",
-        #            "Host": "zhaopin.baidu.com",
-        #            "Referer": "https://zhaopin.baidu.com/quanzhi?query="+parse.quote(query)+"&city="+parse.quote(city),
-        #            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36}"
-        #            }
         global headers
         global proxies
 
@@ -224,24 +215,11 @@ def baiduzhaopin(query, city, num):
 # ==================================
 # |使用百度百聘的company id寻找公司信息 |
 # ==================================
-def baiducompany(cid, company):
+def baiducompanyHomepage(cid, company):
     url = "http://zhaopin.baidu.com/company?query=" + \
         cid+"&page=registration&city=%E4%B8%8A%E6%B5%B7"
-
-    # headers = {"Accept": "*/*",
-    #            "Accept-Encoding": "gzip, deflate, br",
-    #                "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-    #                "Connection": "keep-alive",
-    #                "Cookie": "BAIDUID=D218FD911DA27FA9E5C8A9B6B3F62C92:FG=1; BIDUPSID=D218FD911DA27FA9E5C8A9B6B3F62C92; PSTM=1548381180; delPer=0; PSINO=5; H_PS_PSSID=26525_1443_21105_28328_22158",
-    #                "DNT": "1",
-    #                "Host": "zhaopin.baidu.com",
-    #                "Referer": "https://zhaopin.baidu.com/quanzhi?query=%E8%AE%A1%E7%AE%97%E6%9C%BA&city=%E4%B8%8A%E6%B5%B7",
-    #                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36}"
-    #            }
     global headers
-
     global proxies
-
     try:
         r = requests.get(url, proxies=proxies)
 
@@ -264,8 +242,10 @@ def baiducompany(cid, company):
 
     global db
     db.insertCompany(companyName, cid, companyUrl)
-
     print(companyName + companyUrl + " inserted!")
+
+
+
 
 # 自动查找百度招聘数据库里的公司官网
 def findCompanyUrl():
@@ -275,31 +255,71 @@ def findCompanyUrl():
     db.db.commit()
     results = db.cursor.fetchall()
     for row in results:
-        baiducompany(row[0], row[1])
+        baiducompanyHomepage(row[0], row[1])
+
+#根据公司名称查找职位
+def findCompanyZhaopin(company):
+    global time_sleep
+    global proxies
+    global headers
+    print("info: 搜索公司: "+ company)
+    url = "http://zhaopin.baidu.com/quanzhi?query=" + parse.quote(company)
+    
+    try:
+        r = requests.get(url, headers=headers, proxies=proxies)
+        time.sleep(time_sleep)
+
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+        fail()
+        return ""
+
+    if r.text.find("很抱歉，未能找到您搜索的职位") != -1:
+        print("info: company not find! ")
+        return ""
+    soup = BeautifulSoup(r.text, features="html.parser")
+
+    city = soup.select('div.inlineblock div.detail span')[0].text
+    print("info: company city found : "+city)
+    return baiduzhaopin(company,city,10)
+
 
 if __name__ == "__main__":
     usage = "usage: python3 crawler_baiduzhaopin.py "
     parser = OptionParser()
-    parser.add_option("-f", "--function", help="select a function", metavar="company / zhaopin", dest="function_select", default="zhaopin")
-    parser.add_option("-p", "--proxy", help="select a proxy", metavar="intel / socks5 / noproxy", default="intel", dest="proxy_select")
+    parser.add_option("-f", "--function", help="select a function", metavar="company / zhaopin / company_zhaopin", dest="function_select", default="company_zhaopin")
+    parser.add_option("-p", "--proxy", help="select a proxy", metavar="intel / socks5 / noproxy", default="", dest="proxy_select")
     parser.add_option("-c","--config", help="select a config file", metavar="crawler_config.json", default="crawler_config.json", dest="config_path")
     parser.add_option("-t","--timesleep", help="timesleep seconds", metavar="10", default="-1", dest="time_sleep")
+    parser.add_option("-q","--query", help="query keyword", metavar="计算机视觉", default="", dest="query_keyword")
+    parser.add_option("-C","--city", help="query city", metavar="上海", default="-1", dest="query_city")
     (opt, args) = parser.parse_args()
 
     print('info: using config file: '+ opt.config_path)
     config = json.load(open(opt.config_path))
     ######## BAIDU ##########
-    if opt.time_sleep == -1:
+    if opt.time_sleep == '-1':
         time_sleep = int(config['BAIDU']['time_sleep'])
     else:
-        time_sleep = opt.time_sleep
+        time_sleep = int(opt.time_sleep)
+    print("info: time sleep set to " + opt.time_sleep)
     # 失败处理 超过20次休眠90秒
     fail_count = 0
     fail_count_limit = int(config['BAIDU']['fail_count_limit'])
     fail_sleep = int(config['BAIDU']['fail_sleep'])
-
-    keywords = config['BAIDU']['keywords']
-    keycities = config['BAIDU']['keycities']
+    if opt.query_keyword == "":
+        keywords = config['BAIDU']['keywords']
+    else:
+        keywords = [1]
+        keywords[0] = opt.query_keyword
+        print("info: keyword: " + keywords[0])
+    
+    if opt.query_city == "-1":
+        keycities = config['BAIDU']['keycities']
+    else:
+        keycities = [1]
+        keycities[0] = opt.query_city
+        print("info: keycity: " + keycities[0])
 
     row_wanted = int(config['BAIDU']['row_wanted'])
     ######## MYSQL #########
@@ -310,19 +330,9 @@ if __name__ == "__main__":
     db = mysql_baiduzhaopin(db_username, db_password, db_dbname)
 
     #proxies for inside intel
-    opt.proxy_select = config['DEFAULT'].get("proxy", opt.proxy_select)
-
-    # headers = {
-    #         "Accept": "*/*",
-    #         "Accept-Encoding": "gzip, deflate, br",
-    #         "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-    #         "Connection": "keep-alive",
-    #         "Cookie": "BAIDUID=D218FD911DA27FA9E5C8A9B6B3F62C92:FG=1; BIDUPSID=D218FD911DA27FA9E5C8A9B6B3F62C92; PSTM=1548381180; delPer=0; PSINO=5; H_PS_PSSID=26525_1443_21105_28328_22158",
-    #         "DNT": "1",
-    #         "Host": "zhaopin.baidu.com",
-    #         "Referer": "https://zhaopin.baidu.com/quanzhi?query=%E8%AE%A1%E7%AE%97%E6%9C%BA&city=%E4%B8%8A%E6%B5%B7",
-    #         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36}"
-    #     }
+    if opt.proxy_select == "":
+        opt.proxy_select = config['DEFAULT'].get("proxy", "noproxy")
+        
     headers = config['BAIDU']['headers']
 
     if(opt.proxy_select == "intel"):
@@ -338,18 +348,54 @@ if __name__ == "__main__":
 
     print("-----------start crawling-----------")
     if(opt.function_select == "zhaopin"):
+        print("using function: zhaopin")
         i = 0
-        ret = dict()
+        ret = list()
         for keyword in keywords:
             for keycity in keycities:
+                print(keycity)
+                print(keyword)
                 ret[i] = baiduzhaopin(keyword, keycity, row_wanted)
                 i += 1
 
         print("-----------crawl ended----------")
         pprint(ret)
     elif(opt.function_select == "company"):
-       while 1:
+        print("using function: company")
+        while 1:
             findCompanyUrl()
+    elif(opt.function_select == "company_zhaopin"):
+        print("using function: company_zhaopin")
+
+        cities = json.load(open("cities.json"))
+
+
+
+        db = pymysql.connect(host='localhost',
+                     user=db_username,
+                     passwd=db_password,
+                     db=db_dbname,
+                     charset='utf8')
+        cursor = db.cursor()
+        sql = "SELECT id,company,location FROM huazhan_company"
+        cursor.execute(sql)
+        data = cursor.fetchall()
+
+        for item in data:
+            id = item[0]
+            company = item[1]
+            location = item[2]
+            for city in cities['cities']:
+                if location.find(city['cityName']) != -1:
+                    print("info: " + company)
+                    print("info: " + location)
+                    print("info: " + city['cityName'])
+                    try:
+                        baiduzhaopin(company,city['cityName'],10)
+                    except:
+                        print("Unexpected error:", sys.exc_info()[0])
+                    break
+            
     else:
         parser.print_help()
         sys.exit(1)

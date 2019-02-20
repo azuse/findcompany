@@ -16,39 +16,14 @@ from optparse import OptionParser
 import configparser, os
 import pprint
 
-# time_sleep = 5
+insert_count = 0
 
-# insert_count = 0
+def urlparse(url):
+    url = url.replace("http://","")
+    url = url.replace("https://","")
+    url = url.replace("/","")
+    return url
 
-# # 失败处理 超过20次休眠90秒
-# fail_count = 0
-# fail_count_limit = 10
-# fail_sleep = 100
-
-# headers = {
-#     "Accept"	:"*/*",
-#     "Accept-Encoding"	:"gzip, deflate",
-#     "Accept-Language"	:"en-US,en;q=0.5",
-#     "Connection"	:"keep-alive",
-#     "Content-Length"	:"109",
-#     "Content-Type"	:"application/x-www-form-urlencoded; charset=UTF-8",
-    
-#     "Cookie":"Hm_lpvt_d9f99ed0a40e413ff5b942f6723d305e=1548899666;Hm_lvt_d9f99ed0a40e413ff5b942f6723d305e=1548899205;huazhan_log=49a9ef170a32a16bbf7cdb60eaed0af5;PHPSESSID=79a5va20f9vc6e8raqc62q1uf3",
-#     "Host"	:"yun.ihuazhan.net",
-#     "Referer"	:"http://yun.ihuazhan.net/Index/enterprise?type=1&keyword=%E7%89%A9%E8%81%94%E7%BD%91",
-#     "User-Agent"	:"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0",
-#     "X-Requested-With"	:"XMLHttpRequest"
-# }
-
-#proxies for inside intel
-# proxies = {"http": "http://child-prc.intel.com:913",
-#                "https": "http://child-prc.intel.com:913"}
-# proxies = {"http": None,
-#                "https": None}
-
-# db_username = "root"
-# db_password = "misakaxindex"
-# db_dbname = "findcompany"
 
 ## 找出最合适的联系人 ##
 ## 经理 重要度 +2
@@ -84,12 +59,10 @@ def find_main_contect(contects):
 
 class mysql_huazhan:
     def __init__(self, user, password, database):
-        self.db = pymysql.connect(host='localhost',
-                                  user=user,
-                                  passwd=password,
-                                  db=database,
-                                  charset='utf8')
-        self.cursor = self.db.cursor()
+        self.user = user
+        self.password = password
+        self.database = database
+        
     
     def insert_company(self, detail, contects, exhibitions, raw):
         id = detail.get('id', "")
@@ -98,6 +71,7 @@ class mysql_huazhan:
         location = detail.get('areas', "")
         address = detail.get('address', "")
         url = detail.get('url', "")
+        url = urlparse(url)
         # 产品介绍 #
         product = detail.get('prodcut', "")
         # regcaptal 注册资本#
@@ -119,23 +93,30 @@ class mysql_huazhan:
         contect_all_json = json.dumps(contects)
         exhibitions_json = json.dumps(exhibitions)
 
-        sql = """INSERT INTO huazhan_company (huazhan_id, company, tag, location, address, homePage, product, regCapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw) 
+        sql = """INSERT INTO company (huazhan_id, company, tag, location, address, homePage, product, regCapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw) 
                     VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}')""" \
                     .format(id, name, tag, location, address, url, product, regcapital, contect_main_name, contect_main_position, contect_main_phone, contect_main_tel, contect_main_qq, contect_main_email, contect_all_json, exhibitions_json, raw)
+        self.db = pymysql.connect(host='localhost',
+                                  user=self.user,
+                                  passwd=self.password,
+                                  db=self.database,
+                                  charset='utf8')
+        self.cursor = self.db.cursor()
+        
         self.cursor.execute(
-            "SELECT COUNT(huazhan_id) FROM huazhan_company WHERE huazhan_id LIKE '{0}';".format(id))
+            "SELECT COUNT(huazhan_id) FROM company WHERE huazhan_id LIKE '{0}';".format(id))
         if self.cursor._rows[0] != (0,):
             return 0
 
         try:
             self.cursor.execute(sql)
             self.db.commit()
+            self.db.close()
             return 1
         except:
+            self.db.close()
             return 0
 
-
-# db = mysql_huazhan(db_username, db_password, db_dbname)
 
 def huazhan_search_company_detail(id):
     url = "http://yun.ihuazhan.net/Index/eDetail"
@@ -148,14 +129,14 @@ def huazhan_search_company_detail(id):
     }
 
     try:
-        r = requests.post(url, data=data, headers=headers, proxies=proxies)
+        r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=10)
         time.sleep(time_sleep)
     except ConnectionError as err:
         print("ConnectionError: '{0}'".format(err))
-        return
+        return 0
     except:
         print("Unexpected error:", sys.exc_info()[0])
-        return
+        return 0
 
 
     print("-------------------------------enterprise detail 200")
@@ -171,6 +152,7 @@ def huazhan_search_company_detail(id):
     else :
         print("company already exist")
     return ret
+
 
 def huazhan_search_company_list(keyword, page, sort):
     url = "http://yun.ihuazhan.net/Index/enterpriseAjax"
@@ -194,22 +176,29 @@ def huazhan_search_company_list(keyword, page, sort):
     global proxies
 
     try:
-        r = requests.post(url, data=data, headers=headers, proxies=proxies)
+        r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=10)
         time.sleep(time_sleep)
     except ConnectionError as err:
         print("ConnectionError: '{0}'".format(err))
-        return
+        return 0
     except:
         print("Unexpected error:", sys.exc_info()[0])
-        return
+        return 0
 
     print("-------------------------------enterprise index 200---------page "+ str(page))
     r.encoding = 'utf-8'
     if r.status_code == 403:
         print("error: site return 403")
         sys.exit(1)
-    rdata = json.loads(r.text)
+    print(r.text)
+    try:
+        rdata = json.loads(r.text)
+    except:
+        return 0 
     inserted = 0
+    if not rdata["data"]:
+        inserted = -1
+        return inserted
     for item in rdata["data"]:
         ret = huazhan_search_company_detail(item["id"])
         inserted += ret
@@ -224,19 +213,34 @@ def huazhan_search_company_list(keyword, page, sort):
 ## | sortType = 2 时间排序  |
 ## ========================
 def huazhanyun(keyword, page_start, page_end, sortType):
-    i = page_end
+    i = page_start
     inserted = 0
-    while i > page_start:
+    while i < page_end:
         if sortType == "time":
             ret = huazhan_search_company_list(keyword, i, 2)
+            if ret == -1:
+                print("last page")
+                break
             inserted += ret
-            i -= 1
+            i += 1
         if sortType == "auto":
+            if ret == -1:
+                print("last page")
+                break
             ret = huazhan_search_company_list(keyword, i, 1)
             inserted += ret
-            i -= 1
+            i += 1
     return "查找结束: {0} {1} {2} {4} 插入结果: {4}".format(keyword, page_start, page_end, sortType, inserted)
 
+def huazhan_login():
+    url = "http://yun.ihuazhan.net/Login/loginCheck"
+    global headers
+    data = {
+        "userName":"18100837642",
+        "password":"intel@123"
+    }
+    r = requests.post(url, data=data, headers=headers)
+    print(r.text)
 
 areaid = {
     '北京':"e3EbEKiJ",
@@ -249,10 +253,10 @@ areaid = {
     '辽宁':"eKdKEEmz",
     '安徽':"ebwwEEmN",
     '吉林':"eKETKEm6"
-
 }
 
-if __name__ == "__main__" and 0:
+
+if __name__ == "__main__":
     proxies={
         "http":None,
         "https":None
@@ -262,16 +266,16 @@ if __name__ == "__main__" and 0:
     parser = OptionParser()
     parser.add_option("-p", "--proxy", help="select a proxy", metavar="intel / socks5 / noproxy", default="intel", dest="proxy_select")
     parser.add_option("-c","--config", help="select a config file", metavar="crawler_config.json", default="crawler_config.json", dest="config_path")
-    parser.add_option("-t","--timesleep", help="timesleep seconds", metavar="10", default="-1", dest="time_sleep")
+    parser.add_option("-t","--timesleep", help="timesleep seconds", metavar="10", default=-1, dest="time_sleep")
     (opt, args) = parser.parse_args()
 
     print('info: using config file: '+ opt.config_path)
     config = json.load(open(opt.config_path))
     ######## HUAZHAN ##########
-    if opt.time_sleep == -1:
+    if opt.time_sleep == '-1':
         time_sleep = int(config['HUAZHAN']['time_sleep'])
     else:
-        time_sleep = opt.time_sleep
+        time_sleep = int(opt.time_sleep)
     # 失败处理 超过20次休眠90秒
     fail_count = 0
     fail_count_limit = int(config['HUAZHAN']['fail_count_limit'])
@@ -293,20 +297,6 @@ if __name__ == "__main__" and 0:
     #proxies for inside intel
     opt.proxy_select = config['DEFAULT'].get("proxy", opt.proxy_select)
 
-    # headers={
-    #         "Accept"	:"*/*",
-    #         "Accept-Encoding"	:"gzip, deflate",
-    #         "Accept-Language"	:"en-US,en;q=0.5",
-    #         "Connection"	:"keep-alive",
-    #         "Content-Length"	:"109",
-    #         "Content-Type"	:"application/x-www-form-urlencoded; charset=UTF-8",
-            
-    #         "Cookie":"Hm_lpvt_d9f99ed0a40e413ff5b942f6723d305e=1548899666;Hm_lvt_d9f99ed0a40e413ff5b942f6723d305e=1548899205;huazhan_log=49a9ef170a32a16bbf7cdb60eaed0af5;PHPSESSID=79a5va20f9vc6e8raqc62q1uf3",
-    #         "Host"	:"yun.ihuazhan.net",
-    #         "Referer"	:"http://yun.ihuazhan.net/Index/enterprise?type=1&keyword=%E7%89%A9%E8%81%94%E7%BD%91",
-    #         "User-Agent"	:"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0",
-    #         "X-Requested-With"	:"XMLHttpRequest"
-    #     }
     headers = config['HUAZHAN']['headers']
 
     if(opt.proxy_select == "intel"):
@@ -320,6 +310,9 @@ if __name__ == "__main__" and 0:
         print("info: using no proxy")
         proxies = {"http":None, "https": None}
 
+    
+    print("-----------    login in  -----------")
+    huazhan_login()
     print("-----------start crawling-----------")
     i = 0
     ret = dict()
