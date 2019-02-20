@@ -1,4 +1,22 @@
-
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+import urllib
+from urllib import parse
+import requests
+import json
+import pymysql
+import time
+import random
+import string
+from bs4 import BeautifulSoup
+import re
+import sys
+from optparse import OptionParser
+import configparser
+import os
+import pprint
+import jieba.analyse
+import jieba
 
 class baiduzhaopin:
     def __init__(self, headers, proxies, time_sleep):
@@ -153,6 +171,38 @@ class huazhan:
         self.proxies = proxies
         self.sort = sort
         self.huazhan_login()
+
+    ## 找出最合适的联系人 ##
+    ## 经理 重要度 +2
+    ## 手机 重要度 +1
+    ## 法人 重要度 -1 
+    def find_main_contect(self, contects):
+        for item in contects:
+            item['priority'] = 0
+
+        for item in contects:
+            position = item.get("position", "")
+            if position == "" or position.find("法人") != -1:
+                item["priority"] -= 1
+            if position.find("经理") != -1:
+                item['priority'] += 1
+
+
+        for item in contects:
+            phone = item.get('phone', "")
+            if phone != "":
+                item['priority'] += 1
+            
+        max_priority = contects[0]['priority']
+        max_priority_contect = 0
+        i = 0
+        while i < len(contects):
+            if contects[i]['priority'] > max_priority:
+                max_priority = contects[i]['priority']
+                max_priority_contect = i
+            i += 1
+
+        return contects[max_priority_contect]
 
     def huazhan_search_company_detail(self, id):
         headers = self.headers

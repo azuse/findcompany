@@ -276,10 +276,6 @@ if __name__ == "__main__":
         time_sleep = int(config['HUAZHAN']['time_sleep'])
     else:
         time_sleep = int(opt.time_sleep)
-    # 失败处理 超过20次休眠90秒
-    fail_count = 0
-    fail_count_limit = int(config['HUAZHAN']['fail_count_limit'])
-    fail_sleep = int(config['HUAZHAN']['fail_sleep'])
 
     keywords = config['HUAZHAN']['keywords']
 
