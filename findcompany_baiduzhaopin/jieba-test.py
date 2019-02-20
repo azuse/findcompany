@@ -13,33 +13,7 @@ import jieba.analyse
 import jieba
 import sys
 sys.path.append('../')
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.proxy import *
 import traceback
-from bosonnlp import BosonNLP
-
-chrome_options = Options()
-chrome_options.add_argument('--headless')
-chrome_options.add_argument('--disable-gpu')
-PROXY = "http://child-prc.intel.com:913"
-
-webdriver.DesiredCapabilities.CHROME['proxy'] = {
-    "httpProxy":PROXY,
-    "ftpProxy":PROXY,
-    "sslProxy":PROXY,
-    "noProxy":None,
-    "proxyType":"MANUAL",
-    "class":"org.openqa.selenium.Proxy",
-    "autodetect":False
-}
-driver = webdriver.Chrome(chrome_options=chrome_options)
-
-
-
-
-# from django.utils.http import urlquote
-
 
 class mysql_union:
     def __init__(self, user, password, database):
@@ -94,7 +68,6 @@ r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
 r'(?::\d+)?' # optional port
 r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
-nlp = BosonNLP('1aooLCxg.33225.eMAXko7EljEV')
 
 for item in data:
     try:
