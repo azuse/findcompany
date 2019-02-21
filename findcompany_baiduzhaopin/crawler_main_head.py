@@ -289,7 +289,7 @@ class huazhan:
         if r.status_code == 403:
             print("error: site return 403")
             sys.exit(1)
-        print(r.text)
+        # print(r.text)
         try:
             rdata = json.loads(r.text)
         except:
@@ -310,7 +310,7 @@ class huazhan:
             "password":"intel@123"
         }
         r = requests.post(url, data=data, headers=headers)
-        print(r.text)
+        # print(r.text)
 
 
 
