@@ -1,2 +1,6 @@
 #!/bin/sh
-python3 crawler_huazhangyun.py > log.txt
+cd /home/ubuntu/
+pwd
+python3 crawler_main.py
+ls
+pwd

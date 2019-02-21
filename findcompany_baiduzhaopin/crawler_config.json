@@ -3,7 +3,7 @@
         "proxy": "noproxy"
     },
     "BAIDU":{
-        "time_sleep" : 1,       
+        "time_sleep" : 5,       
         "fail_count_limit" : 10 , 
         "fail_sleep" : 100,
 
@@ -23,7 +23,7 @@
                     }
     },
     "HUAZHAN":{
-        "time_sleep" : 1,
+        "time_sleep" : 5,
         "fail_count_limit" : 10,
         "fail_sleep" : 100,
 
