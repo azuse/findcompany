@@ -18,6 +18,13 @@ import pprint
 import jieba.analyse
 import jieba
 from crawler_main_head import huazhan, baiduzhaopin
+import os 
+
+def writePID():
+    pidfile = open("mainPID.txt")
+    pidfile.write(str(os.getpid))
+    pidfile.flush()
+    pidfile.close()
 
 
 class db:
@@ -187,6 +194,7 @@ def company_homepage_crawler(homepage):
 
 
 if __name__ == "__main__":
+    writePID()
     usage = "usage: python3 crawler_main.py main script for crawl company "
     parser = OptionParser()
     parser.add_option("-p", "--proxy", help="select a proxy",

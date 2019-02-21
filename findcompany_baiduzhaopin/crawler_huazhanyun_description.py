@@ -17,6 +17,14 @@ import configparser, os
 import pprint
 from crawler_main_head import baiduzhaopin
 
+def writePID():
+    pidfile = open("huazhan_descriptionPID.txt")
+    pidfile.write(str(os.getpid))
+    pidfile.flush()
+    pidfile.close()
+
+
+writePID()
 db_username = "root"
 db_password = "misakaxindex"
 db_dbname = "findcompany"

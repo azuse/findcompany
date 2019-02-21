@@ -24,6 +24,12 @@ def urlparse(url):
     url = url.replace("/","")
     return url
 
+def writePID():
+    pidfile = open("huazhanPID.txt")
+    pidfile.write(str(os.getpid))
+    pidfile.flush()
+    pidfile.close()
+
 
 ## 找出最合适的联系人 ##
 ## 经理 重要度 +2
@@ -257,6 +263,7 @@ areaid = {
 
 
 if __name__ == "__main__":
+    writePID()
     proxies={
         "http":None,
         "https":None
