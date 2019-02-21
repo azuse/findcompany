@@ -21,7 +21,7 @@ from crawler_main_head import huazhan, baiduzhaopin
 import os 
 
 def writePID():
-    pidfile = open("mainPID.txt")
+    pidfile = open("mainPID.txt", "w")
     pidfile.write(str(os.getpid))
     pidfile.flush()
     pidfile.close()
