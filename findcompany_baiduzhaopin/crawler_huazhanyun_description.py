@@ -28,7 +28,7 @@ db = pymysql.connect(host='localhost',
                     charset='utf8')
 cursor = db.cursor()
 
-sql = "SELECT id,company,location FROM company ORDER BY addDate DESC;"
+sql = "SELECT id,company,location FROM company ORDER BY addDate ASC;"
 
 cursor.execute(sql)
 
@@ -64,7 +64,10 @@ for item in data:
     ret = bd.baiduzhaopin(company, location)
     if ret != -1:
         for row in ret:
-            sql = "UPDATE company SET description = '" + row["companydescription"] + "', location = '"+row['city']+"' WHERE id = " + str(id) +  ";"
-            cursor.execute(sql)
-            db.commit()
-            pprint.pprint(ret)
+            try:
+                pprint.pprint(row.get("companydescription",""))
+                sql = "UPDATE company SET description = '" + row.get("companydescription","").replace("'","") + "', location = '"+row['city']+"' WHERE id = " + str(id) +  ";"
+                cursor.execute(sql)
+                db.commit()
+            except:
+                print("Unexpected error:", sys.exc_info()[0])
