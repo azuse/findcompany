@@ -57,6 +57,7 @@ cursor.execute(sql)
 data = cursor.fetchall()
 
 config = json.load(open("crawler_config.json"))
+
 print_method = config["DEFAULT"]['print_method']
 if(config['DEFAULT'].get("proxy", "noproxy") == "intel"):
     print("info: using intel proxy")
@@ -71,7 +72,7 @@ elif(config['DEFAULT'].get("proxy", "noproxy") == "noproxy"):
     proxies = {"http": None, "https": None}
 time_sleep = int(config['BAIDU']['time_sleep'])
 headers_baidu = config['BAIDU']['headers']
-bd = baiduzhaopin(headers=headers_baidu, proxies=proxies, time_sleep=time_sleep)
+bd = baiduzhaopin(headers=headers_baidu, proxies=proxies, time_sleep=time_sleep, logfileHandler=logfile, print_method=print_method)
 
 for item in data:
     id = item[0]
