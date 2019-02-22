@@ -28,6 +28,8 @@ def urlparse(url):
 def writePID():
     pidfile = open("huazhanPID.txt", "w")
     pidfile.write(str(os.getpid()))
+    pidfile.write("\n")
+    pidfile.write(str(datetime.datetime.now()))
     pidfile.flush()
     pidfile.close()
 

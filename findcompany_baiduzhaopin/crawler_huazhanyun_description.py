@@ -20,6 +20,8 @@ from crawler_main_head import baiduzhaopin
 def writePID():
     pidfile = open("huazhan_descriptionPID.txt", "w")
     pidfile.write(str(os.getpid()))
+    pidfile.write("\n")
+    pidfile.write(str(datetime.datetime.now()))
     pidfile.flush()
     pidfile.close()
 
