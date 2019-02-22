@@ -18,7 +18,7 @@ import pprint
 from crawler_main_head import baiduzhaopin
 
 def writePID():
-    pidfile = open("huazhan_descriptionPID.txt", "w")
+    pidfile = open("mainPID.txt", "w")
     pidfile.write(str(os.getpid()))
     pidfile.write("\n")
     pidfile.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
