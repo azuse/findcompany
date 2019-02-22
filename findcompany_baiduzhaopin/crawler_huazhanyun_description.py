@@ -25,6 +25,18 @@ def writePID():
     pidfile.flush()
     pidfile.close()
 
+logfile = open("crawler_log.txt", "w")
+print_method = "terminal"
+def print(text, text2=""):
+    if print_method == "terminal":
+        sys.stdout.write(str(text))
+        sys.stdout.write(str(text2))
+        sys.stdout.write("\n")
+    else:
+        logfile.write(str(text))
+        logfile.write(str(text2))
+        logfile.write("\n")
+        logfile.flush()
 
 writePID()
 db_username = "root"
@@ -45,6 +57,7 @@ cursor.execute(sql)
 data = cursor.fetchall()
 
 config = json.load(open("crawler_config.json"))
+print_method = config["DEFAULT"]['print_method']
 if(config['DEFAULT'].get("proxy", "noproxy") == "intel"):
     print("info: using intel proxy")
     proxies = {"http": "http://child-prc.intel.com:913",
