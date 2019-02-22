@@ -260,7 +260,7 @@ if __name__ == "__main__":
     headers_baidu = config['BAIDU']['headers']
 
     bd = baiduzhaopin(headers=headers_baidu,
-                      proxies=proxies, time_sleep=time_sleep)
+                      proxies=proxies, time_sleep=time_sleep, print_method=print_method, logfileHandler=logfile)
 
     #######################################################################################################
     ## huazhan ##
@@ -273,7 +273,7 @@ if __name__ == "__main__":
     sort_type_huazhan = config['HUAZHAN']['sort_type']
 
     hz = huazhan(headers=headers_huazhan, proxies=proxies,
-                 time_sleep=time_sleep_huazhan, sort=sort_type_huazhan)
+                 time_sleep=time_sleep_huazhan, sort=sort_type_huazhan, print_method=print_method, logfileHandler=logfile)
 
     print("-----------start crawling-----------")
 

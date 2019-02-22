@@ -18,20 +18,6 @@ import pprint
 import jieba.analyse
 import jieba
 
-config = json.load(open("crawler_config.json"))
-print_method = config["DEFAULT"]['print_method']
-logfile = open("crawler_log.txt", "w+")
-def print(text, text2=""):
-    if print_method == "terminal":
-        sys.stdout.write(str(text))
-        sys.stdout.write(str(text2))
-        sys.stdout.write("\n")
-    else:
-        logfile.write(str(text))
-        logfile.write(str(text2))
-        logfile.write("\n")
-        logfile.flush()
-
 # =========================
 # | 验证url是否合法          |
 # =========================
@@ -52,11 +38,24 @@ def validateURL(url):
         return True
 
 class baiduzhaopin:
-    def __init__(self, headers, proxies, time_sleep):
+    def __init__(self, headers, proxies, time_sleep, logfileHandler, print_method):
         self.time_sleep = time_sleep
         self.headers = headers
         self.proxies = proxies
+        self.logfile = logfileHandler
+        self.print_method = print_method
     
+    def print(self, text, text2=""):
+        if self.print_method == "terminal":
+            sys.stdout.write(str(text))
+            sys.stdout.write(str(text2))
+            sys.stdout.write("\n")
+        else:
+            self.logfile.write(str(text))
+            self.logfile.write(str(text2))
+            self.logfile.write("\n")
+            self.logfile.flush()
+
     # =========================
     # | 获取百度百聘页面中的token |
     # =========================
@@ -65,7 +64,7 @@ class baiduzhaopin:
         headers = self.headers
         proxies = self.proxies
 
-        print("info: 获取token")
+        self.print("info: 获取token")
         url = "http://zhaopin.baidu.com/quanzhi?query=" + \
             parse.quote(query)+"&city="+parse.quote(city)
         
@@ -76,8 +75,8 @@ class baiduzhaopin:
 
                 break
             except:
-                print("error: 获取token时网络错误,重试")
-                print("Unexpected error:", sys.exc_info()[0])
+                self.print("error: 获取token时网络错误,重试")
+                self.print("Unexpected error:", sys.exc_info()[0])
                 
                 time.sleep(time_sleep)
 
@@ -95,7 +94,7 @@ class baiduzhaopin:
 
         except:
             pass
-        print("info: new token:"+token)
+        self.print("info: new token:"+token)
         return token
 
     # =========================
@@ -114,10 +113,10 @@ class baiduzhaopin:
                 soup = BeautifulSoup(r.text, features="html.parser")
                 return soup.select(".job-detail")[0].get_text()
             except ConnectionError as err:
-                print("ConnectionError: '{0}'".format(err))
+                self.print("ConnectionError: '{0}'".format(err))
                 return ""
             except:
-                print("Unexpected error:", sys.exc_info()[0])
+                self.print("Unexpected error:", sys.exc_info()[0])
                 return ""
         else:
             return ""
@@ -151,7 +150,7 @@ class baiduzhaopin:
             r = requests.get(url, proxies=proxies, headers=headers, timeout=5)
             time.sleep(time_sleep)
         except:            
-            print("error: request timeout")
+            self.print("error: request timeout")
             return -1
             
         r.encoding = 'utf8'
@@ -159,12 +158,12 @@ class baiduzhaopin:
         rdata = json.loads(r.text)
 
         if rdata['data']['errno'] == -1:
-            print("info: 数据获取失败,可能是已经取得了所有结果")
+            self.print("info: 数据获取失败,可能是已经取得了所有结果")
             return -1
 
         hilight = rdata['data']['hilight'].split("\x00")[0]
         if hilight != query:
-            print("error: token失效,或抓取受到限制")
+            self.print("error: token失效,或抓取受到限制")
             token = self.getToken(query, city)
 
 
@@ -198,12 +197,25 @@ class huazhan:
         '吉林':"eKETKEm6"
     }
 
-    def __init__(self, headers, proxies, time_sleep, sort):
+    def __init__(self, headers, proxies, time_sleep, sort, logfileHandler, print_method):
         self.time_sleep = time_sleep
         self.headers = headers
         self.proxies = proxies
         self.sort = sort
         self.huazhan_login()
+        self.logfile = logfileHandler
+        self.print_method = print_method
+
+    def print(self, text, text2=""):
+        if self.print_method == "terminal":
+            sys.stdout.write(str(text))
+            sys.stdout.write(str(text2))
+            sys.stdout.write("\n")
+        else:
+            self.logfile.write(str(text))
+            self.logfile.write(str(text2))
+            self.logfile.write("\n")
+            self.logfile.flush()
 
     ## 找出最合适的联系人 ##
     ## 经理 重要度 +2
@@ -253,14 +265,14 @@ class huazhan:
             r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=10)
             time.sleep(time_sleep)
         except ConnectionError as err:
-            print("ConnectionError: '{0}'".format(err))
+            self.print("ConnectionError: '{0}'".format(err))
             return -1
         except:
-            print("Unexpected error:", sys.exc_info()[0])
+            self.print("Unexpected error:", sys.exc_info()[0])
             return -1
 
 
-        print("-------------------------------enterprise detail 200")
+        self.print("-------------------------------enterprise detail 200")
         r.encoding = 'utf-8'
         rdata = json.loads(r.text)
 
@@ -295,18 +307,18 @@ class huazhan:
             r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=10)
             time.sleep(time_sleep)
         except ConnectionError as err:
-            print("ConnectionError: '{0}'".format(err))
+            self.print("ConnectionError: '{0}'".format(err))
             return -1
         except:
-            print("Unexpected error:", sys.exc_info()[0])
+            self.print("Unexpected error:", sys.exc_info()[0])
             return -1
 
-        print("-------------------------------enterprise index 200---------page "+ str(page))
+        self.print("-------------------------------enterprise index 200---------page "+ str(page))
         r.encoding = 'utf-8'
         if r.status_code == 403:
-            print("error: site return 403")
-            sys.exit(1)
-        # print(r.text)
+            self.print("error: site return 403")
+            return -1
+        # self.print(r.text)
         try:
             rdata = json.loads(r.text)
         except:
@@ -327,7 +339,7 @@ class huazhan:
             "password":"intel@123"
         }
         r = requests.post(url, data=data, headers=headers)
-        # print(r.text)
+        # self.print(r.text)
 
 
 
