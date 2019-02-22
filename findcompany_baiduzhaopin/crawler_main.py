@@ -27,13 +27,16 @@ def writePID():
     pidfile.close()
 
 logfile = open("crawler_log.txt", "w")
-def print(text):
+def print(text, text2=""):
     if print_method == "terminal":
-        sys.stdout.write(text)
+        sys.stdout.write(str(text))
+        sys.stdout.write(str(text2))
+        sys.stdout.write("\n")
     else:
-        logfile.write(text)
+        logfile.write(str(text))
+        logfile.write(str(text2))
+        logfile.write("\n")
         logfile.flush()
-        logfile.close()
 
 class db:
     def __init__(self, user, password, database):

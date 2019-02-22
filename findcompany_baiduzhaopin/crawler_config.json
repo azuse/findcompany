@@ -1,10 +1,10 @@
 {
     "DEFAULT":{
-        "proxy": "intel",
+        "proxy": "noproxy",
         "print_method": "file"
     },
     "BAIDU":{
-        "time_sleep" : 5,       
+        "time_sleep" : 20,       
         "fail_count_limit" : 10 , 
         "fail_sleep" : 100,
 
@@ -24,7 +24,7 @@
                     }
     },
     "HUAZHAN":{
-        "time_sleep" : 5,
+        "time_sleep" : 20,
         "fail_count_limit" : 10,
         "fail_sleep" : 100,
 
