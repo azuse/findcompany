@@ -18,6 +18,23 @@ import pprint
 import jieba.analyse
 import jieba
 
+<<<<<<< HEAD
+=======
+config = json.load(open("crawler_config.json"))
+print_method = config["DEFAULT"]['print_method']
+logfile = open("crawler_log.txt", "w+")
+def print(text):
+    if print_method == "terminal":
+        sys.stdout.write(text)
+    else:
+        logfile.write(text)
+        logfile.flush()
+        logfile.close()
+
+# =========================
+# | 验证url是否合法          |
+# =========================
+>>>>>>> aaa1d4eff5e33e38495666e8f04c3edf6864a48d
 regex = re.compile(
     r'^(?:http|ftp)s?://'  # http:// or https://
     # domain...

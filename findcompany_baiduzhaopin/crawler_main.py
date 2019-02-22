@@ -26,6 +26,14 @@ def writePID():
     pidfile.flush()
     pidfile.close()
 
+logfile = open("crawler_log.txt", "w")
+def print(text):
+    if print_method == "terminal":
+        sys.stdout.write(text)
+    else:
+        logfile.write(text)
+        logfile.flush()
+        logfile.close()
 
 class db:
     def __init__(self, user, password, database):
@@ -200,7 +208,10 @@ def company_homepage_crawler(homepage):
 
 if __name__ == "__main__":
     writePID()
-    sys.stdout = open("crawler_log.txt", "w")
+    print_method = "terminal"
+
+
+
     usage = "usage: python3 crawler_main.py main script for crawl company "
     parser = OptionParser()
     parser.add_option("-p", "--proxy", help="select a proxy",
@@ -209,8 +220,11 @@ if __name__ == "__main__":
                       metavar="crawler_config.json", default="crawler_config.json", dest="config_path")
     (opt, args) = parser.parse_args()
 
+
+
     print('info: using config file: ' + opt.config_path)
     config = json.load(open(opt.config_path))
+    print_method = config["DEFAULT"]['print_method']
     ######## MYSQL #########
     db_username = config['MYSQL']['db_username']
     db_password = config['MYSQL']['db_password']
