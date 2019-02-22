@@ -33,6 +33,17 @@ def writePID():
     pidfile.flush()
     pidfile.close()
 
+logfile = open("crawler_log.txt", "w")
+def print(text, text2=""):
+    if print_method == "terminal":
+        sys.stdout.write(str(text))
+        sys.stdout.write(str(text2))
+        sys.stdout.write("\n")
+    else:
+        logfile.write(str(text))
+        logfile.write(str(text2))
+        logfile.write("\n")
+        logfile.flush()
 
 ## 找出最合适的联系人 ##
 ## 经理 重要度 +2
@@ -269,6 +280,9 @@ areaid = {
 
 if __name__ == "__main__":
     writePID()
+    print_method = "terminal"
+
+
     proxies={
         "http":None,
         "https":None
@@ -283,6 +297,7 @@ if __name__ == "__main__":
 
     print('info: using config file: '+ opt.config_path)
     config = json.load(open(opt.config_path))
+    print_method = config["DEFAULT"]['print_method']
     ######## HUAZHAN ##########
     if opt.time_sleep == -1:
         time_sleep = int(config['HUAZHAN']['time_sleep'])
