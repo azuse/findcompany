@@ -1,6 +1,7 @@
 {
     "DEFAULT":{
-        "proxy": "intel"
+        "proxy": "intel",
+        "print_method": "file"
     },
     "BAIDU":{
         "time_sleep" : 5,       
