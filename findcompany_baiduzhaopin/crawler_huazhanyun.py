@@ -26,7 +26,7 @@ def urlparse(url):
     return url
 
 def writePID():
-    pidfile = open("huazhanPID.txt", "w")
+    pidfile = open("mainPID.txt", "w")
     pidfile.write(str(os.getpid()))
     pidfile.write("\n")
     pidfile.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
