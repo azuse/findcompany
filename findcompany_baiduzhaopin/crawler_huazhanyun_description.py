@@ -21,7 +21,7 @@ def writePID():
     pidfile = open("huazhan_descriptionPID.txt", "w")
     pidfile.write(str(os.getpid()))
     pidfile.write("\n")
-    pidfile.write(str(datetime.datetime.now()))
+    pidfile.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     pidfile.flush()
     pidfile.close()
 

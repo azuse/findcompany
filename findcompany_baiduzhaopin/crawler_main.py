@@ -19,13 +19,12 @@ import jieba.analyse
 import jieba
 from crawler_main_head import huazhan, baiduzhaopin
 import os 
-import datetime
 
 def writePID():
     pidfile = open("mainPID.txt", "w")
     pidfile.write(str(os.getpid()))
     pidfile.write("\n")
-    pidfile.write(str(datetime.datetime.now()))
+    pidfile.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     pidfile.flush()
     pidfile.close()
 

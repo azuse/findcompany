@@ -29,7 +29,7 @@ def writePID():
     pidfile = open("huazhanPID.txt", "w")
     pidfile.write(str(os.getpid()))
     pidfile.write("\n")
-    pidfile.write(str(datetime.datetime.now()))
+    pidfile.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     pidfile.flush()
     pidfile.close()
 
@@ -66,10 +66,6 @@ def find_main_contect(contects):
 
     return contects[max_priority_contect]
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 427ac2b94256e5017a1750b6721419d073a175af
 class mysql_huazhan:
     def __init__(self, user, password, database):
         self.user = user
