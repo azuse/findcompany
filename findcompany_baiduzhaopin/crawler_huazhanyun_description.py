@@ -50,7 +50,7 @@ db = pymysql.connect(host='localhost',
                     charset='utf8')
 cursor = db.cursor()
 
-sql = "SELECT id,company,location FROM company ORDER BY addDate ASC;"
+sql = "SELECT id,company,address FROM company ORDER BY id DESC ;"
 
 cursor.execute(sql)
 
@@ -90,7 +90,7 @@ for item in data:
         for row in ret:
             try:
                 pprint.pprint(row.get("companydescription",""))
-                sql = "UPDATE company SET description = '" + row.get("companydescription","").replace("'","") + "', location = '"+row['city']+"' WHERE id = " + str(id) +  ";"
+                sql = "UPDATE company SET description = '" + row.get("companydescription","").replace("'","") + "' WHERE id = " + str(id) +  ";"
                 cursor.execute(sql)
                 db.commit()
             except:
