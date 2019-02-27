@@ -50,7 +50,7 @@ db = pymysql.connect(host='localhost',
                     charset='utf8')
 cursor = db.cursor()
 
-sql = "SELECT id,company,address FROM company ORDER BY id DESC ;"
+sql = "SELECT id,company,location FROM company ORDER BY id DESC ;"
 
 cursor.execute(sql)
 
