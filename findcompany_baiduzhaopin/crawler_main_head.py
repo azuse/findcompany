@@ -65,12 +65,12 @@ class baiduzhaopin:
         proxies = self.proxies
 
         self.print("info: 获取token")
-        url = "http://zhaopin.baidu.com/quanzhi?query=" + \
+        url = "https://zhaopin.baidu.com/quanzhi?query=" + \
             parse.quote(query)+"&city="+parse.quote(city)
         
         while 1:
             try:
-                r = requests.get(url, headers=headers, timeout=5, proxies=proxies)
+                r = requests.get(url, headers=headers, timeout=5, proxies=proxies, allow_redirects=True)
                 time.sleep(time_sleep)
 
                 break

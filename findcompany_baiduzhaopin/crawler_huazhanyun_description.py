@@ -89,7 +89,7 @@ for item in data:
     if ret != -1:
         for row in ret:
             try:
-                pprint.pprint(row.get("companydescription",""))
+                print(row.get("companydescription",""))
                 sql = "UPDATE company SET description = '" + row.get("companydescription","").replace("'","") + "' WHERE id = " + str(id) +  ";"
                 cursor.execute(sql)
                 db.commit()
