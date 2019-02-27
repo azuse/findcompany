@@ -1,6 +1,6 @@
 {
     "DEFAULT":{
-        "proxy": "intel",
+        "proxy": "noproxy",
         "print_method": "file"
     },
     "BAIDU":{
