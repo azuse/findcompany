@@ -127,7 +127,8 @@ class baiduzhaopin:
     # | 百度招聘api查询函数      |
     # | 查询职位列表            |
     # | query   查询关键词      |
-    # | num     查询多少个职位   |
+    # | city     所在城市       |
+    # | pn     开始页数         |
     # =========================
     def baiduzhaopin(self, query, city, pn = 0):
         time_sleep = self.time_sleep
@@ -146,6 +147,8 @@ class baiduzhaopin:
 
         url = "http://zhaopin.baidu.com/api/qzasync?query=" + parse.quote(query) + "&city=" + parse.quote(
             city) + "&is_adq=1&pcmod=1&token=" + token + "&pn=" + str(pn) + "&rn=" + str(rn) + "&sort_type=1&sort_key=5"
+
+
         try:
             r = requests.get(url, proxies=proxies, headers=headers, timeout=5)
             time.sleep(time_sleep)
@@ -154,9 +157,7 @@ class baiduzhaopin:
             return -1
             
         r.encoding = 'utf8'
-
         rdata = json.loads(r.text)
-
         if rdata['data']['errno'] == -1:
             self.print("info: 数据获取失败,可能是已经取得了所有结果")
             return -1
@@ -165,6 +166,7 @@ class baiduzhaopin:
         if hilight != query:
             self.print("error: token失效,或抓取受到限制")
             token = self.getToken(query, city)
+            return -1
 
 
         return rdata['data']['disp_data']
