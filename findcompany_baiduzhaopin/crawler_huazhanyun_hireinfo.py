@@ -136,7 +136,7 @@ for item in data:
 
                 cursor.execute(sql)
                 db.commit()
-                print(name + " __已插入")
+                print("____" + name + " ____已插入")
             except:
                 print("Unexpected error:", sys.exc_info()[0])
 
