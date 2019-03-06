@@ -119,11 +119,11 @@ if __name__ == "__main__":
     cursor.execute("SELECT company FROM company ORDER BY id DESC")
     rows = cursor.fetchall()
     for row in rows:
-        # try:
+        try:
             print("____"+row[0]+"____")
             maimai(company=row[0], headers=headers)
             time.sleep(time_sleep)
-        # except:
-        #     print("Unexpected error:", sys.exc_info()[0])
-        #     time.sleep(time_sleep)
+        except:
+            print("Unexpected error:", sys.exc_info()[0])
+            time.sleep(time_sleep)
             
