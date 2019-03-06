@@ -1,17 +1,370 @@
+info: using no proxy
+____广州聆科网络技术有限公司____广州
 info: 获取token
-info: new token:%3D%3DQxRztqG3qpUZlbxhZny9WYoxGaaVoalNWlcymZitJb
+error: 获取token时网络错误,重试
 Unexpected error:<class 'requests.exceptions.ConnectionError'>
+error: 获取token时网络错误,重试
 Unexpected error:<class 'requests.exceptions.ReadTimeout'>
-Unexpected error:<class 'requests.exceptions.ConnectionError'>
-Unexpected error:<class 'requests.exceptions.ConnectTimeout'>
--------------------------------enterprise index 200---------page 1
-Unexpected error:<class 'requests.exceptions.ReadTimeout'>
-ror:<class 'requests.exceptions.ConnectionError'>
-Unexpected error:<class 'requests.exceptions.ReadTimeout'>
-Unexpected error:<class 'requests.exceptions.ReadTimeout'>
-Unexpected error:<class 'requests.exceptions.TooManyRedirects'>
-Unexpected error:<class 'requests.exceptions.ReadTimeout'>
+info: new token:%3D%3DAxjuq1FDrpUNlmkN2ll1GaudmkcNlbphmnjFWanZGa
+info: 数据获取失败,可能是已经取得了所有结果
+____杭州湖畔网络技术有限公司____杭州
 info: 获取token
-info: new token:%3D%3DQxRztqG3qpUZVavlZny9WYoxGaaVYZmd2mZembitJb
--------------------------------enterprise index 200---------page 1
-Unexpected error:<class 'requests.exceptions.ConnectTimeout'>
+info: new token:%3D%3DAxjuq1FDrpUN1mjV2ll1GaudmkcNVapl2npJmcoZGa
+____湖牛资深Java开发工程师(杭州湖畔网络技术有限公司) ____已插入
+____市场投放专员(sem) ____已插入
+____技术客服（杭州） ____已插入
+____DBA(杭州湖畔网络技术有限公司) ____已插入
+____软件测试工程师(杭州湖畔网络技术有限公司) ____已插入
+____湖牛架构开发工程师 ____已插入
+____渠道销售经理 ____已插入
+____系统运维工程师/主管(杭州湖畔网络技术有限公司) ____已插入
+____新零售产品经理(杭州湖畔网络技术有限公司) ____已插入
+____渠道主管 ____已插入
+____广州市衣酷网络技术有限公司（酷有拿货网）____广州
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUN1loh2ll1GaudmkcNVarlWmjhGbsZGa
+info: 数据获取失败,可能是已经取得了所有结果
+____阿里巴巴（中国）网络技术有限公司____
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1lnp2ll1GaudmkcNFcotWmil2akdGa
+____阿里零售通邢台地推精英 ____已插入
+____阿里巴巴零售通销售代表/销售 ____已插入
+____阿里巴巴零售通市场推广员 ____已插入
+____阿里巴巴丨售后客服+双休 ____已插入
+____前端实习生(2020年毕业) ____已插入
+____阿里零售通招募快销业务精英（莲湖区） ____已插入
+____测试开发岗位(阿里巴巴（中国）网络技术有限公司) ____已插入
+____渠道/分销（阿里巴巴零售通城市经理） ____已插入
+____实施运维工程师 ____已插入
+____阿里巴巴零售通招募城市拍档（安宁市） ____已插入
+____北京清风车影网络技术有限公司____北京
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNllmx2ll1GaudmkcNlbnpGmkdmamdGa
+info: 数据获取失败,可能是已经取得了所有结果
+____深圳市鼎点网络技术有限公司____深圳
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUN1mhVGml1GaudmkcNlbnhGmlJGcodGa
+error: request timeout
+____北京希来科网络技术有限公司____北京
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1mlZGml1GaudmkcNFcnVGmkJmaqdGa
+info: 数据获取失败,可能是已经取得了所有结果
+____北京凯迪兴业网络技术有限公司____北京
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNFmkhGml1GaudmkcNFbpN2lipmcrdGa
+error: request timeout
+____钛马信息网络技术有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNVnnlGml1GaudmkcNFapNWmoRGbjhGa
+____测试工程师(钛马信息网络技术有限公司) ____已插入
+____运维工程师(钛马信息网络技术有限公司) ____已插入
+____JAVA开发工程师(钛马信息网络技术有限公司) ____已插入
+____Web前端开发工程师 ____已插入
+____架构师(上海) ____已插入
+____客户总监-合肥(钛马信息网络技术有限公司) ____已插入
+____IOS开发工程师(钛马信息网络技术有限公司) ____已插入
+____Android开发工程师(钛马信息网络技术有限公司) ____已插入
+____IOS开发工程师 ____已插入
+____高级java开发工程师(上海）(钛马信息网络技术有限公司) ____已插入
+____快说(上海)网络技术有限公司____上海
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUN1ljxGml1GaudmkcNVbnlWnqhWclhGa
+info: 数据获取失败,可能是已经取得了所有结果
+____深圳市航视界科技有限公司____深圳
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNlnhRWml1GaudmkcNFbrhGnoVGcnhGa
+info: 数据获取失败,可能是已经取得了所有结果
+____深圳市健康鼠科技有限公司____深圳
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUNlnldWml1GaudmkcNFcql2lpVmarhGa
+____区域销售经理 ____已插入
+____电商客服 ____已插入
+____电商运营 ____已插入
+____京东运营 ____已插入
+____磨房网/深圳市载途科技有限公司____深圳
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1nklWml1GaudmkcNlaitmlkZWajlGa
+info: 数据获取失败,可能是已经取得了所有结果
+____深圳市协力傲科技有限公司____深圳
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1mjtWml1GaudmkcN1ZmRmmiJmcklGa
+info: 数据获取失败,可能是已经取得了所有结果
+____深圳市矽伟智科技有限公司____深圳
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNFniNmml1GaudmkcNVajZ2noNWcmlGa
+info: 数据获取失败,可能是已经取得了所有结果
+____深圳市盛矽电子科技有限公司____深圳
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1miVmml1GaudmkcN1ZqlGnoJWcolGa
+info: 数据获取失败,可能是已经取得了所有结果
+____深圳市大赫科技有限公司____深圳
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNVmhdmml1GaudmkcNFaiVGnop2bqlGa
+info: 数据获取失败,可能是已经取得了所有结果
+____森兰信息科技（上海）有限公司____佛山
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNFnqhmml1GaudmkcNVbkhWmlN2bslGa
+info: 数据获取失败,可能是已经取得了所有结果
+____深沐自动化科技（上海）有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNFmppmml1GaudmkcNlapZGmplWbkBWa
+info: 数据获取失败,可能是已经取得了所有结果
+____日兰佳陶瓷科技（上海）有限公司____上海
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUNlnkN2ml1GaudmkcNFcmlGnjVWanBWa
+error: request timeout
+____美国领先环球乳业原料有限公司____
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNVmoR2ml1GaudmkcN1bjRWnjpGboBWa
+info: 数据获取失败,可能是已经取得了所有结果
+____深圳市领域实业有限公司____深圳
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNFmnZ2ml1GaudmkcN1akZ2njl2aqBWa
+____品质总监 ____已插入
+____美容师/顾问 ____已插入
+____领先（香港）贸易有限公司____香港特别行政区
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNFnmh2ml1GaudmkcN1ZrN2nqN2asBWa
+info: 数据获取失败,可能是已经取得了所有结果
+____AI汽车制造业____None
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNVmlp2ml1GaudmkcNVbmhmnlpWakFWa
+info: 数据获取失败,可能是已经取得了所有结果
+____领先精密科技（惠州）有限公司____惠州
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1njx2ml1GaudmkcNlajV2nkZmclFWa
+info: 数据获取失败,可能是已经取得了所有结果
+____上海领先家纺有限公司____保定
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNlljRGnl1GaudmkcNVbqpmlpdWcnFWa
+____淘宝美工 ____已插入
+____威誉领先科技（深圳）有限公司____深圳
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1liZGnl1GaudmkcNVbjZGmohGcpFWa
+info: 数据获取失败,可能是已经取得了所有结果
+____深圳市佳领域实业有限公司____深圳
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNVnqdGnl1GaudmkcN1Zlp2lmR2brFWa
+info: 数据获取失败,可能是已经取得了所有结果
+____深圳市新领域标识有限公司____深圳
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNFnhpGnl1GaudmkcN1arl2mkNGcjJWa
+____客户经理 ____已插入
+____深圳市领先者导航有限公司____深圳
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1mqtGnl1GaudmkcNFbntmmkJ2blJWa
+info: 数据获取失败,可能是已经取得了所有结果
+____北京创新伙伴教育科技有限公司____北京
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUNlnmRWnl1GaudmkcNlbpNWmlV2aoJWa
+____少儿英语课程开发(智课教育科技(北京)有限公司) ____已插入
+____销售培训总监(智课教育科技(北京)有限公司) ____已插入
+____语培销售主管(智课教育科技(北京)有限公司) ____已插入
+____ReactNative开发工程师(北京创新伙伴教育科技有限公司) ____已插入
+____教务专员(北京创新伙伴教育科技有限公司) ____已插入
+____托福雅思GREGMATSAT老师(智课教育科技(北京)有限公司) ____已插入
+____高级招聘专员(智课教育科技(北京)有限公司) ____已插入
+____英语督导(北京创新伙伴教育科技有限公司) ____已插入
+____少儿英语课程设计(北京创新伙伴教育科技有限公司) ____已插入
+____区域经理（少儿英语培训行业）(智课教育科技(北京)有限公司) ____已插入
+____缪尚网络信息科技（上海）有限公司____上海
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUNllqdWnl1GaudmkcNlblNGnidmbrJWa
+____财务人员(缪尚网络信息科技(上海)有限公司) ____已插入
+____百资信息科技（上海）有限公司____上海
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUN1mnpWnl1GaudmkcNFalJ2nrJGbkNWa
+info: 数据获取失败,可能是已经取得了所有结果
+____西模发特信息科技（上海）有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNFnmxWnl1GaudmkcN1bklmmqN2amNWa
+info: 数据获取失败,可能是已经取得了所有结果
+____快狗速运|高高信息科技（上海）有限公司深圳分公司____深圳
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1mlRmnl1GaudmkcN1ZjN2ljJmaoNWa
+info: 数据获取失败,可能是已经取得了所有结果
+____汉弘信息科技（上海）有限公司____上海
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUNlnhdmnl1GaudmkcNFciZmnmVGcqNWa
+info: 数据获取失败,可能是已经取得了所有结果
+____必达泰克光电科技（上海）有限公司____上海
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ReadTimeout'>
+info: new token:%3D%3DAxjuq1FDrpUNVmnlmnl1GaudmkcNFclRmnlp2ajRWa
+____销售工程师 ____已插入
+____质量工程师 ____已插入
+____软件工程师 ____已插入
+____电子产品工程师 / Electronic Product Eng ____已插入
+____纳达思新材料科技（上海）有限公司____上海
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUN1lkxmnl1GaudmkcN1bmJWmqhmclRWa
+info: 数据获取失败,可能是已经取得了所有结果
+____达而观信息技术（上海）有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNFmjR2nl1GaudmkcNFalpWnplWcnRWa
+info: 数据获取失败,可能是已经取得了所有结果
+____北京恒隆科技有限公司____北京
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1liZ2nl1GaudmkcNlbjRmnjhGcpRWa
+____急招网络销售 ____已插入
+____诚聘网络销售\电话销售 ____已插入
+____北京今日能源科技发展有限公司____北京
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNllhh2nl1GaudmkcN1amd2lid2brRWa
+info: 数据获取失败,可能是已经取得了所有结果
+____雷勃企业管理（上海）有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1nql2nl1GaudmkcN1ajlGmpZ2bjVWa
+info: 数据获取失败,可能是已经取得了所有结果
+____珀金埃尔默企业管理（上海）有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNlmqt2nl1GaudmkcNFbqNGmkF2blVWa
+info: 数据获取失败,可能是已经取得了所有结果
+____英特诺企业管理（上海）有限公司____中山
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNFmpNmlm1GaudmkcNFarZmnolWbnVWa
+info: 数据获取失败,可能是已经取得了所有结果
+____瀚森化工企业管理（上海）有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNlnoVmlm1GaudmkcN1biN2llVWbpVWa
+info: 数据获取失败,可能是已经取得了所有结果
+____致睿亚太企业管理（上海）有限公司____上海
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUNVmlhmlm1GaudmkcN1ZqRmlopWasVWa
+info: 数据获取失败,可能是已经取得了所有结果
+____莱克斯诺工业企业管理（上海）有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1mlpmlm1GaudmkcN1ZmtGnoJmakZWa
+error: request timeout
+____美利肯企业管理（上海）有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNFmptmlm1GaudmkcN1Zpl2nplWblZWa
+____技术支持工程师 ____已插入
+____皮乐企业管理（上海）有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNlmoN2lm1GaudmkcNFalZmnkFWbnZWa
+____日语翻译 ____已插入
+____设计监修 ____已插入
+____格拉司通企业管理（上海）有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1nnV2lm1GaudmkcN1bnpWmqZGbpZWa
+info: 数据获取失败,可能是已经取得了所有结果
+____台达电子企业管理（上海）有限公司____上海
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ReadTimeout'>
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ReadTimeout'>
+info: new token:%3D%3DAxjuq1FDrpUNlmqh2lm1GaudmkcNVbiZGnkF2bsZWa
+____电控研发资深工程师（新能源汽车电控）(台达电子企业管理(上海)有限公司) ____已插入
+____项目管理PM(台达电子企业管理(上海)有限公司) ____已插入
+____项目管理(台达电子企业管理(上海)有限公司) ____已插入
+____嵌入式软件工程师(2019年校园招聘)-上海 ____已插入
+Unexpected error:<class 'pymysql.err.ProgrammingError'>
+____FAE工程师（汽车电子方向）(台达电子企业管理(上海)有限公司) ____已插入
+____Layout版图设计资深工程师(台达电子企业管理(上海)有限公司) ____已插入
+Unexpected error:<class 'pymysql.err.ProgrammingError'>
+____SMT工程师(台达电子企业管理(上海)有限公司) ____已插入
+____汽车通讯软件工程师(台达电子企业管理(上海)有限公司) ____已插入
+____上海方千光电科技有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNVmpp2lm1GaudmkcNlanRmmkpWbkdWa
+____LED研发设计工程师 ____已插入
+____上海清淼光电科技有限公司____上海
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUN1llNGmm1GaudmkcNVaptmlihWandWa
+____自动控制工程师 ____已插入
+____上海宝英光电科技有限公司____上海
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUNVnhZGmm1GaudmkcNFbnpGnjRGcpdWa
+____分析仪器渠道销售 ____已插入
+____上海熙视光电科技有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1lhhGmm1GaudmkcNFcjJ2nkh2brdWa
+____售后工程师 ____已插入
+____渠道销售工程师 ____已插入
+____上海智觉光电科技有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNlmipGmm1GaudmkcNVaodmlnFWcjhWa
+____公司前台接待 ____已插入
+____上海方晟光电科技有限公司____上海
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUN1nhxGmm1GaudmkcNVaipmnlZGclhWa
+____项目经理 ____已插入
+____销售代表 ____已插入
+____上海芯导电子科技有限公司____上海
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ReadTimeout'>
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUNVmmVWmm1GaudmkcNlbmd2nnpmaphWa
+____运营经理（集成电路行业） ____已插入
+____IC产品经理 ____已插入
+____（非手机行业）销售经理/大客户销售 ____已插入
+____（急）采购助理 ____已插入
+____ATE测试工程师（IC类） ____已插入
+____（深圳）IC市场推广经理 ____已插入
+____研发及工艺开发工程师（TVS、MOS） ____已插入
+____模拟电路设计工程师（电源类） ____已插入
+____产品研发及工艺开发工程师（TVS或MOS） ____已插入
+____可靠性工程师 ____已插入
+____上海优炽光电科技有限公司____
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNlmldWmm1GaudmkcNFbpZWnnFmarhWa
+info: 数据获取失败,可能是已经取得了所有结果
+____深圳市芯宇光电科技有限公司____深圳
+info: 获取token
+info: new token:%3D%3DAxjuq1FDrpUNVmklWmm1GaudmkcNVapR2mjpmcshWa
+info: 数据获取失败,可能是已经取得了所有结果
+____上海芯龙光电科技有限公司____上海
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUNVnqtWmm1GaudmkcNlalJGmqR2bllWa
+info: 数据获取失败,可能是已经取得了所有结果
+____上海普进贸易有限公司____上海
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error:<class 'requests.exceptions.ConnectionError'>
+info: new token:%3D%3DAxjuq1FDrpUN1loRmmm1GaudmkcN1bpZGmihGbolWa
+____高薪诚聘客服专员+双休 ____已插入
+____市场部客服文员/五险双休 ____已插入
+____工程学士-能源或电气工程专业 ____已插入
+____采购员 ____已插入
+____物流部单证员 ____已插入
+____敬松实业（上海）有限公司____上海
+info: 获取token

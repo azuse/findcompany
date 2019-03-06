@@ -4,7 +4,7 @@
         "print_method": "file"
     },
     "BAIDU":{
-        "time_sleep" : 20,       
+        "time_sleep" : 60,       
         "fail_count_limit" : 10 , 
         "fail_sleep" : 100,
 
