@@ -1,7 +1,8 @@
 {
     "DEFAULT":{
         "proxy": "intel",
-        "print_method": "terminal"
+        "print_method": "terminal",
+        "time_out": 20
     },
     "BAIDU":{
         "time_sleep" : 20,       

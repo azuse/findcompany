@@ -61,7 +61,7 @@ tagArray = ["p", "h1", "h2", "h3", "h4",  "h5", "h6", "label"]
 def get_company_tf_idf(url):
     print("getting url " + url)
     try:
-        r = requests.get(url, timeout = 5)
+        r = requests.get(url, timeout = time_out)
     except:
         print("Unexpected error:", sys.exc_info()[0])
         return -1
@@ -88,7 +88,7 @@ def get_company_tf_idf(url):
         print("getting href " + href)
 
         try:
-            r_sec = requests.get(href, timeout = 5)
+            r_sec = requests.get(href, timeout = time_out)
         except:
             print("Unexpected error:", sys.exc_info()[0])
             continue
@@ -108,6 +108,7 @@ if __name__ == "__main__":
     (opt, args) = parser.parse_args()
 
     config = json.load(open(opt.config_path))
+    time_out = config['DEFAULT']['time_out']
 
     db_username = config['MYSQL']['db_username']
     db_password = config['MYSQL']['db_password']

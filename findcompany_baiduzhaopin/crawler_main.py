@@ -126,7 +126,7 @@ def validateURL(url):
 # =========================
 def baidu_search_homepage(company):
     url = "http://www.baidu.com/s?wd="+company+"%20官网"
-    r = requests.get(url, proxies=proxies, timeout=5)
+    r = requests.get(url, proxies=proxies, timeout=time_out)
     soup = BeautifulSoup(r.text, features="html.parser")
     ret = soup.select("div[class='f13'] > a")
     if len(ret) == 0:
@@ -147,7 +147,7 @@ def company_homepage_crawler(homepage):
     print("getting url " + homepage)
     text = ""
     try:
-        r = requests.get(homepage, timeout=5, proxies=proxies)
+        r = requests.get(homepage, timeout=time_out, proxies=proxies)
         r.encoding = "utf-8"
     except:
         print("Unexpected error:", sys.exc_info()[0])
@@ -170,7 +170,7 @@ def company_homepage_crawler(homepage):
         print("getting href " + href)
 
         try:
-            r_sec = requests.get(href, timeout=5, proxies=proxies)
+            r_sec = requests.get(href, timeout=time_out, proxies=proxies)
             r_sec.encoding = "utf-8"
         except:
             print("Unexpected error in sec:", sys.exc_info()[0])
@@ -192,7 +192,7 @@ def company_homepage_crawler(homepage):
         #     print("getting href " + href)
 
         #     try:
-        #         r_thd = requests.get(href, timeout = 5, proxies=proxies)
+        #         r_thd = requests.get(href, timeout = time_out, proxies=proxies)
         #         r_thd.encoding = "utf-8"
         #     except:
         #         print("Unexpected error in sec:", sys.exc_info()[0])
@@ -229,6 +229,7 @@ if __name__ == "__main__":
     print('info: using config file: ' + opt.config_path)
     config = json.load(open(opt.config_path))
     print_method = config["DEFAULT"]['print_method']
+    time_out = int(config['DEFAULT']['time_out'])
 
     ######## MYSQL #########
     # 使用config中的配置初始化数据库
@@ -265,7 +266,7 @@ if __name__ == "__main__":
 
     # 百度百聘搜索类
     bd = baiduzhaopin(headers=headers_baidu,
-                      proxies=proxies, time_sleep=time_sleep, print_method=print_method, logfileHandler=logfile)
+                      proxies=proxies, time_sleep=time_sleep, print_method=print_method, logfileHandler=logfile, time_out=time_out)
 
     # 初始化华展云搜索选项
     #######################################################################################################
@@ -279,7 +280,7 @@ if __name__ == "__main__":
     sort_type_huazhan = config['HUAZHAN']['sort_type']
 
     hz = huazhan(headers=headers_huazhan, proxies=proxies,
-                 time_sleep=time_sleep_huazhan, sort=sort_type_huazhan, print_method=print_method, logfileHandler=logfile)
+                 time_sleep=time_sleep_huazhan, sort=sort_type_huazhan, print_method=print_method, logfileHandler=logfile, time_out=time_out)
 
     print("-----------start crawling-----------")
 
