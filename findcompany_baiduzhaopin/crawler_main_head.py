@@ -350,7 +350,7 @@ class huazhan:
             "userName":"18100837642",
             "password":"intel@123"
         }
-        r = requests.post(url, data=data, headers=headers)
+        r = requests.post(url, data=data, headers=headers, proxies=proxies)
         # self.print(r.text)
 
 

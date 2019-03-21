@@ -27,6 +27,7 @@ def writePID():
 
 logfile = open("crawler_log.txt", "w")
 print_method = "terminal"
+
 def print(text, text2=""):
     if print_method == "terminal":
         sys.stdout.write(str(text))

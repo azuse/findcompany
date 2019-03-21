@@ -17,7 +17,7 @@ import os
 import pprint
 import jieba.analyse
 import jieba
-from crawler_main_head import huazhan, baiduzhaopin
+from crawler_main_head import huazhan, baiduzhaopin, maimai
 import os 
 
 def writePID():
@@ -51,11 +51,11 @@ class db:
     # | 每一次插入开一个连接      |
     # | 防止脚本运行时数据库连接中断|
     # =========================
-    def insert_company(self, huazhan_id="", company="", address="", location="", tag="", homepage="", product="", regcapital="", contectName="", contectPosition="", contectPhone="", contectTel="", contectQq="", contectEmail="", contectAllJson="", exhibitionJson="", raw=""):
+    def insert_company(self, huazhan_id="", company="", address="", location="", tag="", homepage="", product="", regcapital="", contectName="", contectPosition="", contectPhone="", contectTel="", contectQq="", contectEmail="", contectAllJson="", exhibitionJson="", raw="", addId=0, description=""):
 
-        sql = """INSERT INTO company (huazhan_id, company, tag, location, address, homePage, product, regCapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw) 
-                    VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}')""" \
-                    .format(huazhan_id, company, tag, location, address, homepage, product, regcapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw)
+        sql = """INSERT INTO company (huazhan_id, company, tag, location, address, homePage, product, regCapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw, addId, description) 
+                    VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', {17}, '{18}')""" \
+                    .format(huazhan_id, company, tag, location, address, homepage, product, regcapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw, addId, description)
         self.db = pymysql.connect(host='localhost',
                                   user=self.user,
                                   passwd=self.password,
@@ -264,10 +264,6 @@ if __name__ == "__main__":
     # 百度搜索使用的header cookie设置直接从浏览器中复制
     headers_baidu = config['BAIDU']['headers']
 
-    # 百度百聘搜索类
-    bd = baiduzhaopin(headers=headers_baidu,
-                      proxies=proxies, time_sleep=time_sleep, print_method=print_method, logfileHandler=logfile, time_out=time_out)
-
     # 初始化华展云搜索选项
     #######################################################################################################
     ## huazhan ##
@@ -279,108 +275,137 @@ if __name__ == "__main__":
     # 华展云排序类型 1：综合排序 2：时间排序
     sort_type_huazhan = config['HUAZHAN']['sort_type']
 
-    hz = huazhan(headers=headers_huazhan, proxies=proxies,
-                 time_sleep=time_sleep_huazhan, sort=sort_type_huazhan, print_method=print_method, logfileHandler=logfile, time_out=time_out)
+    huazhan = huazhan(
+                headers=headers_huazhan, 
+                proxies=proxies,
+                time_sleep=time_sleep_huazhan, 
+                sort=sort_type_huazhan, 
+                print_method=print_method, 
+                logfileHandler=logfile, 
+                time_out=time_out
+                )
+
+    #######################################################################################################
+    headers_maimai = config['MAIMAI']['headers']
+    time_sleep_maimai = config['MAIMAI']['time_sleep']
+
+    maimai = maimai(
+                    time_sleep=time_sleep_maimai,
+                    headers=headers_maimai,
+                    time_out=time_out,
+                    print_method=print_method,
+                    proxies=proxies,
+
+                    )
 
     print("-----------start crawling-----------")
+    
+    tmpdb = pymysql.connect(host='localhost',
+                            user=db_username,
+                            passwd=db_password,
+                            db=db_dbname,
+                            charset='utf8')
+    tmpcursor = tmpdb.cursor()
+
+    tmpcursor.execute("SELECT MAX(addId) FROM company; ")
+    rows = tmpcursor.fetchall()
+    addId = rows[0][0] + 1
+
+    baiduzhaopin = baiduzhaopin(   
+                                headers=headers_baidu, 
+                                proxies=proxies,
+                                time_sleep=time_sleep,
+                                logfileHandler=logfile,
+                                print_method=print_method,
+                                time_out=time_out
+                                )
+
 
     for keyword in keywords:
         for keycity in keycities:
             print(keycity)
             print(keyword)
-            while(True):
-                pn = 0
-                # 调用百度搜索
-                ret = bd.baiduzhaopin(keyword, keycity, pn)
+            
 
-                # 百度搜索没有结果 继续搜索下一个城市
-                if ret == -1:
-                    break
+            rows_baiduzhaopin = baiduzhaopin.baiduzhaopin(query=keyword, city=keycity)
+            for row_baiduzhaopin in rows_baiduzhaopin:
+                huazhan_id = ""
+                company = row_baiduzhaopin['company']
+                description = row_baiduzhaopin.get("companydescription", "")
+                tag = ""
+                location = row_baiduzhaopin.get("city", "")
+                address = ""
+                homePage = ""
+                product = ""
+                regCapital = ""
+                contectName = ""
+                contectPosition = ""
+                contectPhone = ""
+                contectTel = ""
+                contectQq = ""
+                contectEmail = ""
+                contectAllJson = ""
+                exhibitionJson = ""
+                raw = ""
+                addId = addId
 
-                # pn + 10 循环继续搜索下一页
-                pn += 10
+                rows_huazhan = huazhan.huazhan_search_company_list(keyword=company, page=0)
+                for row_huazhan in rows_huazhan:
+                    if(row_huazhan["names"].replace(r"<.*?>","") == company):
+                        rdata_huazhan = huazhan.huazhan_search_company_detail(row_huazhan['id'])
+                        rdata_detail = rdata_huazhan['detail']
+                        rdata_contects = rdata_huazhan['cur']
+                        rdata_exhibitions = rdata_huazhan['pro']
+                        
+                        huazhan_id = rdata_detail.get("id","")
+                        tag = rdata_detail.get('trades',"")
+                        address = rdata_detail.get("address","")
+                        homePage = rdata_detail.get("url", "")
+                        product = rdata_detail.get("product","")
+                        regCapital = rdata_detail.get("regcapital","")
 
-                # 处理搜索结果
-                for item in ret:
-                    # 公司名称
-                    company = item.get("company", "")
-                    # 公司地址
-                    companyaddress = item.get("companyaddress", "")
-                    # 公司介绍
-                    companydescription = item.get("companydescription", "")
-                    # 公司所在城市
-                    city = item.get("city", "")
-                    
-                    # 百度百聘搜索公司详细信息需要调用loc
-                    # loc = item.get("loc", "")
-                    # detail = bd.baiduzhaopin_detail(loc)
-
-                    # 公司详情提取关键词
-                    # searchKeywords = jieba_tf_idf(detail, topK=10)
-
-                    # 使用百度搜索搜索公司官网
-                    # homepage = baidu_search_homepage(company)
-                    # if(homepage.find("http://") == -1 and homepage.find("https://") == -1):
-                    #     homepage = "http://" + homepage
-
-                    # 抓取公司官网信息 提取关键词
-                    # text = company_homepage_crawler(homepage)
-                    # searchKeywords.append(jieba_tf_idf(text, topK=20))
-
-                    # 使用公司名在华展云搜索公司列表
-                    ret2 = hz.huazhan_search_company_list(company, 1)
-                    if ret2 == -1:
-                        continue
-
-                    # 处理华展云搜索结果
-                    for item in ret2:
-                        # 华展云搜索公司详细信息
-                        ret3 = hz.huazhan_search_company_detail(item["id"])
-                        # detail 公司详细信息
-                        detail = ret3["detail"]
-                        # cur 联系人信息
-                        contects = ret3["cur"]
-                        # pro 参展信息
-                        exhibitions = ret3["pro"]
-                        # 保存原始json数据
-                        raw = json.dumps(ret3)
-                        # 公司的华展云id
-                        id = detail.get('id', "")
-                        # 公司名称
-                        name = detail.get('name', "")
-                        print(name)
-                        # 华展云与百度百聘公司名称不匹配 跳过
-                        if name != company:
-                            continue
-
-
-                        tag = detail.get('trades', "")
-                        location = detail.get('areas', "")
-                        address = detail.get('address', "")
-                        homepage = detail.get('url', "")
-
-                        # 产品介绍 #
-                        product = detail.get('prodcut', "")
-                        # regcaptal 注册资本#
-                        regcapital = detail.get("regcapital", "")
-
-                        # 对联系人的一些处理 因为联系人个数不确定 数据库中为 一个主联系人-手机-固话-邮件-qq + 所有联系人的json数据存储
-                        # 正向搜索有手机号的联系人
-                        if contects != None:
-                            contect_main = hz.find_main_contect(contects)
+                        if rdata_contects != None:
+                            contect_main = huazhan.find_main_contect(rdata_contects)
                         else:
                             contect_main = dict()
 
-                        contect_main_name = contect_main.get('name', "")
-                        contect_main_phone = contect_main.get('phone', "")
-                        contect_main_tel = contect_main.get('tel', "")
-                        contect_main_qq = contect_main.get('qq', "")
-                        contect_main_email = contect_main.get('email', "")
-                        contect_main_position = contect_main.get('position', "")
+                        contectName = contect_main.get("name","")
+                        contectPosition = contect_main.get("position","")
+                        contectPhone = contect_main.get("phone","")
+                        contectTel = contect_main.get("tel","")
+                        contectQq = contect_main.get("qq","")
+                        contectEmail = contect_main.get("email","")
+                        
+                        contectAllJson = json.dumps(rdata_contects)
+                        exhibitionJson = json.dumps(rdata_exhibitions)
 
-                        contect_all_json = json.dumps(contects)
-                        exhibitions_json = json.dumps(exhibitions)
+                        raw = json.dumps(row_huazhan)
 
-                        # 插入到数据库
-                        db.insert_company(huazhan_id=id, company=name, address=address, location=location, tag=tag, homepage=homepage, product=product, regcapital=regcapital, contectName=contect_main_name, contectPosition=contect_main_position,
-                                        contectPhone=contect_main_phone, contectTel=contect_main_tel, contectQq=contect_main_qq, contectEmail=contect_main_email, contectAllJson=contect_all_json, exhibitionJson=exhibitions_json, raw=raw)
+                        db.insert_company(
+                                        huazhan_id=huazhan_id,
+                                        company=company,
+                                        description=description,
+                                        address=address,
+                                        location=location,
+                                        tag=tag,
+                                        homepage=homePage,
+                                        product=product,
+                                        regcapital=regCapital,
+                                        contectName=contectName,
+                                        contectPosition=contectPosition,
+                                        contectPhone=contectPhone,
+                                        contectTel=contectTel,
+                                        contectQq=contectQq,
+                                        contectEmail=contectEmail,
+                                        contectAllJson=contectAllJson,
+                                        exhibitionJson=exhibitionJson,
+                                        raw=raw,
+                                        addId=addId
+                                    )
+
+                        maimai.maimai(company)
+                        
+                        break
+
+            
+                        

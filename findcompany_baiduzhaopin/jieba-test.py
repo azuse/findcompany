@@ -76,3 +76,4 @@ for item in data:
     seg_list = jieba.cut(company)  # 默认是精确模式
     print(", ".join(seg_list))
     input()
+    
