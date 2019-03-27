@@ -227,7 +227,7 @@ if __name__ == "__main__":
 
     # 读取config file
     print('info: using config file: ' + opt.config_path)
-    config = json.load(open(opt.config_path))
+    config = json.load(open(opt.config_path, encoding="utf8"))
     print_method = config["DEFAULT"]['print_method']
     time_out = int(config['DEFAULT']['time_out'])
 
@@ -256,6 +256,7 @@ if __name__ == "__main__":
     # 搜索的关键词 与 城市
     keywords = config['BAIDU']['keywords']
     keycities = config['BAIDU']['keycities']
+    page_wanted = config['BAIDU']['page_wanted']
 
     # 百度搜索的延迟时间 建议设置到60以上
     time_sleep = int(config['BAIDU']['time_sleep'])
@@ -325,87 +326,90 @@ if __name__ == "__main__":
         for keycity in keycities:
             print(keycity)
             print(keyword)
-            
+            page = 0
+            while page < page_wanted:
 
-            rows_baiduzhaopin = baiduzhaopin.baiduzhaopin(query=keyword, city=keycity)
-            for row_baiduzhaopin in rows_baiduzhaopin:
-                huazhan_id = ""
-                company = row_baiduzhaopin['company']
-                description = row_baiduzhaopin.get("companydescription", "")
-                tag = ""
-                location = row_baiduzhaopin.get("city", "")
-                address = ""
-                homePage = ""
-                product = ""
-                regCapital = ""
-                contectName = ""
-                contectPosition = ""
-                contectPhone = ""
-                contectTel = ""
-                contectQq = ""
-                contectEmail = ""
-                contectAllJson = ""
-                exhibitionJson = ""
-                raw = ""
-                addId = addId
+                rows_baiduzhaopin = baiduzhaopin.baiduzhaopin(query=keyword, city=keycity, pn=page)
+                page += 1
+                for row_baiduzhaopin in rows_baiduzhaopin:
+                    huazhan_id = ""
+                    company = row_baiduzhaopin['company']
+                    description = row_baiduzhaopin.get("companydescription", "")
+                    tag = ""
+                    location = row_baiduzhaopin.get("city", "")
+                    address = ""
+                    homePage = ""
+                    product = ""
+                    regCapital = ""
+                    contectName = ""
+                    contectPosition = ""
+                    contectPhone = ""
+                    contectTel = ""
+                    contectQq = ""
+                    contectEmail = ""
+                    contectAllJson = ""
+                    exhibitionJson = ""
+                    raw = ""
+                    addId = addId
 
-                rows_huazhan = huazhan.huazhan_search_company_list(keyword=company, page=0)
-                for row_huazhan in rows_huazhan:
-                    if(row_huazhan["names"].replace(r"<.*?>","") == company):
-                        rdata_huazhan = huazhan.huazhan_search_company_detail(row_huazhan['id'])
-                        rdata_detail = rdata_huazhan['detail']
-                        rdata_contects = rdata_huazhan['cur']
-                        rdata_exhibitions = rdata_huazhan['pro']
-                        
-                        huazhan_id = rdata_detail.get("id","")
-                        tag = rdata_detail.get('trades',"")
-                        address = rdata_detail.get("address","")
-                        homePage = rdata_detail.get("url", "")
-                        product = rdata_detail.get("product","")
-                        regCapital = rdata_detail.get("regcapital","")
+                    rows_huazhan = huazhan.huazhan_search_company_list(keyword=company, page=0)
+                    for row_huazhan in rows_huazhan:
+                        print("{0} == {1}".format(re.sub(r"<.*?>", "", row_huazhan["names"]), company))
+                        if(re.sub(r"<.*?>", "", row_huazhan["names"]) == company):
+                            rdata_huazhan = huazhan.huazhan_search_company_detail(row_huazhan['id'])
+                            rdata_detail = rdata_huazhan['detail']
+                            rdata_contects = rdata_huazhan['cur']
+                            rdata_exhibitions = rdata_huazhan['pro']
+                            
+                            huazhan_id = rdata_detail.get("id","")
+                            tag = rdata_detail.get('trades',"")
+                            address = rdata_detail.get("address","")
+                            homePage = rdata_detail.get("url", "")
+                            product = rdata_detail.get("product","")
+                            regCapital = rdata_detail.get("regcapital","")
 
-                        if rdata_contects != None:
-                            contect_main = huazhan.find_main_contect(rdata_contects)
-                        else:
-                            contect_main = dict()
+                            if rdata_contects != None:
+                                contect_main = huazhan.find_main_contect(rdata_contects)
+                            else:
+                                contect_main = dict()
 
-                        contectName = contect_main.get("name","")
-                        contectPosition = contect_main.get("position","")
-                        contectPhone = contect_main.get("phone","")
-                        contectTel = contect_main.get("tel","")
-                        contectQq = contect_main.get("qq","")
-                        contectEmail = contect_main.get("email","")
-                        
-                        contectAllJson = json.dumps(rdata_contects)
-                        exhibitionJson = json.dumps(rdata_exhibitions)
+                            contectName = contect_main.get("name","")
+                            contectPosition = contect_main.get("position","")
+                            contectPhone = contect_main.get("phone","")
+                            contectTel = contect_main.get("tel","")
+                            contectQq = contect_main.get("qq","")
+                            contectEmail = contect_main.get("email","")
+                            
+                            contectAllJson = json.dumps(rdata_contects)
+                            exhibitionJson = json.dumps(rdata_exhibitions)
 
-                        raw = json.dumps(row_huazhan)
+                            raw = json.dumps(row_huazhan)
 
-                        db.insert_company(
-                                        huazhan_id=huazhan_id,
-                                        company=company,
-                                        description=description,
-                                        address=address,
-                                        location=location,
-                                        tag=tag,
-                                        homepage=homePage,
-                                        product=product,
-                                        regcapital=regCapital,
-                                        contectName=contectName,
-                                        contectPosition=contectPosition,
-                                        contectPhone=contectPhone,
-                                        contectTel=contectTel,
-                                        contectQq=contectQq,
-                                        contectEmail=contectEmail,
-                                        contectAllJson=contectAllJson,
-                                        exhibitionJson=exhibitionJson,
-                                        raw=raw,
-                                        addId=addId
-                                    )
+                            db.insert_company(
+                                            huazhan_id=huazhan_id,
+                                            company=company,
+                                            description=description,
+                                            address=address,
+                                            location=location,
+                                            tag=tag,
+                                            homepage=homePage,
+                                            product=product,
+                                            regcapital=regCapital,
+                                            contectName=contectName,
+                                            contectPosition=contectPosition,
+                                            contectPhone=contectPhone,
+                                            contectTel=contectTel,
+                                            contectQq=contectQq,
+                                            contectEmail=contectEmail,
+                                            contectAllJson=contectAllJson,
+                                            exhibitionJson=exhibitionJson,
+                                            raw=raw,
+                                            addId=addId
+                                        )
 
-                        maimai.maimai(company)
-                        
-                        break
+                            maimai.maimai(company)
+                            
+                            break
 
             
                         

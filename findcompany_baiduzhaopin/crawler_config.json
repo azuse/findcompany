@@ -5,12 +5,13 @@
         "time_out": 20
     },
     "BAIDU":{
-        "time_sleep" : 20,       
+        "time_sleep" : 3,       
         "fail_count_limit" : 10 , 
         "fail_sleep" : 100,
 
         "keywords" : ["计算机视觉", "物联网"],
         "keycities" : ["上海", "深圳", "广州", "北京"],
+        "page_wanted": 10,
         "row_wanted" : 100,
         "headers": {
                         "Accept": "*/*",
@@ -25,7 +26,7 @@
                     }
     },
     "HUAZHAN":{
-        "time_sleep" : 20,
+        "time_sleep" : 3,
         "fail_count_limit" : 10,
         "fail_sleep" : 100,
 

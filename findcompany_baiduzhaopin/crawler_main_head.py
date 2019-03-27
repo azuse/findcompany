@@ -82,6 +82,7 @@ class baiduzhaopin:
         while 1:
             try:
                 r = requests.get(url, headers=headers, timeout=self.time_out, proxies=proxies, allow_redirects=True)
+                self.print("info:get token sucess, sleep")
                 time.sleep(time_sleep)
 
                 break
@@ -162,11 +163,12 @@ class baiduzhaopin:
 
         try:
             r = requests.get(url, proxies=proxies, headers=headers, timeout=self.time_out)
+            self.print("info: get baidubaipin data sucess, sleep")
             time.sleep(time_sleep)
         except:            
             self.print("error: request timeout")
             return -1
-            
+             
         r.encoding = 'utf8'
         rdata = json.loads(r.text)
         if rdata['data']['errno'] == -1:
@@ -251,7 +253,7 @@ class huazhan:
             phone = item.get('phone', "")
             if phone != "":
                 item['priority'] += 1
-            
+             
         max_priority = contects[0]['priority']
         max_priority_contect = 0
         i = 0
@@ -318,6 +320,7 @@ class huazhan:
 
         try:
             r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=self.time_out)
+            
             time.sleep(time_sleep)
         except ConnectionError as err:
             self.print("ConnectionError: '{0}'".format(err))
