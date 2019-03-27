@@ -17,6 +17,7 @@ import configparser, os
 import pprint
 
 insert_count = 0
+time_sleep = 20
 
 def urlparse(url):
     url = url.replace("http://","")
@@ -24,6 +25,25 @@ def urlparse(url):
     url = url.replace("/","")
     return url
 
+def writePID():
+    pidfile = open("mainPID.txt", "w")
+    pidfile.write(str(os.getpid()))
+    pidfile.write("\n")
+    pidfile.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+    pidfile.flush()
+    pidfile.close()
+
+logfile = open("crawler_log.txt", "w")
+def print(text, text2=""):
+    if print_method == "terminal":
+        sys.stdout.write(str(text))
+        sys.stdout.write(str(text2))
+        sys.stdout.write("\n")
+    else:
+        logfile.write(str(text))
+        logfile.write(str(text2))
+        logfile.write("\n")
+        logfile.flush()
 
 ## 找出最合适的联系人 ##
 ## 经理 重要度 +2
@@ -71,7 +91,8 @@ class mysql_huazhan:
         location = detail.get('areas', "")
         address = detail.get('address', "")
         url = detail.get('url', "")
-        url = urlparse(url)
+        if(url != None):
+            url = urlparse(url)
         # 产品介绍 #
         product = detail.get('prodcut', "")
         # regcaptal 注册资本#
@@ -129,13 +150,13 @@ def huazhan_search_company_detail(id):
     }
 
     try:
-        r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=10)
+        r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=time_out)
         time.sleep(time_sleep)
     except ConnectionError as err:
-        print("ConnectionError: '{0}'".format(err))
+        print("ConnectionError in huazhan_search_company_detail: '{0}'".format(err))
         return 0
     except:
-        print("Unexpected error:", sys.exc_info()[0])
+        print("Unexpected error in huazhan_search_company_detail:", sys.exc_info()[0])
         return 0
 
 
@@ -176,13 +197,14 @@ def huazhan_search_company_list(keyword, page, sort):
     global proxies
 
     try:
-        r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=10)
+        r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=time_out)
         time.sleep(time_sleep)
     except ConnectionError as err:
-        print("ConnectionError: '{0}'".format(err))
+        print("ConnectionError in huazhan_search_company_list: '{0}'".format(err))
         return 0
     except:
-        print("Unexpected error:", sys.exc_info()[0])
+        print("Unexpected error in huazhan_search_company_list:", sys.exc_info()[0])
+        pprint.pprint(r.text)
         return 0
 
     print("-------------------------------enterprise index 200---------page "+ str(page))
@@ -257,6 +279,10 @@ areaid = {
 
 
 if __name__ == "__main__":
+    writePID()
+    print_method = "terminal"
+
+
     proxies={
         "http":None,
         "https":None
@@ -271,15 +297,13 @@ if __name__ == "__main__":
 
     print('info: using config file: '+ opt.config_path)
     config = json.load(open(opt.config_path))
+    print_method = config["DEFAULT"]['print_method']
+    time_out = config['DEFAULT']['time_out']
     ######## HUAZHAN ##########
-    if opt.time_sleep == '-1':
+    if opt.time_sleep == -1:
         time_sleep = int(config['HUAZHAN']['time_sleep'])
     else:
         time_sleep = int(opt.time_sleep)
-    # 失败处理 超过20次休眠90秒
-    fail_count = 0
-    fail_count_limit = int(config['HUAZHAN']['fail_count_limit'])
-    fail_sleep = int(config['HUAZHAN']['fail_sleep'])
 
     keywords = config['HUAZHAN']['keywords']
 

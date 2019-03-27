@@ -1,11 +1,72 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+import urllib
+from urllib import parse
+import requests
+import json
+import pymysql
+import time
+import random
+import string
+from bs4 import BeautifulSoup
+import re
+import sys
+from optparse import OptionParser
+import configparser
+import os
+import pprint
+import jieba.analyse
+import jieba
+
+# =========================
+# | 验证url是否合法          |
+# =========================
+regex = re.compile(
+    r'^(?:http|ftp)s?://'  # http:// or https://
+    # domain...
+    r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
+    r'localhost|'  # localhost...
+    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+    r'(?::\d+)?'  # optional port
+    r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+
+
+def validateURL(url):
+    if(re.match(regex, url) is None):
+        return False
+    else:
+        return True
+
+
+
+
+
+
+
+
+
 
 
 class baiduzhaopin:
-    def __init__(self, headers, proxies, time_sleep):
+    def __init__(self, headers, proxies, time_sleep, logfileHandler, print_method, time_out=20):
         self.time_sleep = time_sleep
         self.headers = headers
         self.proxies = proxies
+        self.logfile = logfileHandler
+        self.print_method = print_method
+        self.time_out = time_out
     
+    def print(self, text, text2=""):
+        if self.print_method == "terminal":
+            sys.stdout.write(str(text))
+            sys.stdout.write(str(text2))
+            sys.stdout.write("\n")
+        else:
+            self.logfile.write(str(text))
+            self.logfile.write(str(text2))
+            self.logfile.write("\n")
+            self.logfile.flush()
+
     # =========================
     # | 获取百度百聘页面中的token |
     # =========================
@@ -14,19 +75,19 @@ class baiduzhaopin:
         headers = self.headers
         proxies = self.proxies
 
-        print("info: 获取token")
-        url = "http://zhaopin.baidu.com/quanzhi?query=" + \
+        self.print("info: 获取token")
+        url = "https://zhaopin.baidu.com/quanzhi?query=" + \
             parse.quote(query)+"&city="+parse.quote(city)
         
         while 1:
             try:
-                r = requests.get(url, headers=headers, timeout=5, proxies=proxies)
+                r = requests.get(url, headers=headers, timeout=self.time_out, proxies=proxies, allow_redirects=True)
                 time.sleep(time_sleep)
 
                 break
             except:
-                print("error: 获取token时网络错误,重试")
-                print("Unexpected error:", sys.exc_info()[0])
+                self.print("error: 获取token时网络错误,重试")
+                self.print("Unexpected error:", sys.exc_info()[0])
                 
                 time.sleep(time_sleep)
 
@@ -44,7 +105,7 @@ class baiduzhaopin:
 
         except:
             pass
-        print("info: new token:"+token)
+        self.print("info: new token:"+token)
         return token
 
     # =========================
@@ -59,14 +120,14 @@ class baiduzhaopin:
         detailurl = "http://zhaopin.baidu.com/szzw?id="+loc
         if(validateURL(detailurl)):
             try:
-                r = requests.get(detailurl, proxies=proxies, timeout=5)
+                r = requests.get(detailurl, proxies=proxies, timeout=self.time_out)
                 soup = BeautifulSoup(r.text, features="html.parser")
                 return soup.select(".job-detail")[0].get_text()
             except ConnectionError as err:
-                print("ConnectionError: '{0}'".format(err))
+                self.print("ConnectionError: '{0}'".format(err))
                 return ""
             except:
-                print("Unexpected error:", sys.exc_info()[0])
+                self.print("Unexpected error:", sys.exc_info()[0])
                 return ""
         else:
             return ""
@@ -77,7 +138,8 @@ class baiduzhaopin:
     # | 百度招聘api查询函数      |
     # | 查询职位列表            |
     # | query   查询关键词      |
-    # | num     查询多少个职位   |
+    # | city     所在城市       |
+    # | pn     开始页数         |
     # =========================
     def baiduzhaopin(self, query, city, pn = 0):
         time_sleep = self.time_sleep
@@ -96,25 +158,26 @@ class baiduzhaopin:
 
         url = "http://zhaopin.baidu.com/api/qzasync?query=" + parse.quote(query) + "&city=" + parse.quote(
             city) + "&is_adq=1&pcmod=1&token=" + token + "&pn=" + str(pn) + "&rn=" + str(rn) + "&sort_type=1&sort_key=5"
+
+
         try:
-            r = requests.get(url, proxies=proxies, headers=headers, timeout=5)
+            r = requests.get(url, proxies=proxies, headers=headers, timeout=self.time_out)
             time.sleep(time_sleep)
         except:            
-            print("error: request timeout")
+            self.print("error: request timeout")
             return -1
             
         r.encoding = 'utf8'
-
         rdata = json.loads(r.text)
-
         if rdata['data']['errno'] == -1:
-            print("info: 数据获取失败,可能是已经取得了所有结果")
+            self.print("info: 数据获取失败,可能是已经取得了所有结果")
             return -1
 
         hilight = rdata['data']['hilight'].split("\x00")[0]
         if hilight != query:
-            print("error: token失效,或抓取受到限制")
+            self.print("error: token失效,或抓取受到限制")
             token = self.getToken(query, city)
+            return -1
 
 
         return rdata['data']['disp_data']
@@ -147,12 +210,58 @@ class huazhan:
         '吉林':"eKETKEm6"
     }
 
-    def __init__(self, headers, proxies, time_sleep, sort):
+    def __init__(self, headers, proxies, time_sleep, sort, logfileHandler, print_method, time_out=20):
         self.time_sleep = time_sleep
         self.headers = headers
         self.proxies = proxies
         self.sort = sort
         self.huazhan_login()
+        self.logfile = logfileHandler
+        self.print_method = print_method
+        self.time_out = time_out
+
+    def print(self, text, text2=""):
+        if self.print_method == "terminal":
+            sys.stdout.write(str(text))
+            sys.stdout.write(str(text2))
+            sys.stdout.write("\n")
+        else:
+            self.logfile.write(str(text))
+            self.logfile.write(str(text2))
+            self.logfile.write("\n")
+            self.logfile.flush()
+
+    ## 找出最合适的联系人 ##
+    ## 经理 重要度 +2
+    ## 手机 重要度 +1
+    ## 法人 重要度 -1 
+    def find_main_contect(self, contects):
+        for item in contects:
+            item['priority'] = 0
+
+        for item in contects:
+            position = item.get("position", "")
+            if position == "" or position.find("法人") != -1:
+                item["priority"] -= 1
+            if position.find("经理") != -1:
+                item['priority'] += 1
+
+
+        for item in contects:
+            phone = item.get('phone', "")
+            if phone != "":
+                item['priority'] += 1
+            
+        max_priority = contects[0]['priority']
+        max_priority_contect = 0
+        i = 0
+        while i < len(contects):
+            if contects[i]['priority'] > max_priority:
+                max_priority = contects[i]['priority']
+                max_priority_contect = i
+            i += 1
+
+        return contects[max_priority_contect]
 
     def huazhan_search_company_detail(self, id):
         headers = self.headers
@@ -167,17 +276,16 @@ class huazhan:
         }
 
         try:
-            r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=10)
+            r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=self.time_out)
             time.sleep(time_sleep)
         except ConnectionError as err:
-            print("ConnectionError: '{0}'".format(err))
+            self.print("ConnectionError: '{0}'".format(err))
             return -1
         except:
-            print("Unexpected error:", sys.exc_info()[0])
+            self.print("Unexpected error:", sys.exc_info()[0])
             return -1
 
 
-        print("-------------------------------enterprise detail 200")
         r.encoding = 'utf-8'
         rdata = json.loads(r.text)
 
@@ -209,21 +317,20 @@ class huazhan:
         }
 
         try:
-            r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=10)
+            r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=self.time_out)
             time.sleep(time_sleep)
         except ConnectionError as err:
-            print("ConnectionError: '{0}'".format(err))
+            self.print("ConnectionError: '{0}'".format(err))
             return -1
         except:
-            print("Unexpected error:", sys.exc_info()[0])
+            self.print("Unexpected error:", sys.exc_info()[0])
             return -1
 
-        print("-------------------------------enterprise index 200---------page "+ str(page))
         r.encoding = 'utf-8'
         if r.status_code == 403:
-            print("error: site return 403")
-            sys.exit(1)
-        print(r.text)
+            self.print("error: site return 403")
+            return -1
+        # self.print(r.text)
         try:
             rdata = json.loads(r.text)
         except:
@@ -243,10 +350,63 @@ class huazhan:
             "userName":"18100837642",
             "password":"intel@123"
         }
-        r = requests.post(url, data=data, headers=headers)
-        print(r.text)
+        r = requests.post(url, data=data, headers=headers, proxies=proxies)
+        # self.print(r.text)
 
 
 
 
 
+
+
+
+class maimai:
+    def __init__(self, time_sleep=30, time_out=20,print_method="terminal", proxies = {"http": None, "https": None}, headers= {
+            "cookie": """seid=s1551840667869; _buuid=506a7fbf-1b2f-481a-8031-85e007d99559; guid=GxMYBBsaGAQYGh4EGRxWBxgbHhwfExMaHRxWHBkEHRkfBUNYS0xLeQoSEwQSHR8ZBBoEGx0FT0dFWEJpCgNFQUlPbQpPQUNGCgZmZ35iYQIKHBkEHRkfBV5DYUhPfU9GWlprCgMeHHUcElIKUl9EQ2YKERsbcgIKGgQfBUtGRkNQRWc=; token="Q+TrGRMjLhgKkfDydWgiCN3OTEDcmCk5NReUcExsaSkZqFI82V6e6mK37MUFo07k8CKuzcDfAvoCmBm7+jVysA=="; uid="kBWdlFr7Q4Abh3QUS0c+rvAirs3A3wL6ApgZu/o1crA="; session=eyJ1IjoiMjIxMDIzODE5Iiwic2VjcmV0IjoiQmFOSXNQcFl6VEFSVDBGUkFKLW9fMU5vIiwibWlkNDU2ODc2MCI6ZmFsc2UsIl9leHBpcmUiOjE1NTE5Mjc3NTEwMDEsIl9tYXhBZ2UiOjg2NDAwMDAwfQ==; session.sig=ubREdw-SbtyPtXxyq_iUbxWnOek""",
+        }):
+        self.time_sleep = time_sleep
+        self.time_out = time_out
+        self.print_method = print_method
+        self.proxies = proxies
+        self.headers=headers
+
+    def print(self, text, text2=""):
+        if self.print_method == "terminal":
+            sys.stdout.write(str(text))
+            sys.stdout.write(str(text2))
+            sys.stdout.write("\n")
+        else:
+            self.logfile.write(str(text))
+            self.logfile.write(str(text2))
+            self.logfile.write("\n")
+            self.logfile.flush()
+
+
+    def maimai(self, company):
+        time_sleep = self.time_sleep
+        time_out = self.time_out
+        headers = self.headers
+        proxies = self.proxies
+
+        url = "https://maimai.cn/search/contacts"
+        data = {
+            "count": 20,
+            "page": 0,
+            "query": company,
+            "dist": 0,
+            "searchTokens": "",
+            "highlight": "true",
+            "jsononly": 1,
+            "pc": 1,
+        }
+
+        r = requests.get(url=url, params=data, headers=headers, proxies=proxies, timeout=time_out)
+        jsondata = json.loads(r.text)
+        if jsondata['result'] == "error":
+            time.sleep(time_sleep)
+            jsondata = json.loads(r.text)
+            if jsondata['result'] == "error":
+                time.sleep(time_sleep * 10)
+                jsondata = json.loads(r.text)
+        
+        return jsondata["data"]["contacts"]

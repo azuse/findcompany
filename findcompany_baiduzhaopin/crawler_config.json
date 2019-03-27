@@ -1,9 +1,11 @@
 {
     "DEFAULT":{
-        "proxy": "intel"
+        "proxy": "noproxy",
+        "print_method": "terminal",
+        "time_out": 20
     },
     "BAIDU":{
-        "time_sleep" : 5,       
+        "time_sleep" : 20,       
         "fail_count_limit" : 10 , 
         "fail_sleep" : 100,
 
@@ -15,7 +17,7 @@
                         "Accept-Encoding": "gzip, deflate, br",
                         "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
                         "Connection": "keep-alive",
-                        "Cookie": "BAIDUID=D218FD911DA27FA9E5C8A9B6B3F62C92:FG=1; BIDUPSID=D218FD911DA27FA9E5C8A9B6B3F62C92; PSTM=1548381180; delPer=0; PSINO=5; H_PS_PSSID=26525_1443_21105_28328_22158",
+                        "Cookie": "BAIDUID=D218FD911DA27FA9E5C8A9B6B3F62C92:FG=1; BIDUPSID=D218FD911DA27FA9E5C8A9B6B3F62C92; PSTM=1548381180; delPer=0; BDUSS=Q0LUh1RWV5NFZhY1U1YU1MMm14RkRqRjZ0Sm5KYWYzVkFlYWRjUG85UXpVWEpjQVFBQUFBJCQAAAAAAAAAAAEAAAAP4QMkyKVTsMm2yMTvAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADPESlwzxEpcfl; Hm_lvt_4b55f5db1b521481b884efb1078a89cc=1548404745; pgv_pvi=6691330048; pgv_si=s8589608960; Hm_lpvt_4b55f5db1b521481b884efb1078a89cc=1548664131; PSINO=2; Hm_lvt_da3258e243c3132f66f0f3c247b48473=1550627430; H_PS_PSSID=26525_1443_21105_22158; BDRCVFR[feWj1Vr5u3D]=I67x6TjHwwYf0; Hm_lpvt_da3258e243c3132f66f0f3c247b48473=1551252361",
                         "DNT": "1",
                         "Host": "zhaopin.baidu.com",
                         "Referer": "https://zhaopin.baidu.com/quanzhi?query=%E8%AE%A1%E7%AE%97%E6%9C%BA&city=%E4%B8%8A%E6%B5%B7",
@@ -27,8 +29,8 @@
         "fail_count_limit" : 10,
         "fail_sleep" : 100,
 
-        "keywords" : ["计算机视觉", "物联网"],
-        "page_start": 38,
+        "keywords" : ["物联网","物联网"],
+        "page_start": 0,
         "page_end": 500,
         "sort_type":"time",
         "headers":  {
@@ -45,6 +47,12 @@
                         "User-Agent"	:"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0",
                         "X-Requested-With"	:"XMLHttpRequest"
                     }
+    },
+    "MAIMAI":{
+        "time_sleep" : 30,
+        "headers": {
+            "cookie": "seid=s1551840667869; _buuid=506a7fbf-1b2f-481a-8031-85e007d99559; guid=GxMYBBsaGAQYGh4EGRxWBxgbHhwfExMaHRxWHBkEHRkfBUNYS0xLeQoSEwQSHR8ZBBoEGx0FT0dFWEJpCgNFQUlPbQpPQUNGCgZmZ35iYQIKHBkEHRkfBV5DYUhPfU9GWlprCgMeHHUcElIKUl9EQ2YKERsbcgIKGgQfBUtGRkNQRWc=; token='Q+TrGRMjLhgKkfDydWgiCN3OTEDcmCk5NReUcExsaSkZqFI82V6e6mK37MUFo07k8CKuzcDfAvoCmBm7+jVysA=='; uid='kBWdlFr7Q4Abh3QUS0c+rvAirs3A3wL6ApgZu/o1crA='; session=eyJ1IjoiMjIxMDIzODE5Iiwic2VjcmV0IjoiQmFOSXNQcFl6VEFSVDBGUkFKLW9fMU5vIiwibWlkNDU2ODc2MCI6ZmFsc2UsIl9leHBpcmUiOjE1NTE5Mjc3NTEwMDEsIl9tYXhBZ2UiOjg2NDAwMDAwfQ==; session.sig=ubREdw-SbtyPtXxyq_iUbxWnOek"
+        }
     },
     "MYSQL":{
         "db_username" :"root",

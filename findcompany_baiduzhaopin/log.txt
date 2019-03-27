@@ -1,0 +1,16 @@
+info: using config file: crawler_config.json
+info: using no proxy
+info: baidu time sleep set to 5
+info: huazhan time sleep set to 5
+{"status":1,"message":"\u767b\u5f55\u6210\u529f"}
+-----------start crawling-----------
+上海
+计算机视觉
+info: 获取token
+info: new token:%3D%3DwmU7dqTCLpEOlaY62lrpmZXmmkFSIbdWZZdGHmplZl
+error: request timeout
+深圳
+计算机视觉
+info: 获取token
+error: 获取token时网络错误,重试
+Unexpected error: <class 'KeyboardInterrupt'>
