@@ -5,12 +5,13 @@
         "time_out": 20
     },
     "BAIDU":{
-        "time_sleep" : 20,       
+        "time_sleep" : 3,       
         "fail_count_limit" : 10 , 
         "fail_sleep" : 100,
 
         "keywords" : ["计算机视觉", "物联网"],
         "keycities" : ["上海", "深圳", "广州", "北京"],
+        "page_wanted": 10,
         "row_wanted" : 100,
         "headers": {
                         "Accept": "*/*",
@@ -25,7 +26,7 @@
                     }
     },
     "HUAZHAN":{
-        "time_sleep" : 20,
+        "time_sleep" : 3,
         "fail_count_limit" : 10,
         "fail_sleep" : 100,
 
@@ -43,7 +44,7 @@
                         
                         "Cookie":"PHPSESSID=prfc69n8gpcv8fpiae12idpt60;",
                         "Host"	:"yun.ihuazhan.net",
-                        "Referer"	:"http://yun.ihuazhan.net/Index/enterprise?type=1&keyword=%E7%89%A9%E8%81%94%E7%BD%91",
+                        "Referer"	:"http://yun.ihuazhan.net/",
                         "User-Agent"	:"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0",
                         "X-Requested-With"	:"XMLHttpRequest"
                     }
