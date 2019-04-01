@@ -1,4 +1,4 @@
-#!/usr/bin/python
+# !/usr/bin/python
 # -*- coding: UTF-8 -*-
 import urllib
 from urllib import parse
@@ -51,10 +51,11 @@ class db:
     # | 每一次插入开一个连接      |
     # | 防止脚本运行时数据库连接中断|
     # =========================
-    def insert_company(self, huazhan_id="", company="", address="", location="", tag="", homepage="", product="", regcapital="", contectName="", contectPosition="", contectPhone="", contectTel="", contectQq="", contectEmail="", contectAllJson="", exhibitionJson="", raw="", addId=0, description=""):
-
+    def insert_company(self, huazhan_id="NULL", company="", address="", location="", tag="", homepage="", product="", regcapital="", contectName="", contectPosition="", contectPhone="", contectTel="", contectQq="", contectEmail="", contectAllJson="", exhibitionJson="", raw="", addId=0, description=""):
+        if huazhan_id != "NULL":
+            huazhan_id = "'{0}'".format(huazhan_id)
         sql = """INSERT INTO company (huazhan_id, company, tag, location, address, homePage, product, regCapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw, addId, description) 
-                    VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', {17}, '{18}')""" \
+                    VALUES ({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', {17}, '{18}')""" \
                     .format(huazhan_id, company, tag, location, address, homepage, product, regcapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw, addId, description)
         self.db = pymysql.connect(host='localhost',
                                   user=self.user,
@@ -69,19 +70,18 @@ class db:
         #     print("info:  公司已存在")
         #     return -1
 
-        try:
-            self.cursor.execute(sql)
-            self.db.commit()
-            self.db.close()
-            print("info:  插入成功")
-            return 1
-        except:
+        # try:
+        self.cursor.execute(sql)
+        self.db.commit()
+        self.db.close()
+        return 1
+        # except:
             
-            self.db.close()
-            return -1
+        self.db.close()
+        return -1
     
     def is_company_exist(self, companyname):
-        sql = "SELECT COUNT(*) FROM company WHERE company LIKE {0};".format(companyname)
+        sql = "SELECT COUNT(*) FROM company WHERE company LIKE '{0}';".format(companyname)
         self.db = pymysql.connect(host='localhost',
                                   user=self.user,
                                   passwd=self.password,
@@ -109,7 +109,7 @@ class db:
         if count[0][0] != 0:
             return -1
 
-        sql_insert = "INSERT INTO company_keyword (company_id, company_name, keyword, keyword_weight) VALUES ('{0}','{1}','{2}','{3}');".format(id,company,keyword,ketword_weight)
+        sql_insert = "INSERT INTO company_keyword (company_name, keyword, keyword_weight) VALUES ('{0}','{1}','{2}');".format(company,keyword,ketword_weight)
         self.cursor.execute(sql_insert)
         self.db.commit()
         self.db.close()
@@ -579,8 +579,9 @@ if __name__ == "__main__":
                                 for tag in tags:
                                     db.insert_tag(tag[0], tag[1], company,)
                                 print("info: tags for hireinfo inserted")
-                    
-
+                            except:
+                                print("error:  error in retreiving hiring info")
+                                print("Unexpected error:", sys.exc_info()[0])
                     tags = jieba_tf_idf(description, topK=10)
                     for tag in tags:
                         db.insert_tag(tag[0], tag[1], company,)
