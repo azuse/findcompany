@@ -74,7 +74,7 @@ class db:
         self.cursor.execute(sql)
         self.db.commit()
         self.db.close()
-        return 1
+        return 0
         # except:
             
         self.db.close()
@@ -136,6 +136,22 @@ class db:
         self.db.close()
         return 0
 
+    def insert_maimai(self, mmid, name, position, major, profession, company):
+        self.db = pymysql.connect(host='localhost',
+                            user=self.user,
+                            passwd=self.password,
+                            db=self.database,
+                            charset='utf8')
+        self.cursor = self.db.cursor()   
+        sql = "SELECT COUNT(id) FROM maimai WHERE name LIKE '"+name+"' AND company LIKE '"+company+"';"
+        self.cursor.execute(sql)
+        if self.cursor._rows[0] != (0,):
+            return -2
+
+        sql = "INSERT INTO maimai(mmid, company, name, position, major, profession) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}')".format(mmid, company, name, position, major, profession)
+        self.cursor.execute(sql)
+        self.db.commit()
+        return 0
     
 
 
@@ -205,6 +221,8 @@ def baidu_search_homepage(company):
 # =========================
 def company_homepage_crawler(homepage):
     print("getting url " + homepage)
+    if(homepage.find("http://") == -1 and homepage.find("https://") == -1):
+        homepage = "http://{0}".format(homepage)
     text = ""
     try:
         r = requests.get(homepage, timeout=time_out, proxies=proxies)
@@ -381,6 +399,8 @@ if __name__ == "__main__":
                                 time_out=time_out
                                 )
 
+    inserted = 0
+    insert_part_log = open("log/insert_part.log","w")
 
     for keyword in keywords:
         for keycity in keycities:
@@ -392,6 +412,9 @@ if __name__ == "__main__":
                 rows_baiduzhaopin = baiduzhaopin.baiduzhaopin(query=keyword, city=keycity, pn=page)
                 page += 1
                 for row_baiduzhaopin in rows_baiduzhaopin:
+                    # company maimai homepage hireinfo tag
+                    insert_part = [0,0,0,0,0]
+
                     huazhan_id = ""
                     company = row_baiduzhaopin['company']
                     if company.find("某") != -1:
@@ -481,13 +504,33 @@ if __name__ == "__main__":
                                         )
                     if ret == 0:
                         print("info: company inserted: {0}".format(company))
+                        insert_part[0] = 1
                     else:
-                        print("info:  sql insert fail in company insert")
+                        print("info: sql insert fail in company insert")
                         print("Unexpected error:", sys.exc_info()[0])
 
 
                     
-                    maimai.maimai(company)
+                    ret = maimai.maimai(company)
+                    pprint.pprint(ret)
+                    for contact in ret:
+                        contact = contact.get("contact", "")
+                        maimai_name = contact.get("name", "")
+                        maimai_position = contact.get("position", "")
+                        maimai_major = contact["user_pfmj"].get("mj_name1","")
+                        maimai_profession =  contact["user_pfmj"].get("pf_name1","")
+                        maimai_mmid = contact.get("mmid","")       
+
+                        ret = db.insert_maimai(maimai_mmid, maimai_name, maimai_position, maimai_major, maimai_profession, company)
+                        if(ret == 0):
+                            print("info: maimai inserted {0} {1} {2}".format(maimai_name, maimai_position, company))
+                            insert_part[1] = 1
+                        elif (ret == -2):
+                            print("info: maimai existed {0} {1}".format(name, company))
+                        else:
+                            print("error: maimai insert fail")
+                            print("Unexpected error:", sys.exc_info()[0])
+
 
 
                     if homePage == "":
@@ -500,6 +543,7 @@ if __name__ == "__main__":
                             for tag in tags:
                                 db.insert_tag(tag[0], tag[1], company)
                             print("info: tags for homepage inserted")
+                            insert_part[2] = 1
                     else:
                         print("info: homepage not found")
 
@@ -571,6 +615,7 @@ if __name__ == "__main__":
                                                             )
                                 if ret == 0:
                                     print("info: hireinfo inserted {0}".format(name))
+                                    insert_part[3]=1
                                 else:
                                     print("info:  sql insert fail in hireinfo insert")
                                     print("Unexpected error:", sys.exc_info()[0])
@@ -585,8 +630,10 @@ if __name__ == "__main__":
                     tags = jieba_tf_idf(description, topK=10)
                     for tag in tags:
                         db.insert_tag(tag[0], tag[1], company,)
+                    insert_part[4] = 1
                     print("info: tags for company description inserted")
-
+                    insert_part_string = ' '.join(str(e) for e in insert_part)
+                    insert_part_log.write("{0} {1}".format(insert_part_string, company))
                     print("info: one company insert program finished, continuing...")
                     print("")
 
