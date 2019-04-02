@@ -512,7 +512,6 @@ if __name__ == "__main__":
 
                     
                     ret = maimai.maimai(company)
-                    pprint.pprint(ret)
                     for contact in ret:
                         contact = contact.get("contact", "")
                         maimai_name = contact.get("name", "")
@@ -530,7 +529,8 @@ if __name__ == "__main__":
                         else:
                             print("error: maimai insert fail")
                             print("Unexpected error:", sys.exc_info()[0])
-
+                    if( insert_part[1] == 0):
+                        print("info: maimai not found")
 
 
                     if homePage == "":
