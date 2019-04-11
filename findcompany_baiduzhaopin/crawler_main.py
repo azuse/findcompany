@@ -220,6 +220,8 @@ def baidu_search_homepage(company):
 # | 错误返回空字符串         |
 # =========================
 def company_homepage_crawler(homepage):
+    if homepage == None:
+        return ""
     print("getting url " + homepage)
     if(homepage.find("http://") == -1 and homepage.find("https://") == -1):
         homepage = "http://{0}".format(homepage)
@@ -388,7 +390,10 @@ if __name__ == "__main__":
 
     tmpcursor.execute("SELECT MAX(addId) FROM company; ")
     rows = tmpcursor.fetchall()
-    addId = rows[0][0] + 1
+    if(rows[0][0] == None):
+        addId = 1
+    else:
+        addId = rows[0][0] + 1
 
     baiduzhaopin = baiduzhaopin(   
                                 headers=headers_baidu, 
@@ -410,6 +415,8 @@ if __name__ == "__main__":
             while page < page_wanted:
 
                 rows_baiduzhaopin = baiduzhaopin.baiduzhaopin(query=keyword, city=keycity, pn=page)
+                if(rows_baiduzhaopin == -1):
+                    break
                 page += 1
                 for row_baiduzhaopin in rows_baiduzhaopin:
                     # company maimai homepage hireinfo tag
@@ -525,7 +532,7 @@ if __name__ == "__main__":
                             print("info: maimai inserted {0} {1} {2}".format(maimai_name, maimai_position, company))
                             insert_part[1] = 1
                         elif (ret == -2):
-                            print("info: maimai existed {0} {1}".format(name, company))
+                            print("info: maimai existed {0} {1}".format(maimai_name, company))
                         else:
                             print("error: maimai insert fail")
                             print("Unexpected error:", sys.exc_info()[0])
