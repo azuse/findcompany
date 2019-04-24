@@ -171,7 +171,7 @@ class baiduzhaopin:
              
         r.encoding = 'utf8'
         rdata = json.loads(r.text)
-        if rdata['data']['errno'] == -1:
+        if rdata['data'].get('errno', "") == -1 or rdata['data']['disp_data'] == None:
             self.print("info: 数据获取失败,可能是已经取得了所有结果")
             return -1
 
