@@ -93,9 +93,8 @@ class baiduzhaopin:
                 time.sleep(time_sleep)
 
                 continue
-        index = r.text.index("window.zp_pc_nekot")
-        test = r.text[index:index+100]
-        token = r.text[index+22:index+66]
+        index = r.text.index('data["nekot"] = "')
+        token = r.text[index+17:index+17+44]
         # reverse token
         token = token[::-1]
         token = parse.quote(token)
