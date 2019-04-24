@@ -24,8 +24,6 @@ def writePID():
     pidfile.flush()
     pidfile.close()
 
-logfile = open("crawler_log.txt", "w")
-print_method = "terminal"
 def print(text, text2=""):
     if print_method == "terminal":
         sys.stdout.write(str(text))
@@ -37,22 +35,16 @@ def print(text, text2=""):
         logfile.write("\n")
         logfile.flush()
 
-writePID()
 
-db_username = "root"
-db_password = "misakaxindex"
-db_dbname = "findcompany"
-
-db = pymysql.connect(host='localhost',
-                    user=db_username,
-                    passwd=db_password,
-                    db=db_dbname,
-                    charset='utf8')
-cursor = db.cursor()
-
+####################################
+# 脉脉爬虫                           #
+# @param company 需要抓取的公司名称   #
+# @param headers 已经登录的cookies   #
+# @param time_out 设置网络超时时间    #
+####################################
 def maimai(company, headers= {
         "cookie": """seid=s1551840667869; _buuid=506a7fbf-1b2f-481a-8031-85e007d99559; guid=GxMYBBsaGAQYGh4EGRxWBxgbHhwfExMaHRxWHBkEHRkfBUNYS0xLeQoSEwQSHR8ZBBoEGx0FT0dFWEJpCgNFQUlPbQpPQUNGCgZmZ35iYQIKHBkEHRkfBV5DYUhPfU9GWlprCgMeHHUcElIKUl9EQ2YKERsbcgIKGgQfBUtGRkNQRWc=; token="Q+TrGRMjLhgKkfDydWgiCN3OTEDcmCk5NReUcExsaSkZqFI82V6e6mK37MUFo07k8CKuzcDfAvoCmBm7+jVysA=="; uid="kBWdlFr7Q4Abh3QUS0c+rvAirs3A3wL6ApgZu/o1crA="; session=eyJ1IjoiMjIxMDIzODE5Iiwic2VjcmV0IjoiQmFOSXNQcFl6VEFSVDBGUkFKLW9fMU5vIiwibWlkNDU2ODc2MCI6ZmFsc2UsIl9leHBpcmUiOjE1NTE5Mjc3NTEwMDEsIl9tYXhBZ2UiOjg2NDAwMDAwfQ==; session.sig=ubREdw-SbtyPtXxyq_iUbxWnOek""",
-    }):
+    }, time_out = 20):
     url = "https://maimai.cn/search/contacts"
     data = {
         "count": 20,
@@ -65,8 +57,7 @@ def maimai(company, headers= {
         "pc": 1,
     }
 
-    r = requests.get(url=url, params=data, headers=headers, proxies=proxies, timeout=10)
-    
+    r = requests.get(url=url, params=data, headers=headers, proxies=proxies, timeout=time_out)
     jsondata = json.loads(r.text)
     if jsondata['result'] == "error":
         time.sleep(time_sleep)
@@ -81,8 +72,7 @@ def maimai(company, headers= {
         position = contact.get("position", "")
         major = contact["user_pfmj"].get("mj_name1","")
         profession =  contact["user_pfmj"].get("pf_name1","")
-        mmid = contact.get("mmid","")
-       
+        mmid = contact.get("mmid","")       
 
         sql = "SELECT COUNT(id) FROM maimai WHERE name LIKE '"+name+"' AND company LIKE '"+company+"';"
         cursor.execute(sql)
@@ -95,10 +85,30 @@ def maimai(company, headers= {
         db.commit()
         print(name + "\t\t\tinserted")
 
+
+
 if __name__ == "__main__":
+    writePID()
+    logfile = open("crawler_log.txt", "w")
+    print_method = "terminal"
+
     config = json.load(open("crawler_config.json"))
 
+
     print_method = config["DEFAULT"]['print_method']
+    time_sleep = int(config['MAIMAI']['time_sleep'])
+    time_out = int(config['DEFAULT']['time_out'])
+    headers = config['MAIMAI']['headers']
+    db_username = config['MYSQL']['db_username']
+    db_password = config['MYSQL']['db_password']
+    db_dbname = config['MYSQL']['db_dbname']
+    db = pymysql.connect(host='localhost',
+                        user=db_username,
+                        passwd=db_password,
+                        db=db_dbname,
+                        charset='utf8')
+    cursor = db.cursor()
+
     if(config['DEFAULT'].get("proxy", "noproxy") == "intel"):
         print("info: using intel proxy")
         proxies = {"http": "http://child-prc.intel.com:913",
@@ -111,9 +121,6 @@ if __name__ == "__main__":
         print("info: using no proxy")
         proxies = {"http": None, "https": None}
 
-    
-    time_sleep = int(config['MAIMAI']['time_sleep'])
-    headers = config['MAIMAI']['headers']
 
 
     cursor.execute("SELECT company FROM company ORDER BY id DESC")
@@ -121,7 +128,7 @@ if __name__ == "__main__":
     for row in rows:
         try:
             print("____"+row[0]+"____")
-            maimai(company=row[0], headers=headers)
+            maimai(company=row[0], headers=headers, time_out=time_out)
             time.sleep(time_sleep)
         except:
             print("Unexpected error:", sys.exc_info()[0])

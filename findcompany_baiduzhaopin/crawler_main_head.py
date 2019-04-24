@@ -37,13 +37,24 @@ def validateURL(url):
     else:
         return True
 
+
+
+
+
+
+
+
+
+
+
 class baiduzhaopin:
-    def __init__(self, headers, proxies, time_sleep, logfileHandler, print_method):
+    def __init__(self, headers, proxies, time_sleep, logfileHandler, print_method, time_out=20):
         self.time_sleep = time_sleep
         self.headers = headers
         self.proxies = proxies
         self.logfile = logfileHandler
         self.print_method = print_method
+        self.time_out = time_out
     
     def print(self, text, text2=""):
         if self.print_method == "terminal":
@@ -70,7 +81,8 @@ class baiduzhaopin:
         
         while 1:
             try:
-                r = requests.get(url, headers=headers, timeout=5, proxies=proxies, allow_redirects=True)
+                r = requests.get(url, headers=headers, timeout=self.time_out, proxies=proxies, allow_redirects=True)
+                self.print("info:get token sucess, sleep")
                 time.sleep(time_sleep)
 
                 break
@@ -109,7 +121,7 @@ class baiduzhaopin:
         detailurl = "http://zhaopin.baidu.com/szzw?id="+loc
         if(validateURL(detailurl)):
             try:
-                r = requests.get(detailurl, proxies=proxies, timeout=5)
+                r = requests.get(detailurl, proxies=proxies, timeout=self.time_out)
                 soup = BeautifulSoup(r.text, features="html.parser")
                 return soup.select(".job-detail")[0].get_text()
             except ConnectionError as err:
@@ -150,15 +162,16 @@ class baiduzhaopin:
 
 
         try:
-            r = requests.get(url, proxies=proxies, headers=headers, timeout=5)
+            r = requests.get(url, proxies=proxies, headers=headers, timeout=self.time_out)
+            self.print("info: get baidubaipin data sucess, sleep")
             time.sleep(time_sleep)
         except:            
             self.print("error: request timeout")
             return -1
-            
+             
         r.encoding = 'utf8'
         rdata = json.loads(r.text)
-        if rdata['data']['errno'] == -1:
+        if rdata['data'].get('errno', "") == -1 or rdata['data']['disp_data'] == None:
             self.print("info: 数据获取失败,可能是已经取得了所有结果")
             return -1
 
@@ -199,7 +212,7 @@ class huazhan:
         '吉林':"eKETKEm6"
     }
 
-    def __init__(self, headers, proxies, time_sleep, sort, logfileHandler, print_method):
+    def __init__(self, headers, proxies, time_sleep, sort, logfileHandler, print_method, time_out=20):
         self.time_sleep = time_sleep
         self.headers = headers
         self.proxies = proxies
@@ -207,6 +220,7 @@ class huazhan:
         self.huazhan_login()
         self.logfile = logfileHandler
         self.print_method = print_method
+        self.time_out = time_out
 
     def print(self, text, text2=""):
         if self.print_method == "terminal":
@@ -239,7 +253,7 @@ class huazhan:
             phone = item.get('phone', "")
             if phone != "":
                 item['priority'] += 1
-            
+             
         max_priority = contects[0]['priority']
         max_priority_contect = 0
         i = 0
@@ -264,7 +278,7 @@ class huazhan:
         }
 
         try:
-            r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=10)
+            r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=self.time_out)
             time.sleep(time_sleep)
         except ConnectionError as err:
             self.print("ConnectionError: '{0}'".format(err))
@@ -274,7 +288,6 @@ class huazhan:
             return -1
 
 
-        self.print("-------------------------------enterprise detail 200")
         r.encoding = 'utf-8'
         rdata = json.loads(r.text)
 
@@ -306,7 +319,8 @@ class huazhan:
         }
 
         try:
-            r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=10)
+            r = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=self.time_out)
+            
             time.sleep(time_sleep)
         except ConnectionError as err:
             self.print("ConnectionError: '{0}'".format(err))
@@ -315,7 +329,6 @@ class huazhan:
             self.print("Unexpected error:", sys.exc_info()[0])
             return -1
 
-        self.print("-------------------------------enterprise index 200---------page "+ str(page))
         r.encoding = 'utf-8'
         if r.status_code == 403:
             self.print("error: site return 403")
@@ -340,10 +353,63 @@ class huazhan:
             "userName":"18100837642",
             "password":"intel@123"
         }
-        r = requests.post(url, data=data, headers=headers)
+        r = requests.post(url, data=data, headers=headers, proxies=proxies)
         # self.print(r.text)
 
 
 
 
 
+
+
+
+class maimai:
+    def __init__(self, time_sleep=30, time_out=20,print_method="terminal", proxies = {"http": None, "https": None}, headers= {
+            "cookie": """seid=s1551840667869; _buuid=506a7fbf-1b2f-481a-8031-85e007d99559; guid=GxMYBBsaGAQYGh4EGRxWBxgbHhwfExMaHRxWHBkEHRkfBUNYS0xLeQoSEwQSHR8ZBBoEGx0FT0dFWEJpCgNFQUlPbQpPQUNGCgZmZ35iYQIKHBkEHRkfBV5DYUhPfU9GWlprCgMeHHUcElIKUl9EQ2YKERsbcgIKGgQfBUtGRkNQRWc=; token="Q+TrGRMjLhgKkfDydWgiCN3OTEDcmCk5NReUcExsaSkZqFI82V6e6mK37MUFo07k8CKuzcDfAvoCmBm7+jVysA=="; uid="kBWdlFr7Q4Abh3QUS0c+rvAirs3A3wL6ApgZu/o1crA="; session=eyJ1IjoiMjIxMDIzODE5Iiwic2VjcmV0IjoiQmFOSXNQcFl6VEFSVDBGUkFKLW9fMU5vIiwibWlkNDU2ODc2MCI6ZmFsc2UsIl9leHBpcmUiOjE1NTE5Mjc3NTEwMDEsIl9tYXhBZ2UiOjg2NDAwMDAwfQ==; session.sig=ubREdw-SbtyPtXxyq_iUbxWnOek""",
+        }):
+        self.time_sleep = time_sleep
+        self.time_out = time_out
+        self.print_method = print_method
+        self.proxies = proxies
+        self.headers=headers
+
+    def print(self, text, text2=""):
+        if self.print_method == "terminal":
+            sys.stdout.write(str(text))
+            sys.stdout.write(str(text2))
+            sys.stdout.write("\n")
+        else:
+            self.logfile.write(str(text))
+            self.logfile.write(str(text2))
+            self.logfile.write("\n")
+            self.logfile.flush()
+
+
+    def maimai(self, company):
+        time_sleep = self.time_sleep
+        time_out = self.time_out
+        headers = self.headers
+        proxies = self.proxies
+
+        url = "https://maimai.cn/search/contacts"
+        data = {
+            "count": 20,
+            "page": 0,
+            "query": company,
+            "dist": 0,
+            "searchTokens": "",
+            "highlight": "true",
+            "jsononly": 1,
+            "pc": 1,
+        }
+
+        r = requests.get(url=url, params=data, headers=headers, proxies=proxies, timeout=time_out)
+        jsondata = json.loads(r.text)
+        if jsondata['result'] == "error":
+            time.sleep(time_sleep)
+            jsondata = json.loads(r.text)
+            if jsondata['result'] == "error":
+                time.sleep(time_sleep * 10)
+                jsondata = json.loads(r.text)
+        
+        return jsondata["data"]["contacts"]

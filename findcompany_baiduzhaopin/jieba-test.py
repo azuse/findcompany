@@ -68,78 +68,12 @@ r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
 r'(?::\d+)?' # optional port
 r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
-
+jieba.load_userdict("dict.txt")
 for item in data:
-    try:
-        id = item[0]
-        company = item[1]
-        url = item[2]
-        if(url == "None"):
-            continue
-        
-        if(url.find("http://") == -1 and url.find("https://") == -1):
-            url = "http://" + url
-
-        if(re.match(regex, url) is None):
-            continue 
-        #### using selenium ####
-
-        # driver.get(url)
-        # soup = BeautifulSoup(driver.page_source, features="html.parser")
-        # text = soup.get_text()
-        # btn = driver.find_element_by_css_selector("a")
-        
-        # print("page get daze: "+ text)
-        # jieba_tf_idf(text)
-
-        #### using request ####
-        print("getting url " + url)
-
-       
-        try:
-            r = requests.get(url, timeout = 5)
-            r.encoding = "utf-8"
-        except:
-            print("Unexpected error:", sys.exc_info()[0])
-
-            continue
-        soup = BeautifulSoup(r.text,  features="html.parser")
-        tagArray = ["p", "h1", "h2", "h3", "h4",  "h5", "h6", "label", "a", "span"]
-        text = ""
-        for i in range(len(tagArray)):
-            res = soup.find_all(tagArray[i])
-            for j in range(len(res)):
-                text += "," +  res[j].get_text()
-        
-        a_all = soup.find_all("a")
-        for k in range(len(a_all)):
-            href = a_all[k].attrs.get('href', "")
-            if(href.find("http://") == -1 and href.find("https://") == -1):
-                href = url + href
-
-
-            if(re.match(regex, href) is None):
-                continue 
-
-            print("getting href " + href)
-
-            try:
-                r_sec = requests.get(href, timeout = 5)
-                r_sec.encoding = "utf-8"
-            except:
-                print("Unexpected error:", sys.exc_info()[0])
-                continue
-            soup_sec = BeautifulSoup(r_sec.text, features="html.parser")
-            for i in range(len(tagArray)):
-                res = soup.find_all(tagArray[i])
-                for j in range(len(res)):
-                    text += "," + res[j].get_text()
-
+    id = item[0]
+    company = item[1]
+    url = item[2]
+    seg_list = jieba.cut(company)  # 默认是精确模式
+    print(", ".join(seg_list))
+    input()
     
-
-        print("page get daze: "+ text)
-        if text != "" and r.status_code == 200:
-            jieba_tf_idf(text, company)
-    except: 
-        continue
-        

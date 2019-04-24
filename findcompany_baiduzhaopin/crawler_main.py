@@ -1,4 +1,4 @@
-#!/usr/bin/python
+# !/usr/bin/python
 # -*- coding: UTF-8 -*-
 import urllib
 from urllib import parse
@@ -17,7 +17,7 @@ import os
 import pprint
 import jieba.analyse
 import jieba
-from crawler_main_head import huazhan, baiduzhaopin
+from crawler_main_head import huazhan, baiduzhaopin, maimai
 import os 
 
 def writePID():
@@ -51,11 +51,12 @@ class db:
     # | 每一次插入开一个连接      |
     # | 防止脚本运行时数据库连接中断|
     # =========================
-    def insert_company(self, huazhan_id="", company="", address="", location="", tag="", homepage="", product="", regcapital="", contectName="", contectPosition="", contectPhone="", contectTel="", contectQq="", contectEmail="", contectAllJson="", exhibitionJson="", raw=""):
-
-        sql = """INSERT INTO company (huazhan_id, company, tag, location, address, homePage, product, regCapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw) 
-                    VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}')""" \
-                    .format(huazhan_id, company, tag, location, address, homepage, product, regcapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw)
+    def insert_company(self, huazhan_id="NULL", company="", address="", location="", tag="", homepage="", product="", regcapital="", contectName="", contectPosition="", contectPhone="", contectTel="", contectQq="", contectEmail="", contectAllJson="", exhibitionJson="", raw="", addId=0, description=""):
+        if huazhan_id != "NULL":
+            huazhan_id = "'{0}'".format(huazhan_id)
+        sql = """INSERT INTO company (huazhan_id, company, tag, location, address, homePage, product, regCapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw, addId, description) 
+                    VALUES ({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', {17}, '{18}')""" \
+                    .format(huazhan_id, company, tag, location, address, homepage, product, regcapital, contectName, contectPosition, contectPhone, contectTel, contectQq, contectEmail, contectAllJson, exhibitionJson, raw, addId, description)
         self.db = pymysql.connect(host='localhost',
                                   user=self.user,
                                   passwd=self.password,
@@ -63,31 +64,104 @@ class db:
                                   charset='utf8')
         self.cursor = self.db.cursor()
 
-        self.cursor.execute(
-            "SELECT COUNT(huazhan_id) FROM company WHERE huazhan_id LIKE '{0}';".format(id))
+        # self.cursor.execute(
+        #     "SELECT COUNT(huazhan_id) FROM company WHERE huazhan_id LIKE '{0}';".format(id))
+        # if self.cursor._rows[0] != (0,):
+        #     print("info:  公司已存在")
+        #     return -1
+
+        # try:
+        self.cursor.execute(sql)
+        self.db.commit()
+        self.db.close()
+        return 0
+        # except:
+            
+        self.db.close()
+        return -1
+    
+    def is_company_exist(self, companyname):
+        sql = "SELECT COUNT(*) FROM company WHERE company LIKE '{0}';".format(companyname)
+        self.db = pymysql.connect(host='localhost',
+                                  user=self.user,
+                                  passwd=self.password,
+                                  db=self.database,
+                                  charset='utf8')
+        self.cursor = self.db.cursor()
+        self.cursor.execute(sql)
+        self.db.close()
+
         if self.cursor._rows[0] != (0,):
-            print("info:  公司已存在")
-            return 0
+            return True
+        else:
+            return False
 
-        try:
-            self.cursor.execute(sql)
-            self.db.commit()
-            self.db.close()
-            print("info:  插入成功")
-            return 1
-        except:
-            print("info:  插入失败")
-            print(sql)
-            print("Unexpected error:", sys.exc_info()[0])
-            self.db.close()
-            return 0
+    def insert_tag(self, keyword, ketword_weight, company):
+        sql_check = "SELECT COUNT(keyword_id) count FROM company_keyword WHERE company_name LIKE '"+company+"' AND keyword LIKE '"+keyword+"';"
+        self.db = pymysql.connect(host='localhost',
+                                  user=self.user,
+                                  passwd=self.password,
+                                  db=self.database,
+                                  charset='utf8')
+        self.cursor = self.db.cursor()
+        self.cursor.execute(sql_check)
+        count = self.cursor.fetchall()
+        if count[0][0] != 0:
+            return -1
+
+        sql_insert = "INSERT INTO company_keyword (company_name, keyword, keyword_weight) VALUES ('{0}','{1}','{2}');".format(company,keyword,ketword_weight)
+        self.cursor.execute(sql_insert)
+        self.db.commit()
+        self.db.close()
+
+        return 0
+
+    def insert_baiduzhaopin(self, sid, name, company, city, depart, education, employertype, experience, label, jobclass, salary, location, url, companyaddress, companydescription, companysize, rowdata, company_id):
+        sql = """INSERT INTO baiduzhaopin (sid, jobName, company, city, depart, education, employerType, experience, label, jobClass, salary, location, url, companyAddress, companyDescription, companySize, rowData, queryWord, companyId) VALUES
+                                                                ('{0}', '{1}'  ,'{2}'   ,'{3}',  '{4}' , '{5}'    , '{6}'       , '{7}'     , '{8}', '{9}'   , '{10}', '{11}'  ,'{12}','{13}'        , '{14}'            , '{15}'     , '{16}' , '{17}'   ,'{18}');""" \
+                                                        .format(sid, name, company, city, depart, education, employertype, experience, label, jobclass, salary, location, url, companyaddress, companydescription.replace("'", ""), companysize, rowdata, company, company_id)
+        self.db = pymysql.connect(host='localhost',
+                            user=self.user,
+                            passwd=self.password,
+                            db=self.database,
+                            charset='utf8')
+        self.cursor = self.db.cursor()                
+        self.cursor.execute(
+            "SELECT COUNT(sid) FROM baiduzhaopin WHERE sid LIKE '{0}';".format(sid))
+        if self.cursor._rows[0] != (0,):
+            return -1
+
+        self.cursor.execute(sql)
+        self.db.commit()
+        self.db.close()
+        return 0
+
+    def insert_maimai(self, mmid, name, position, major, profession, company):
+        self.db = pymysql.connect(host='localhost',
+                            user=self.user,
+                            passwd=self.password,
+                            db=self.database,
+                            charset='utf8')
+        self.cursor = self.db.cursor()   
+        sql = "SELECT COUNT(id) FROM maimai WHERE name LIKE '"+name+"' AND company LIKE '"+company+"';"
+        self.cursor.execute(sql)
+        if self.cursor._rows[0] != (0,):
+            return -2
+
+        sql = "INSERT INTO maimai(mmid, company, name, position, major, profession) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}')".format(mmid, company, name, position, major, profession)
+        self.cursor.execute(sql)
+        self.db.commit()
+        return 0
+    
 
 
-# =========================
-# | 调用结巴分词tf_idf       |
-# =========================
-def jieba_tf_idf(content, topK=20):
-
+##########################################
+# 调用结巴分词提取关键词                    #
+# @param content 待分词的句子             #
+# @return array 包含关键词，权重的二维数组  #
+########################################
+def jieba_tf_idf(content, topK = 10):
+    
     withWeight = True
     tags = jieba.analyse.extract_tags(
         content, topK=topK, withWeight=withWeight)
@@ -121,19 +195,21 @@ def validateURL(url):
         return True
 
 
-# =========================
-# | 使用百度搜索搜索公司官网 |
-# =========================
+#################################################
+# 使用百度搜索搜索公司主页                          #
+# @param company 公司名称                        #
+# @return companyUrl 公司主页链接（未找到时为""）   #
+#################################################
 def baidu_search_homepage(company):
     url = "http://www.baidu.com/s?wd="+company+"%20官网"
-    r = requests.get(url, proxies=proxies, timeout=5)
+    r = requests.get(url)
     soup = BeautifulSoup(r.text, features="html.parser")
     ret = soup.select("div[class='f13'] > a")
     if len(ret) == 0:
         print(company + " not found")
         return ""
     if ret[0].text.find("\xa0") != -1:
-        companyUrl = ret[0].text.split("\xa0")[0]
+        companyUrl = ret[0].text.split("\xa0")[0]     #百度搜索会在网页链接后加一个'\xa0'需要手动去掉
         return companyUrl
     else:
         return ""
@@ -144,10 +220,14 @@ def baidu_search_homepage(company):
 # | 错误返回空字符串         |
 # =========================
 def company_homepage_crawler(homepage):
+    if homepage == None:
+        return ""
     print("getting url " + homepage)
+    if(homepage.find("http://") == -1 and homepage.find("https://") == -1):
+        homepage = "http://{0}".format(homepage)
     text = ""
     try:
-        r = requests.get(homepage, timeout=5, proxies=proxies)
+        r = requests.get(homepage, timeout=time_out, proxies=proxies)
         r.encoding = "utf-8"
     except:
         print("Unexpected error:", sys.exc_info()[0])
@@ -170,7 +250,7 @@ def company_homepage_crawler(homepage):
         print("getting href " + href)
 
         try:
-            r_sec = requests.get(href, timeout=5, proxies=proxies)
+            r_sec = requests.get(href, timeout=time_out, proxies=proxies)
             r_sec.encoding = "utf-8"
         except:
             print("Unexpected error in sec:", sys.exc_info()[0])
@@ -181,7 +261,7 @@ def company_homepage_crawler(homepage):
             res = soup_sec.find_all(tagArray[i])
             for j in range(len(res)):
                 text += "," + res[j].get_text()
-    # 不搜索第三层 太多了
+        # 不搜索第三层 太多了
         # a_sec_all = soup_sec.find_all("a")
         # for p in range(len(a_sec_all)):
         #     href = a_sec_all[p].get("href", "")
@@ -192,7 +272,7 @@ def company_homepage_crawler(homepage):
         #     print("getting href " + href)
 
         #     try:
-        #         r_thd = requests.get(href, timeout = 5, proxies=proxies)
+        #         r_thd = requests.get(href, timeout = time_out, proxies=proxies)
         #         r_thd.encoding = "utf-8"
         #     except:
         #         print("Unexpected error in sec:", sys.exc_info()[0])
@@ -227,8 +307,9 @@ if __name__ == "__main__":
 
     # 读取config file
     print('info: using config file: ' + opt.config_path)
-    config = json.load(open(opt.config_path))
+    config = json.load(open(opt.config_path, encoding="utf8"))
     print_method = config["DEFAULT"]['print_method']
+    time_out = int(config['DEFAULT']['time_out'])
 
     ######## MYSQL #########
     # 使用config中的配置初始化数据库
@@ -255,6 +336,7 @@ if __name__ == "__main__":
     # 搜索的关键词 与 城市
     keywords = config['BAIDU']['keywords']
     keycities = config['BAIDU']['keycities']
+    page_wanted = config['BAIDU']['page_wanted']
 
     # 百度搜索的延迟时间 建议设置到60以上
     time_sleep = int(config['BAIDU']['time_sleep'])
@@ -262,10 +344,6 @@ if __name__ == "__main__":
 
     # 百度搜索使用的header cookie设置直接从浏览器中复制
     headers_baidu = config['BAIDU']['headers']
-
-    # 百度百聘搜索类
-    bd = baiduzhaopin(headers=headers_baidu,
-                      proxies=proxies, time_sleep=time_sleep, print_method=print_method, logfileHandler=logfile)
 
     # 初始化华展云搜索选项
     #######################################################################################################
@@ -278,108 +356,297 @@ if __name__ == "__main__":
     # 华展云排序类型 1：综合排序 2：时间排序
     sort_type_huazhan = config['HUAZHAN']['sort_type']
 
-    hz = huazhan(headers=headers_huazhan, proxies=proxies,
-                 time_sleep=time_sleep_huazhan, sort=sort_type_huazhan, print_method=print_method, logfileHandler=logfile)
+    huazhan = huazhan(
+                headers=headers_huazhan, 
+                proxies=proxies,
+                time_sleep=time_sleep_huazhan, 
+                sort=sort_type_huazhan, 
+                print_method=print_method, 
+                logfileHandler=logfile, 
+                time_out=time_out
+                )
+
+    #######################################################################################################
+    headers_maimai = config['MAIMAI']['headers']
+    time_sleep_maimai = config['MAIMAI']['time_sleep']
+
+    maimai = maimai(
+                    time_sleep=time_sleep_maimai,
+                    headers=headers_maimai,
+                    time_out=time_out,
+                    print_method=print_method,
+                    proxies=proxies,
+
+                    )
 
     print("-----------start crawling-----------")
+    
+    tmpdb = pymysql.connect(host='localhost',
+                            user=db_username,
+                            passwd=db_password,
+                            db=db_dbname,
+                            charset='utf8')
+    tmpcursor = tmpdb.cursor()
+
+    tmpcursor.execute("SELECT MAX(addId) FROM company; ")
+    rows = tmpcursor.fetchall()
+    if(rows[0][0] == None):
+        addId = 1
+    else:
+        addId = rows[0][0] + 1
+
+    baiduzhaopin = baiduzhaopin(   
+                                headers=headers_baidu, 
+                                proxies=proxies,
+                                time_sleep=time_sleep,
+                                logfileHandler=logfile,
+                                print_method=print_method,
+                                time_out=time_out
+                                )
+
+    inserted = 0
+    insert_part_log = open("log/insert_part.log","w")
 
     for keyword in keywords:
         for keycity in keycities:
             print(keycity)
             print(keyword)
-            while(True):
-                pn = 0
-                # 调用百度搜索
-                ret = bd.baiduzhaopin(keyword, keycity, pn)
+            page = 0
+            while page < page_wanted:
 
-                # 百度搜索没有结果 继续搜索下一个城市
-                if ret == -1:
+                rows_baiduzhaopin = baiduzhaopin.baiduzhaopin(query=keyword, city=keycity, pn=page)
+                if(rows_baiduzhaopin == -1):
                     break
+                page += 1
+                for row_baiduzhaopin in rows_baiduzhaopin:
+                    # company maimai homepage hireinfo tag
+                    insert_part = [0,0,0,0,0]
 
-                # pn + 10 循环继续搜索下一页
-                pn += 10
-
-                # 处理搜索结果
-                for item in ret:
-                    # 公司名称
-                    company = item.get("company", "")
-                    # 公司地址
-                    companyaddress = item.get("companyaddress", "")
-                    # 公司介绍
-                    companydescription = item.get("companydescription", "")
-                    # 公司所在城市
-                    city = item.get("city", "")
-                    
-                    # 百度百聘搜索公司详细信息需要调用loc
-                    # loc = item.get("loc", "")
-                    # detail = bd.baiduzhaopin_detail(loc)
-
-                    # 公司详情提取关键词
-                    # searchKeywords = jieba_tf_idf(detail, topK=10)
-
-                    # 使用百度搜索搜索公司官网
-                    # homepage = baidu_search_homepage(company)
-                    # if(homepage.find("http://") == -1 and homepage.find("https://") == -1):
-                    #     homepage = "http://" + homepage
-
-                    # 抓取公司官网信息 提取关键词
-                    # text = company_homepage_crawler(homepage)
-                    # searchKeywords.append(jieba_tf_idf(text, topK=20))
-
-                    # 使用公司名在华展云搜索公司列表
-                    ret2 = hz.huazhan_search_company_list(company, 1)
-                    if ret2 == -1:
+                    huazhan_id = ""
+                    company = row_baiduzhaopin['company']
+                    if company.find("某") != -1:
+                        print("info: company filtered: {0}".format(company))
                         continue
+                    if db.is_company_exist(company):
+                        print("info: company exist: {0}".format(company))
+                        continue
+                    print("info: starting to insert company: {0}".format(company))
+                    description = row_baiduzhaopin.get("companydescription", "")
+                    tag = ""
+                    location = row_baiduzhaopin.get("city", "")
+                    address = ""
+                    homePage = ""
+                    product = ""
+                    regCapital = ""
+                    contectName = ""
+                    contectPosition = ""
+                    contectPhone = ""
+                    contectTel = ""
+                    contectQq = ""
+                    contectEmail = ""
+                    contectAllJson = ""
+                    exhibitionJson = ""
+                    raw = ""
+                    addId = addId
 
-                    # 处理华展云搜索结果
-                    for item in ret2:
-                        # 华展云搜索公司详细信息
-                        ret3 = hz.huazhan_search_company_detail(item["id"])
-                        # detail 公司详细信息
-                        detail = ret3["detail"]
-                        # cur 联系人信息
-                        contects = ret3["cur"]
-                        # pro 参展信息
-                        exhibitions = ret3["pro"]
-                        # 保存原始json数据
-                        raw = json.dumps(ret3)
-                        # 公司的华展云id
-                        id = detail.get('id', "")
-                        # 公司名称
-                        name = detail.get('name', "")
-                        print(name)
-                        # 华展云与百度百聘公司名称不匹配 跳过
-                        if name != company:
-                            continue
+                    rows_huazhan = huazhan.huazhan_search_company_list(keyword=company, page=0)
+                    for row_huazhan in rows_huazhan:
+                        if(re.sub(r"<.*?>", "", row_huazhan["names"]) == company):
+                            print("info: huazhan imformation matched")
+                            rdata_huazhan = huazhan.huazhan_search_company_detail(row_huazhan['id'])
+                            rdata_detail = rdata_huazhan['detail']
+                            rdata_contects = rdata_huazhan['cur']
+                            rdata_exhibitions = rdata_huazhan['pro']
+                            
+                            huazhan_id = rdata_detail.get("id","")
+                            tag = rdata_detail.get('trades',"")
+                            address = rdata_detail.get("address","")
+                            homePage = rdata_detail.get("url", "")
+                            product = rdata_detail.get("product","")
+                            regCapital = rdata_detail.get("regcapital","")
+
+                            if rdata_contects != None:
+                                contect_main = huazhan.find_main_contect(rdata_contects)
+                            else:
+                                contect_main = dict()
+
+                            contectName = contect_main.get("name","")
+                            contectPosition = contect_main.get("position","")
+                            contectPhone = contect_main.get("phone","")
+                            contectTel = contect_main.get("tel","")
+                            contectQq = contect_main.get("qq","")
+                            contectEmail = contect_main.get("email","")
+                            
+                            contectAllJson = json.dumps(rdata_contects)
+                            exhibitionJson = json.dumps(rdata_exhibitions)
+
+                            raw = json.dumps(row_huazhan)
+
+                            
+                            
+                            break
+                    if huazhan_id == "":
+                        print("info: huazhan information no match")
+
+                    ret = db.insert_company(
+                                            huazhan_id=huazhan_id,
+                                            company=company,
+                                            description=description,
+                                            address=address,
+                                            location=location,
+                                            tag=tag,
+                                            homepage=homePage,
+                                            product=product,
+                                            regcapital=regCapital,
+                                            contectName=contectName,
+                                            contectPosition=contectPosition,
+                                            contectPhone=contectPhone,
+                                            contectTel=contectTel,
+                                            contectQq=contectQq,
+                                            contectEmail=contectEmail,
+                                            contectAllJson=contectAllJson,
+                                            exhibitionJson=exhibitionJson,
+                                            raw=raw,
+                                            addId=addId
+                                        )
+                    if ret == 0:
+                        print("info: company inserted: {0}".format(company))
+                        insert_part[0] = 1
+                    else:
+                        print("info: sql insert fail in company insert")
+                        print("Unexpected error:", sys.exc_info()[0])
 
 
-                        tag = detail.get('trades', "")
-                        location = detail.get('areas', "")
-                        address = detail.get('address', "")
-                        homepage = detail.get('url', "")
+                    
+                    ret = maimai.maimai(company)
+                    for contact in ret:
+                        contact = contact.get("contact", "")
+                        maimai_name = contact.get("name", "")
+                        maimai_position = contact.get("position", "")
+                        maimai_major = contact["user_pfmj"].get("mj_name1","")
+                        maimai_profession =  contact["user_pfmj"].get("pf_name1","")
+                        maimai_mmid = contact.get("mmid","")       
 
-                        # 产品介绍 #
-                        product = detail.get('prodcut', "")
-                        # regcaptal 注册资本#
-                        regcapital = detail.get("regcapital", "")
-
-                        # 对联系人的一些处理 因为联系人个数不确定 数据库中为 一个主联系人-手机-固话-邮件-qq + 所有联系人的json数据存储
-                        # 正向搜索有手机号的联系人
-                        if contects != None:
-                            contect_main = hz.find_main_contect(contects)
+                        ret = db.insert_maimai(maimai_mmid, maimai_name, maimai_position, maimai_major, maimai_profession, company)
+                        if(ret == 0):
+                            print("info: maimai inserted {0} {1} {2}".format(maimai_name, maimai_position, company))
+                            insert_part[1] = 1
+                        elif (ret == -2):
+                            print("info: maimai existed {0} {1}".format(maimai_name, company))
                         else:
-                            contect_main = dict()
+                            print("error: maimai insert fail")
+                            print("Unexpected error:", sys.exc_info()[0])
+                    if( insert_part[1] == 0):
+                        print("info: maimai not found")
 
-                        contect_main_name = contect_main.get('name', "")
-                        contect_main_phone = contect_main.get('phone', "")
-                        contect_main_tel = contect_main.get('tel', "")
-                        contect_main_qq = contect_main.get('qq', "")
-                        contect_main_email = contect_main.get('email', "")
-                        contect_main_position = contect_main.get('position', "")
 
-                        contect_all_json = json.dumps(contects)
-                        exhibitions_json = json.dumps(exhibitions)
+                    if homePage == "":
+                        homePage = baidu_search_homepage(company)
+                    if homePage != "":
+                        print("info: homepage found: {0}".format(homePage))
+                        homePage_text = company_homepage_crawler(homePage)
+                        if homePage_text != "":
+                            tags = jieba_tf_idf(homePage_text)
+                            for tag in tags:
+                                db.insert_tag(tag[0], tag[1], company)
+                            print("info: tags for homepage inserted")
+                            insert_part[2] = 1
+                    else:
+                        print("info: homepage not found")
 
-                        # 插入到数据库
-                        db.insert_company(huazhan_id=id, company=name, address=address, location=location, tag=tag, homepage=homepage, product=product, regcapital=regcapital, contectName=contect_main_name, contectPosition=contect_main_position,
-                                        contectPhone=contect_main_phone, contectTel=contect_main_tel, contectQq=contect_main_qq, contectEmail=contect_main_email, contectAllJson=contect_all_json, exhibitionJson=exhibitions_json, raw=raw)
+
+                    # 查找该公司的招聘信息
+                    hireinfo = baiduzhaopin.baiduzhaopin(company, location)
+                    if hireinfo != -1:
+                        for row in hireinfo:
+                            try:
+                                # 百度百聘id
+                                sid = row.get('@sid', "")
+                                # 招聘的职位名字
+                                name = row.get("@name", "")
+                                # 所在城市
+                                city = row.get("city", "")
+                                # 所在部门
+                                depart = row.get("depart", "")
+                                # 要求教育水平
+                                education = row.get("education", "")
+                                # 雇主种类
+                                employertype = row.get("employertype", "")
+                                # 经验
+                                experience = row.get("experience", "")
+                                # 标签
+                                first_level_label = row.get("first_level_label", "")
+                                second_level_label = row.get("second_level_label", "")
+                                third_level_label = row.get("third_level_label", "")
+
+                                label = first_level_label + ',' + second_level_label + ',' + third_level_label
+                                # 工作种类
+                                jobfirstclass = row.get("jobfirstclass", "")
+                                jobsecondclass = row.get("jobsecondclass", "")
+                                jobthirdclass = row.get("jobthirdclass", "")
+
+                                jobclass = jobfirstclass + ',' + jobsecondclass + ',' + jobthirdclass
+                                # 月薪
+                                salary = row.get("salary", "")
+                                # 地点
+                                location = row.get("location", "")
+                                # 详细链接
+                                url = row.get("pc_url", "")
+                                # 公司地址 公司介绍 公司规模 公司id
+                                companyaddress = row.get("companyaddress", "")
+                                companydescription = row.get("companydescription", "")
+                                companysize = row.get("companysize", "")
+                                company_id = row.get("company_id", "")
+                                # 生数据
+                                rowdata = json.dumps(row)
+
+                                ret = db.insert_baiduzhaopin(
+                                                            sid=sid,
+                                                            name=name,
+                                                            company=company,
+                                                            city=city,
+                                                            depart=depart,
+                                                            education=education,
+                                                            employertype=employertype,
+                                                            experience=experience,
+                                                            label=label,
+                                                            jobclass=jobclass,
+                                                            salary=salary,
+                                                            location=location,
+                                                            url=url,
+                                                            companyaddress=companyaddress,
+                                                            company_id=company_id,
+                                                            companydescription=companydescription,
+                                                            companysize=companysize,
+                                                            rowdata=rowdata
+                                                            )
+                                if ret == 0:
+                                    print("info: hireinfo inserted {0}".format(name))
+                                    insert_part[3]=1
+                                else:
+                                    print("info:  sql insert fail in hireinfo insert")
+                                    print("Unexpected error:", sys.exc_info()[0])
+
+                                tags = jieba_tf_idf(name, topK=5)
+                                for tag in tags:
+                                    db.insert_tag(tag[0], tag[1], company,)
+                                print("info: tags for hireinfo inserted")
+                            except:
+                                print("error:  error in retreiving hiring info")
+                                print("Unexpected error:", sys.exc_info()[0])
+                    tags = jieba_tf_idf(description, topK=10)
+                    for tag in tags:
+                        db.insert_tag(tag[0], tag[1], company,)
+                    insert_part[4] = 1
+                    print("info: tags for company description inserted")
+                    insert_part_string = ' '.join(str(e) for e in insert_part)
+                    insert_part_log.write("{0} {1}".format(insert_part_string, company))
+                    print("info: one company insert program finished, continuing...")
+                    print("")
+
+                                
+                                
+
+
+            
+                        

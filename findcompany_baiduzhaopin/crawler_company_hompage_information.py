@@ -18,7 +18,11 @@ import pprint
 import jieba.analyse
 import jieba
 
-
+#################################################
+# 使用百度搜索搜索公司主页                          #
+# @param company 公司名称                        #
+# @return companyUrl 公司主页链接（未找到时为""）   #
+#################################################
 def baidu_search_homepage(company):
     url = "http://www.baidu.com/s?wd="+company+"%20官网"
     r = requests.get(url)
@@ -26,13 +30,19 @@ def baidu_search_homepage(company):
     ret = soup.select("div[class='f13'] > a")
     if len(ret) == 0:
         print(company + " not found")
-        return -1
+        return ""
     if ret[0].text.find("\xa0") != -1:
-        companyUrl = ret[0].text.split("\xa0")[0]
+        companyUrl = ret[0].text.split("\xa0")[0]     #百度搜索会在网页链接后加一个'\xa0'需要手动去掉
         return companyUrl
     else:
         return ""
 
+
+##########################################
+# 调用结巴分词提取关键词                    #
+# @param content 待分词的句子             #
+# @return array 包含关键词，权重的二维数组  #
+########################################
 def jieba_tf_idf(content):
     topK = 10
     withWeight = True
@@ -45,7 +55,7 @@ def jieba_tf_idf(content):
     else:
         print(",".join(tags))
 
-    return tags[0][0]
+    return tags
 
 regex = re.compile(
 r'^(?:http|ftp)s?://' # http:// or https://
@@ -58,10 +68,15 @@ r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 tagArray = ["p", "h1", "h2", "h3", "h4",  "h5", "h6", "label"]
 
 
+############################################
+#  获取公司网页的关键词                       #
+#  @param url 公司网页域名                  # 
+#  @return array 包含关键词，权重的二维数组   #
+##########################################
 def get_company_tf_idf(url):
     print("getting url " + url)
     try:
-        r = requests.get(url, timeout = 5)
+        r = requests.get(url, timeout = time_out)
     except:
         print("Unexpected error:", sys.exc_info()[0])
         return -1
@@ -88,7 +103,7 @@ def get_company_tf_idf(url):
         print("getting href " + href)
 
         try:
-            r_sec = requests.get(href, timeout = 5)
+            r_sec = requests.get(href, timeout = time_out)
         except:
             print("Unexpected error:", sys.exc_info()[0])
             continue
@@ -108,6 +123,7 @@ if __name__ == "__main__":
     (opt, args) = parser.parse_args()
 
     config = json.load(open(opt.config_path))
+    time_out = config['DEFAULT']['time_out']
 
     db_username = config['MYSQL']['db_username']
     db_password = config['MYSQL']['db_password']
@@ -140,7 +156,9 @@ if __name__ == "__main__":
         if(re.match(regex, url) is None):
             continue 
 
-        get_company_tf_idf(url)
+        tags = get_company_tf_idf(url)
+
+        ### 将tags插入数据库
 
         
 

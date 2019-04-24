@@ -40,26 +40,25 @@ def print(text, text2=""):
 
 writePID()
 
-db_username = "root"
-db_password = "misakaxindex"
-db_dbname = "findcompany"
-
+config = json.load(open("crawler_config.json"))
+print_method = config["DEFAULT"]['print_method']
+time_out = config['DEFAULT']['time_out']
+time_sleep = int(config['BAIDU']['time_sleep'])
+headers_baidu = config['BAIDU']['headers']
+db_username = config['MYSQL']['db_username']
+db_password = config['MYSQL']['db_password']
+db_dbname = config['MYSQL']['db_dbname']
 db = pymysql.connect(host='localhost',
                     user=db_username,
                     passwd=db_password,
                     db=db_dbname,
                     charset='utf8')
 cursor = db.cursor()
-
 sql = "SELECT id,company,location FROM company ORDER BY id DESC ;"
-
 cursor.execute(sql)
-
 data = cursor.fetchall()
 
-config = json.load(open("crawler_config.json"))
 
-print_method = config["DEFAULT"]['print_method']
 if(config['DEFAULT'].get("proxy", "noproxy") == "intel"):
     print("info: using intel proxy")
     proxies = {"http": "http://child-prc.intel.com:913",
@@ -71,9 +70,9 @@ elif(config['DEFAULT'].get("proxy", "noproxy") == "socks5"):
 elif(config['DEFAULT'].get("proxy", "noproxy") == "noproxy"):
     print("info: using no proxy")
     proxies = {"http": None, "https": None}
-time_sleep = int(config['BAIDU']['time_sleep'])
-headers_baidu = config['BAIDU']['headers']
-bd = baiduzhaopin(headers=headers_baidu, proxies=proxies, time_sleep=time_sleep, logfileHandler=logfile, print_method=print_method)
+
+
+bd = baiduzhaopin(headers=headers_baidu, proxies=proxies, time_sleep=time_sleep, logfileHandler=logfile, print_method=print_method, time_out=time_out)
 
 for item in data:
     id = item[0]
