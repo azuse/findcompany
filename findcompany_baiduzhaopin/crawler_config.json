@@ -1,18 +1,11 @@
 {
     "DEFAULT":{
         "proxy": "noproxy",
-<<<<<<< HEAD
-        "print_method": "file"
-    },
-    "BAIDU":{
-        "time_sleep" : 60,       
-=======
-        "print_method": "terminal",
+        "print_method": "file",
         "time_out": 20
     },
     "BAIDU":{
-        "time_sleep" : 3,       
->>>>>>> b35b6e34a5a1d8460137e3a7d14c01faf42a2594
+        "time_sleep" : 60,       
         "fail_count_limit" : 10 , 
         "fail_sleep" : 100,
 
