@@ -46,10 +46,10 @@ def jieba_tf_idf(content):
     return tags
 
 ########## insert keyword from company name(tf-idf) 插入公司名称中的关键词 ########### 
-# sql = "SELECT id, company FROM company"
-# cursor.execute(sql)
-# data = cursor.fetchall()
-# jieba.load_userdict("dict.txt")
+sql = "SELECT id, company FROM company"
+cursor.execute(sql)
+data = cursor.fetchall()
+jieba.load_userdict("dict.txt")
 
 for item in data:
     id = item[0]
