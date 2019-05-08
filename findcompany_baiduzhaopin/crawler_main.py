@@ -96,7 +96,7 @@ class db:
         else:
             return False
 
-    def insert_tag(self, keyword, ketword_weight, company, comopany_id):
+    def insert_tag(self, keyword, ketword_weight, company, company_id):
         sql_check = "SELECT COUNT(keyword_id) count FROM company_keyword WHERE company_name LIKE '"+company+"' AND keyword LIKE '"+keyword+"';"
         self.db = pymysql.connect(host='localhost',
                                   user=self.user,
