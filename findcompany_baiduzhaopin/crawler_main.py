@@ -96,7 +96,7 @@ class db:
         else:
             return False
 
-    def insert_tag(self, keyword, ketword_weight, company):
+    def insert_tag(self, keyword, ketword_weight, company, comopany_id):
         sql_check = "SELECT COUNT(keyword_id) count FROM company_keyword WHERE company_name LIKE '"+company+"' AND keyword LIKE '"+keyword+"';"
         self.db = pymysql.connect(host='localhost',
                                   user=self.user,
@@ -109,7 +109,7 @@ class db:
         if count[0][0] != 0:
             return -1
 
-        sql_insert = "INSERT INTO company_keyword (company_name, keyword, keyword_weight) VALUES ('{0}','{1}','{2}');".format(company,keyword,ketword_weight)
+        sql_insert = "INSERT INTO company_keyword (company_id, company_name, keyword, keyword_weight) VALUES ('{0}','{1}','{2}','{3}');".format(company_id,company,keyword,ketword_weight)
         self.cursor.execute(sql_insert)
         self.db.commit()
         self.db.close()
@@ -152,6 +152,19 @@ class db:
         self.cursor.execute(sql)
         self.db.commit()
         return 0
+
+    def get_company_id_by_company(self, company):
+        self.db = pymysql.connect(host='localhost',
+                            user=self.user,
+                            passwd=self.password,
+                            db=self.database,
+                            charset='utf8')
+        self.cursor = self.db.cursor()   
+        sql = "SELECT id FROM company WHERE company LIKE '"+company+"' ;"
+        self.cursor.execute(sql)
+        
+        data = self.cursor.fetchall()
+        return data[0][0]  
     
 
 
@@ -448,6 +461,7 @@ if __name__ == "__main__":
                     exhibitionJson = ""
                     raw = ""
                     addId = addId
+                    id = 0
 
                     rows_huazhan = huazhan.huazhan_search_company_list(keyword=company, page=0)
                     for row_huazhan in rows_huazhan:
@@ -511,6 +525,7 @@ if __name__ == "__main__":
                                         )
                     if ret == 0:
                         print("info: company inserted: {0}".format(company))
+                        id = db.get_company_id_by_company(company)
                         insert_part[0] = 1
                     else:
                         print("info: sql insert fail in company insert")
@@ -548,7 +563,7 @@ if __name__ == "__main__":
                         if homePage_text != "":
                             tags = jieba_tf_idf(homePage_text)
                             for tag in tags:
-                                db.insert_tag(tag[0], tag[1], company)
+                                db.insert_tag(tag[0], tag[1], company, id)
                             print("info: tags for homepage inserted")
                             insert_part[2] = 1
                     else:
@@ -629,14 +644,14 @@ if __name__ == "__main__":
 
                                 tags = jieba_tf_idf(name, topK=5)
                                 for tag in tags:
-                                    db.insert_tag(tag[0], tag[1], company,)
+                                    db.insert_tag(tag[0], tag[1], company, id)
                                 print("info: tags for hireinfo inserted")
                             except:
                                 print("error:  error in retreiving hiring info")
                                 print("Unexpected error:", sys.exc_info()[0])
                     tags = jieba_tf_idf(description, topK=10)
                     for tag in tags:
-                        db.insert_tag(tag[0], tag[1], company,)
+                        db.insert_tag(tag[0], tag[1], company, id)
                     insert_part[4] = 1
                     print("info: tags for company description inserted")
                     insert_part_string = ' '.join(str(e) for e in insert_part)
