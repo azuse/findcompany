@@ -329,7 +329,7 @@ if __name__ == "__main__":
                     charset='utf8')
     tmpcursor = tmpdb.cursor()
 
-    tmpcursor.execute("SELECT MAX(addId) FROM company; ")
+    tmpcursor.execute("SELECT MAX(addId) FROM update_history; ")
     rows = tmpcursor.fetchall()
     if(rows[0][0] == None):
         addId = 1

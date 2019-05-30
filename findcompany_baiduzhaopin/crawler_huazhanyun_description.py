@@ -58,7 +58,7 @@ db = pymysql.connect(host='localhost',
 
 cursor = db.cursor()
 
-cursor.execute("SELECT MAX(addId) FROM company; ")
+cursor.execute("SELECT MAX(addId) FROM update_history; ")
 rows = cursor.fetchall()
 if(rows[0][0] == None):
     addId = 1
