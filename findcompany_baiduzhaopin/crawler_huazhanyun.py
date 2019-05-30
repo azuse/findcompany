@@ -338,6 +338,7 @@ if __name__ == "__main__":
 
     tmpcursor.execute("INSERT INTO `update_history` (`addId`, `date`, `type`, `result_count`) VALUES ({0}, CURRENT_TIMESTAMP, 2, {1});".format(addId, insert_count))
     rows = tmpcursor.fetchall()
+    tmpdb.commit()
 
     #proxies for inside intel
     opt.proxy_select = config['DEFAULT'].get("proxy", opt.proxy_select)
