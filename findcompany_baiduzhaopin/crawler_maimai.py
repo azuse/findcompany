@@ -121,7 +121,7 @@ if __name__ == "__main__":
         addId = rows[0][0] + 1
 
     insert_count = 0
-    cursor.execute("INSERT INTO `update_histoy` (`addId`, `date`, `type`, `result_count`) VALUES ({0}, CURRENT_TIMESTAMP, 5, {1});".format(addId, insert_count))
+    cursor.execute("INSERT INTO `update_history` (`addId`, `date`, `type`, `result_count`) VALUES ({0}, CURRENT_TIMESTAMP, 5, {1});".format(addId, insert_count))
     rows = cursor.fetchall()
 
     if(config['DEFAULT'].get("proxy", "noproxy") == "intel"):
