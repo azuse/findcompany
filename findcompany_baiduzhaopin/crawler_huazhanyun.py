@@ -170,9 +170,11 @@ def huazhan_search_company_detail(id):
     if ret:
         insert_count += 1
         print("company inserted! total "+ str(insert_count))
-        global cursor
-        cursor.execute("UPDATE update_history SET result_count = {0} WHERE addId = {1};".format(insert_count, addId))
-        cursor.fetchall()
+        global tmpcursor
+        global tmpdb
+        tmpcursor.execute("UPDATE update_history SET result_count = {0} WHERE addId = {1};".format(insert_count, addId))
+        tmpcursor.fetchall()
+        tmpdb.commit()
     else :
         print("company already exist")
     return ret
@@ -320,18 +322,22 @@ if __name__ == "__main__":
     db_dbname = config['MYSQL']['db_dbname']
 
     db = mysql_huazhan(db_username, db_password, db_dbname)
+    tmpdb = pymysql.connect(host='localhost',
+                    user=db_username,
+                    passwd=db_password,
+                    db=db_dbname,
+                    charset='utf8')
+    tmpcursor = tmpdb.cursor()
 
-    cursor = db.cursor()
-
-    cursor.execute("SELECT MAX(addId) FROM company; ")
-    rows = cursor.fetchall()
+    tmpcursor.execute("SELECT MAX(addId) FROM company; ")
+    rows = tmpcursor.fetchall()
     if(rows[0][0] == None):
         addId = 1
     else:
         addId = rows[0][0] + 1
 
-    cursor.execute("INSERT INTO `update_histoy` (`addId`, `date`, `type`, `result_count`) VALUES ({0}, CURRENT_TIMESTAMP, 2, {1});".format(addId, insert_count))
-    rows = cursor.fetchall()
+    tmpcursor.execute("INSERT INTO `update_histoy` (`addId`, `date`, `type`, `result_count`) VALUES ({0}, CURRENT_TIMESTAMP, 2, {1});".format(addId, insert_count))
+    rows = tmpcursor.fetchall()
 
     #proxies for inside intel
     opt.proxy_select = config['DEFAULT'].get("proxy", opt.proxy_select)

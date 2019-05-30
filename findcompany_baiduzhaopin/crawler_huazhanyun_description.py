@@ -68,6 +68,7 @@ else:
 insert_count = 0
 cursor.execute("INSERT INTO `update_histoy` (`addId`, `date`, `type`, `result_count`) VALUES ({0}, CURRENT_TIMESTAMP, 3, {1});".format(addId, insert_count))
 rows = cursor.fetchall()
+db.commit()
 
 
 sql = "SELECT id,company,location FROM company ORDER BY id DESC ;"
@@ -115,3 +116,4 @@ for item in data:
         insert_count += 1
         cursor.execute("UPDATE update_history SET result_count = {0} WHERE addId = {1};".format(insert_count, addId))
         cursor.fetchall()
+        db.commit()

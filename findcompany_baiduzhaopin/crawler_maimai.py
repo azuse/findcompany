@@ -88,6 +88,8 @@ def maimai(company, headers= {
         insert_count += 1
         cursor.execute("UPDATE update_history SET result_count = {0} WHERE addId = {1};".format(insert_count, addId))
         cursor.fetchall()
+        db.commit()
+
 
 
 
