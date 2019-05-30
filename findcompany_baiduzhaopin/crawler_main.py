@@ -408,6 +408,10 @@ if __name__ == "__main__":
     else:
         addId = rows[0][0] + 1
 
+    insert_count = 0
+    tmpcursor.execute("INSERT INTO `update_histoy` (`addId`, `date`, `type`, `result_count`) VALUES ({0}, CURRENT_TIMESTAMP, 5, {1});".format(addId, insert_count))
+    rows = tmpcursor.fetchall()
+    
     baiduzhaopin = baiduzhaopin(   
                                 headers=headers_baidu, 
                                 proxies=proxies,
@@ -526,6 +530,9 @@ if __name__ == "__main__":
                     if ret == 0:
                         print("info: company inserted: {0}".format(company))
                         id = db.get_company_id_by_company(company)
+                        insert_count += 1
+                        tmpcursor.execute("UPDATE update_history SET result_count = {0} WHERE addId = {1};".format(insert_count, addId))
+                        tmpcursor.fetchall()
                         insert_part[0] = 1
                     else:
                         print("info: sql insert fail in company insert")

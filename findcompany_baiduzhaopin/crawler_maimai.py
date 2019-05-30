@@ -84,6 +84,10 @@ def maimai(company, headers= {
         cursor.execute(sql)
         db.commit()
         print(name + "\t\t\tinserted")
+        global insert_count
+        insert_count += 1
+        cursor.execute("UPDATE update_history SET result_count = {0} WHERE addId = {1};".format(insert_count, addId))
+        cursor.fetchall()
 
 
 
@@ -108,6 +112,17 @@ if __name__ == "__main__":
                         db=db_dbname,
                         charset='utf8')
     cursor = db.cursor()
+
+    cursor.execute("SELECT MAX(addId) FROM company; ")
+    rows = cursor.fetchall()
+    if(rows[0][0] == None):
+        addId = 1
+    else:
+        addId = rows[0][0] + 1
+
+    insert_count = 0
+    cursor.execute("INSERT INTO `update_histoy` (`addId`, `date`, `type`, `result_count`) VALUES ({0}, CURRENT_TIMESTAMP, 5, {1});".format(addId, insert_count))
+    rows = cursor.fetchall()
 
     if(config['DEFAULT'].get("proxy", "noproxy") == "intel"):
         print("info: using intel proxy")

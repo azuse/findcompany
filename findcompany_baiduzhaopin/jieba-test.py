@@ -8,7 +8,6 @@ import json
 import requests
 from urllib import parse
 import urllib
-from optparse import OptionParser
 import jieba.analyse
 import jieba
 import sys
@@ -42,10 +41,13 @@ def jieba_tf_idf(content, company):
 
     return tags[0][0]
 
-# print(jieba_tf_idf("大津编物（无锡）有限公司"))
-db_username = "root"
-db_password = "misakaxindex"
-db_dbname = "findcompany"
+config = json.load(open("crawler_config.json", encoding="utf8"))
+######## MYSQL #########
+# 使用config中的配置初始化数据库
+db_username = config['MYSQL']['db_username']
+db_password = config['MYSQL']['db_password']
+db_dbname = config['MYSQL']['db_dbname']
+
 
 db = pymysql.connect(host='localhost',
                     user=db_username,

@@ -170,6 +170,9 @@ def huazhan_search_company_detail(id):
     if ret:
         insert_count += 1
         print("company inserted! total "+ str(insert_count))
+        global cursor
+        cursor.execute("UPDATE update_history SET result_count = {0} WHERE addId = {1};".format(insert_count, addId))
+        cursor.fetchall()
     else :
         print("company already exist")
     return ret
@@ -318,6 +321,18 @@ if __name__ == "__main__":
 
     db = mysql_huazhan(db_username, db_password, db_dbname)
 
+    cursor = db.cursor()
+
+    cursor.execute("SELECT MAX(addId) FROM company; ")
+    rows = cursor.fetchall()
+    if(rows[0][0] == None):
+        addId = 1
+    else:
+        addId = rows[0][0] + 1
+
+    cursor.execute("INSERT INTO `update_histoy` (`addId`, `date`, `type`, `result_count`) VALUES ({0}, CURRENT_TIMESTAMP, 2, {1});".format(addId, insert_count))
+    rows = cursor.fetchall()
+
     #proxies for inside intel
     opt.proxy_select = config['DEFAULT'].get("proxy", opt.proxy_select)
 
@@ -371,5 +386,3 @@ def huazhan_login():
     }
     r = requests.post(url, data=data, headers=headers)
     print(r.text)
-
-huazhan_login()

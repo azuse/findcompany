@@ -53,7 +53,21 @@ db = pymysql.connect(host='localhost',
                     passwd=db_password,
                     db=db_dbname,
                     charset='utf8')
+
 cursor = db.cursor()
+
+cursor.execute("SELECT MAX(addId) FROM company; ")
+rows = cursor.fetchall()
+if(rows[0][0] == None):
+    addId = 1
+else:
+    addId = rows[0][0] + 1
+
+insert_count = 0
+cursor.execute("INSERT INTO `update_histoy` (`addId`, `date`, `type`, `result_count`) VALUES ({0}, CURRENT_TIMESTAMP, 4, {1});".format(addId, insert_count))
+rows = cursor.fetchall()
+
+
 sql = "SELECT id,company,location FROM company ORDER BY id DESC ;"
 cursor.execute(sql)
 data = cursor.fetchall()
@@ -136,6 +150,9 @@ for item in data:
                 cursor.execute(sql)
                 db.commit()
                 print("____" + name + " ____已插入")
+                insert_count += 1
+                cursor.execute("UPDATE update_history SET result_count = {0} WHERE addId = {1};".format(insert_count, addId))
+                cursor.fetchall()
             except:
                 print("Unexpected error:", sys.exc_info()[0])
 
