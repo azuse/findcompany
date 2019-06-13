@@ -325,7 +325,7 @@ if __name__ == "__main__":
     if(print_method == "file"):
         sys.stderr = logfile    # 重定向标准错误
     time_out = int(config['DEFAULT']['time_out'])
-
+    
     ######## MYSQL #########
     # 使用config中的配置初始化数据库
     db_username = config['MYSQL']['db_username']

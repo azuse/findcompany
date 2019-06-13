@@ -198,7 +198,7 @@ delimiter ;
 
 
 -- 测试
-drop table if exists cities;
-create table cities(city text);
-insert into cities(city) values ("");
-call search_all("",1,1,1,1,1,1,1,1,10);
+-- drop table if exists cities;
+-- create table cities(city text);
+-- insert into cities(city) values ("");
+-- call search_all("",1,1,1,1,1,1,1,1,10);
