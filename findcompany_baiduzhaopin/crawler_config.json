@@ -1,7 +1,7 @@
 {
     "DEFAULT":{
         "proxy": "noproxy",
-        "print_method": "terminal",
+        "print_method": "file",
         "time_out": 20
     },
     "BAIDU":{
