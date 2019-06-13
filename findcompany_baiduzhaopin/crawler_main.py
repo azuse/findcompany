@@ -322,6 +322,8 @@ if __name__ == "__main__":
     print('info: using config file: ' + opt.config_path)
     config = json.load(open(opt.config_path, encoding="utf8"))
     print_method = config["DEFAULT"]['print_method']
+    if(print_method == "file"):
+        sys.stderr = logfile    # 重定向标准错误
     time_out = int(config['DEFAULT']['time_out'])
 
     ######## MYSQL #########
