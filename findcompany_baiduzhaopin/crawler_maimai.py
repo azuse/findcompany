@@ -35,6 +35,18 @@ def print(text, text2=""):
         logfile.write("\n")
         logfile.flush()
 
+####################################
+# 脉脉登录                          #
+####################################
+def maimai_login(session, username, password, time_out=20):
+    url = "https://acc.maimai.cn/login"
+    data =  {
+        "m": username,
+        "p": password
+    }
+    session.post(url=url, params=data, proxies=proxies, timeout=time_out)
+    return cookies
+
 
 ####################################
 # 脉脉爬虫                           #
@@ -42,9 +54,7 @@ def print(text, text2=""):
 # @param headers 已经登录的cookies   #
 # @param time_out 设置网络超时时间    #
 ####################################
-def maimai(company, headers= {
-        "cookie": """seid=s1551840667869; _buuid=506a7fbf-1b2f-481a-8031-85e007d99559; guid=GxMYBBsaGAQYGh4EGRxWBxgbHhwfExMaHRxWHBkEHRkfBUNYS0xLeQoSEwQSHR8ZBBoEGx0FT0dFWEJpCgNFQUlPbQpPQUNGCgZmZ35iYQIKHBkEHRkfBV5DYUhPfU9GWlprCgMeHHUcElIKUl9EQ2YKERsbcgIKGgQfBUtGRkNQRWc=; token="Q+TrGRMjLhgKkfDydWgiCN3OTEDcmCk5NReUcExsaSkZqFI82V6e6mK37MUFo07k8CKuzcDfAvoCmBm7+jVysA=="; uid="kBWdlFr7Q4Abh3QUS0c+rvAirs3A3wL6ApgZu/o1crA="; session=eyJ1IjoiMjIxMDIzODE5Iiwic2VjcmV0IjoiQmFOSXNQcFl6VEFSVDBGUkFKLW9fMU5vIiwibWlkNDU2ODc2MCI6ZmFsc2UsIl9leHBpcmUiOjE1NTE5Mjc3NTEwMDEsIl9tYXhBZ2UiOjg2NDAwMDAwfQ==; session.sig=ubREdw-SbtyPtXxyq_iUbxWnOek""",
-    }, time_out = 20):
+def maimai(session, company, time_out = 20):
     url = "https://maimai.cn/search/contacts"
     data = {
         "count": 20,
@@ -57,7 +67,7 @@ def maimai(company, headers= {
         "pc": 1,
     }
 
-    r = requests.get(url=url, params=data, headers=headers, proxies=proxies, timeout=time_out)
+    r = session.get(url=url, params=data, proxies=proxies, timeout=time_out)
     jsondata = json.loads(r.text)
     if jsondata['result'] == "error":
         time.sleep(time_sleep)
@@ -104,7 +114,6 @@ if __name__ == "__main__":
     print_method = config["DEFAULT"]['print_method']
     time_sleep = int(config['MAIMAI']['time_sleep'])
     time_out = int(config['DEFAULT']['time_out'])
-    headers = config['MAIMAI']['headers']
     db_username = config['MYSQL']['db_username']
     db_password = config['MYSQL']['db_password']
     db_dbname = config['MYSQL']['db_dbname']
@@ -138,14 +147,24 @@ if __name__ == "__main__":
         print("info: using no proxy")
         proxies = {"http": None, "https": None}
 
+    username = config["MAIMAI"]["username"]
+    password = config["MAIMAI"]["password"]
 
+    session = requests.session()
+    session.post(
+        url="https://acc.maimai.cn/login",
+        data =  {
+            "m": username,
+            "p": password
+        }
+    )
 
     cursor.execute("SELECT company FROM company ORDER BY id DESC")
     rows = cursor.fetchall()
     for row in rows:
         try:
             print("____"+row[0]+"____")
-            maimai(company=row[0], headers=headers, time_out=time_out)
+            maimai(session=session, company=row[0], time_out=time_out)
             time.sleep(time_sleep)
         except:
             print("Unexpected error:", sys.exc_info()[0])

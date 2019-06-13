@@ -11,7 +11,8 @@ start() {
     exit
   fi
   echo "Starting service ${SERVICE_NAME} ..."
-  python3 /home/ubuntu/findcompany/findcompany_baiduzhaopin/crawler_main.py  >/dev/null  2>&1  &
+  cd /home/ubuntu/findcompany/findcompany_baiduzhaopin
+  python3 crawler_main.py  >/dev/null  2>&1  &
   PID=$!
   if [ -z ${PID} ]; then
     echo "Failed to get the process id, exit!"

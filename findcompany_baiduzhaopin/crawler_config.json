@@ -1,11 +1,11 @@
 {
     "DEFAULT":{
         "proxy": "noproxy",
-        "print_method": "file",
+        "print_method": "terminal",
         "time_out": 20
     },
     "BAIDU":{
-        "time_sleep" : 60,       
+        "time_sleep" : 180,       
         "fail_count_limit" : 10 , 
         "fail_sleep" : 100,
 
@@ -26,10 +26,9 @@
                     }
     },
     "HUAZHAN":{
-        "time_sleep" : 3,
+        "time_sleep" : 180,
         "fail_count_limit" : 10,
         "fail_sleep" : 100,
-
         "keywords" : ["物联网","物联网"],
         "page_start": 0,
         "page_end": 500,
@@ -47,13 +46,14 @@
                         "Referer"	:"http://yun.ihuazhan.net/",
                         "User-Agent"	:"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0",
                         "X-Requested-With"	:"XMLHttpRequest"
-                    }
+                    },
+        "username":"18100837642",
+        "password":"intel@123"
     },
     "MAIMAI":{
-        "time_sleep" : 30,
-        "headers": {
-            "cookie": "seid=s1551840667869; _buuid=506a7fbf-1b2f-481a-8031-85e007d99559; guid=GxMYBBsaGAQYGh4EGRxWBxgbHhwfExMaHRxWHBkEHRkfBUNYS0xLeQoSEwQSHR8ZBBoEGx0FT0dFWEJpCgNFQUlPbQpPQUNGCgZmZ35iYQIKHBkEHRkfBV5DYUhPfU9GWlprCgMeHHUcElIKUl9EQ2YKERsbcgIKGgQfBUtGRkNQRWc=; token='Q+TrGRMjLhgKkfDydWgiCN3OTEDcmCk5NReUcExsaSkZqFI82V6e6mK37MUFo07k8CKuzcDfAvoCmBm7+jVysA=='; uid='kBWdlFr7Q4Abh3QUS0c+rvAirs3A3wL6ApgZu/o1crA='; session=eyJ1IjoiMjIxMDIzODE5Iiwic2VjcmV0IjoiQmFOSXNQcFl6VEFSVDBGUkFKLW9fMU5vIiwibWlkNDU2ODc2MCI6ZmFsc2UsIl9leHBpcmUiOjE1NTE5Mjc3NTEwMDEsIl9tYXhBZ2UiOjg2NDAwMDAwfQ==; session.sig=ubREdw-SbtyPtXxyq_iUbxWnOek"
-        }
+        "time_sleep" : 180,
+        "username": "13818209932",
+        "password": "intel@123"
     },
     "MYSQL":{
         "db_username" :"root",

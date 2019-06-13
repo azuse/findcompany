@@ -211,11 +211,13 @@ class huazhan:
         '吉林':"eKETKEm6"
     }
 
-    def __init__(self, headers, proxies, time_sleep, sort, logfileHandler, print_method, time_out=20):
+    def __init__(self, headers, proxies, time_sleep, sort, logfileHandler, print_method, time_out=20, username="", password=""):
         self.time_sleep = time_sleep
         self.headers = headers
         self.proxies = proxies
         self.sort = sort
+        self.username = username
+        self.password = password
         self.huazhan_login()
         self.logfile = logfileHandler
         self.print_method = print_method
@@ -349,8 +351,8 @@ class huazhan:
 
         url = "http://yun.ihuazhan.net/Login/loginCheck"
         data = {
-            "userName":"18100837642",
-            "password":"intel@123"
+            "userName": self.username,
+            "password": self.password
         }
         r = requests.post(url, data=data, headers=headers, proxies=proxies)
         # self.print(r.text)
@@ -363,14 +365,20 @@ class huazhan:
 
 
 class maimai:
-    def __init__(self, time_sleep=30, time_out=20,print_method="terminal", proxies = {"http": None, "https": None}, headers= {
-            "cookie": """seid=s1551840667869; _buuid=506a7fbf-1b2f-481a-8031-85e007d99559; guid=GxMYBBsaGAQYGh4EGRxWBxgbHhwfExMaHRxWHBkEHRkfBUNYS0xLeQoSEwQSHR8ZBBoEGx0FT0dFWEJpCgNFQUlPbQpPQUNGCgZmZ35iYQIKHBkEHRkfBV5DYUhPfU9GWlprCgMeHHUcElIKUl9EQ2YKERsbcgIKGgQfBUtGRkNQRWc=; token="Q+TrGRMjLhgKkfDydWgiCN3OTEDcmCk5NReUcExsaSkZqFI82V6e6mK37MUFo07k8CKuzcDfAvoCmBm7+jVysA=="; uid="kBWdlFr7Q4Abh3QUS0c+rvAirs3A3wL6ApgZu/o1crA="; session=eyJ1IjoiMjIxMDIzODE5Iiwic2VjcmV0IjoiQmFOSXNQcFl6VEFSVDBGUkFKLW9fMU5vIiwibWlkNDU2ODc2MCI6ZmFsc2UsIl9leHBpcmUiOjE1NTE5Mjc3NTEwMDEsIl9tYXhBZ2UiOjg2NDAwMDAwfQ==; session.sig=ubREdw-SbtyPtXxyq_iUbxWnOek""",
-        }):
+    def __init__(self, time_sleep=30, time_out=20,print_method="terminal", proxies = {"http": None, "https": None}, username="", password=""):
         self.time_sleep = time_sleep
         self.time_out = time_out
         self.print_method = print_method
         self.proxies = proxies
-        self.headers=headers
+        self.session = requests.session()
+        self.session.post(
+            url="https://acc.maimai.cn/login",
+            data =  {
+                "m": username,
+                "p": password
+            }
+        )
+
 
     def print(self, text, text2=""):
         if self.print_method == "terminal":
@@ -387,7 +395,6 @@ class maimai:
     def maimai(self, company):
         time_sleep = self.time_sleep
         time_out = self.time_out
-        headers = self.headers
         proxies = self.proxies
 
         url = "https://maimai.cn/search/contacts"
@@ -402,7 +409,7 @@ class maimai:
             "pc": 1,
         }
 
-        r = requests.get(url=url, params=data, headers=headers, proxies=proxies, timeout=time_out)
+        r = self.session.get(url=url, params=data, proxies=proxies, timeout=time_out)
         jsondata = json.loads(r.text)
         if jsondata['result'] == "error":
             time.sleep(time_sleep)

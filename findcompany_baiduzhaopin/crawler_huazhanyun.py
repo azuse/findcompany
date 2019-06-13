@@ -259,12 +259,12 @@ def huazhanyun(keyword, page_start, page_end, sortType):
             i += 1
     return "查找结束: {0} {1} {2} {4} 插入结果: {4}".format(keyword, page_start, page_end, sortType, inserted)
 
-def huazhan_login():
+def huazhan_login(username, password):
     url = "http://yun.ihuazhan.net/Login/loginCheck"
     global headers
     data = {
-        "userName":"18100837642",
-        "password":"intel@123"
+        "userName": username,
+        "password": password
     }
     r = requests.post(url, data=data, headers=headers)
     print(r.text)
@@ -344,6 +344,9 @@ if __name__ == "__main__":
     opt.proxy_select = config['DEFAULT'].get("proxy", opt.proxy_select)
 
     headers = config['HUAZHAN']['headers']
+    username = config["HUAZHAN"]["username"]
+    password = config["HUAZHAN"]["password"]
+
 
     if(opt.proxy_select == "intel"):
         print("info: using intel proxy")
@@ -358,7 +361,7 @@ if __name__ == "__main__":
 
     
     print("-----------    login in  -----------")
-    huazhan_login()
+    huazhan_login(username, password)
     print("-----------start crawling-----------")
     i = 0
     ret = dict()

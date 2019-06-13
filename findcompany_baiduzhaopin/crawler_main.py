@@ -363,6 +363,8 @@ if __name__ == "__main__":
     ## huazhan ##
     headers_huazhan = config['HUAZHAN']['headers']
     keywords_huazhan = config['HUAZHAN']['keywords']
+    username_huazhan = config["HUAZHAN"]["username"]
+    password_huazhan = config["HUAZHAN"]["password"]
     # 华展云的延迟时间
     time_sleep_huazhan = int(config['HUAZHAN']['time_sleep'])
     print("info: huazhan time sleep set to " + str(time_sleep_huazhan))
@@ -376,20 +378,23 @@ if __name__ == "__main__":
                 sort=sort_type_huazhan, 
                 print_method=print_method, 
                 logfileHandler=logfile, 
-                time_out=time_out
+                time_out=time_out,
+                username=username_huazhan,
+                password=password_huazhan
                 )
 
     #######################################################################################################
-    headers_maimai = config['MAIMAI']['headers']
     time_sleep_maimai = config['MAIMAI']['time_sleep']
+    username_maimai = config["MAIMAI"]["username"]
+    password_maimai = config["MAIMAI"]["password"]
 
     maimai = maimai(
                     time_sleep=time_sleep_maimai,
-                    headers=headers_maimai,
                     time_out=time_out,
                     print_method=print_method,
                     proxies=proxies,
-
+                    username=username_maimai,
+                    password=password_maimai
                     )
 
     print("-----------start crawling-----------")
