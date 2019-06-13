@@ -116,10 +116,10 @@ class db:
 
         return 0
 
-    def insert_baiduzhaopin(self, sid, name, company, city, depart, education, employertype, experience, label, jobclass, salary, location, url, companyaddress, companydescription, companysize, rowdata, company_id):
+    def insert_baiduzhaopin(self, sid, name, company, city, depart, education, employertype, experience, label, jobclass, salary, location, url, companyaddress, companydescription, companysize, rowdata, company_id, queryword):
         sql = """INSERT INTO baiduzhaopin (sid, jobName, company, city, depart, education, employerType, experience, label, jobClass, salary, location, url, companyAddress, companyDescription, companySize, rowData, queryWord, companyId) VALUES
                                                                 ('{0}', '{1}'  ,'{2}'   ,'{3}',  '{4}' , '{5}'    , '{6}'       , '{7}'     , '{8}', '{9}'   , '{10}', '{11}'  ,'{12}','{13}'        , '{14}'            , '{15}'     , '{16}' , '{17}'   ,'{18}');""" \
-                                                        .format(sid, name, company, city, depart, education, employertype, experience, label, jobclass, salary, location, url, companyaddress, companydescription.replace("'", ""), companysize, rowdata, company, company_id)
+                                                        .format(sid, name, company, city, depart, education, employertype, experience, label, jobclass, salary, location, url, companyaddress, companydescription.replace("'", ""), companysize, rowdata, queryword, company_id)
         self.db = pymysql.connect(host='localhost',
                             user=self.user,
                             passwd=self.password,
@@ -512,6 +512,20 @@ if __name__ == "__main__":
                     if huazhan_id == "":
                         print("info: huazhan information no match")
 
+                    if homePage == "":
+                        homePage = baidu_search_homepage(company)
+                    if homePage != "":
+                        print("info: homepage found: {0}".format(homePage))
+                        homePage_text = company_homepage_crawler(homePage)
+                        if homePage_text != "":
+                            tags = jieba_tf_idf(homePage_text)
+                            for tag in tags:
+                                db.insert_tag(tag[0], tag[1], company, id)
+                            print("info: tags for homepage inserted")
+                            insert_part[2] = 1
+                    else:
+                        print("info: homepage not found")
+
                     ret = db.insert_company(
                                             huazhan_id=huazhan_id,
                                             company=company,
@@ -567,21 +581,6 @@ if __name__ == "__main__":
                             print("Unexpected error:", sys.exc_info()[0])
                     if( insert_part[1] == 0):
                         print("info: maimai not found")
-
-
-                    if homePage == "":
-                        homePage = baidu_search_homepage(company)
-                    if homePage != "":
-                        print("info: homepage found: {0}".format(homePage))
-                        homePage_text = company_homepage_crawler(homePage)
-                        if homePage_text != "":
-                            tags = jieba_tf_idf(homePage_text)
-                            for tag in tags:
-                                db.insert_tag(tag[0], tag[1], company, id)
-                            print("info: tags for homepage inserted")
-                            insert_part[2] = 1
-                    else:
-                        print("info: homepage not found")
 
 
                     # 查找该公司的招聘信息
@@ -647,7 +646,8 @@ if __name__ == "__main__":
                                                             company_id=company_id,
                                                             companydescription=companydescription,
                                                             companysize=companysize,
-                                                            rowdata=rowdata
+                                                            rowdata=rowdata,
+                                                            queryword=keyword
                                                             )
                                 if ret == 0:
                                     print("info: hireinfo inserted {0}".format(name))
