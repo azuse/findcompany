@@ -409,7 +409,7 @@ if __name__ == "__main__":
         addId = rows[0][0] + 1
 
     insert_count = 0
-    tmpcursor.execute("INSERT INTO `update_history` (`addId`, `date`, `type`, `result_count`) VALUES ({0}, CURRENT_TIMESTAMP, 5, {1});".format(addId, insert_count))
+    tmpcursor.execute("INSERT INTO `update_history` (`addId`, `date`, `type`, `result_count`) VALUES ({0}, CURRENT_TIMESTAMP, 1, {1});".format(addId, insert_count))
     rows = tmpcursor.fetchall()
     tmpdb.commit()
 
