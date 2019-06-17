@@ -17,7 +17,7 @@ import configparser, os
 import pprint
 
 def writePID():
-    pidfile = open("mainPID.txt", "w")
+    pidfile = open("mainPID.txt", "w", encoding="utf8")
     pidfile.write(str(os.getpid()))
     pidfile.write("\n")
     pidfile.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     logfile = open("crawler_log.txt", "w", encoding="utf-8")
     print_method = "terminal"
 
-    config = json.load(open("crawler_config.json"))
+    config = json.load(open("crawler_config.json", encoding="utf8"))
 
 
     # print_method = config["DEFAULT"]['print_method']

@@ -296,7 +296,7 @@ if __name__ == "__main__":
     (opt, args) = parser.parse_args()
 
     print('info: using config file: '+ opt.config_path)
-    config = json.load(open(opt.config_path))
+    config = json.load(open(opt.config_path, encoding="utf8"))
     ######## BAIDU ##########
     if opt.time_sleep == '-1':
         time_sleep = int(config['BAIDU']['time_sleep'])
@@ -367,7 +367,7 @@ if __name__ == "__main__":
     elif(opt.function_select == "company_zhaopin"):
         print("using function: company_zhaopin")
 
-        cities = json.load(open("cities.json"))
+        cities = json.load(open("cities.json", encoding="utf8"))
 
 
 

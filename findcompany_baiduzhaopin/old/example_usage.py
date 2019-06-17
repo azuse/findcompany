@@ -19,7 +19,7 @@ from crawler_main_head import huazhan, baiduzhaopin, maimai
 import os 
 
 logfile = None
-config = json.load(open("crawler_config.json"))
+config = json.load(open("crawler_config.json", encoding="utf8"))
 print_method = "terminal"
 time_out = int(config['DEFAULT']['time_out'])
 

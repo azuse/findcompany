@@ -430,7 +430,7 @@ if __name__ == "__main__":
                                 )
 
     inserted = 0
-    insert_part_log = open("log/insert_part.log","w")
+    insert_part_log = open("log/insert_part.log","w", encoding="utf8")
 
     for keyword in keywords:
         for keycity in keycities:
