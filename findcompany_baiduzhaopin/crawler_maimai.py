@@ -70,12 +70,11 @@ def maimai(session, company, time_out = 20):
     r = session.get(url=url, params=data, proxies=proxies, timeout=time_out)
     jsondata = json.loads(r.text)
     if jsondata['result'] == "error":
+        print("error: maimai result error")
+        print(r.text)
         time.sleep(time_sleep)
-        jsondata = json.loads(r.text)
-        if jsondata['result'] == "error":
-            time.sleep(time_sleep * 10)
-            jsondata = json.loads(r.text)
-    
+        return
+
     for contact in jsondata["data"]["contacts"]:
         contact = contact.get("contact", "")
         name = contact.get("name", "")
@@ -105,14 +104,16 @@ def maimai(session, company, time_out = 20):
 
 if __name__ == "__main__":
     writePID()
-    logfile = open("crawler_log.txt", "w")
+    logfile = open("crawler_log.txt", "w", encoding="utf-8")
     print_method = "terminal"
 
     config = json.load(open("crawler_config.json"))
 
 
-    print_method = config["DEFAULT"]['print_method']
-    time_sleep = int(config['MAIMAI']['time_sleep'])
+    # print_method = config["DEFAULT"]['print_method']
+    print_method = "terminal"
+    # time_sleep = int(config['MAIMAI']['time_sleep'])
+    time_sleep = 1
     time_out = int(config['DEFAULT']['time_out'])
     db_username = config['MYSQL']['db_username']
     db_password = config['MYSQL']['db_password']
@@ -158,6 +159,7 @@ if __name__ == "__main__":
             "p": password
         }
     )
+    
 
     cursor.execute("SELECT company FROM company ORDER BY id DESC")
     rows = cursor.fetchall()

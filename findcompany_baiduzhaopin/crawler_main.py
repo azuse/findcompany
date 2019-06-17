@@ -21,14 +21,14 @@ from crawler_main_head import huazhan, baiduzhaopin, maimai
 import os 
 
 def writePID():
-    pidfile = open("mainPID.txt", "w")
+    pidfile = open("mainPID.txt", "w", encoding="utf-8")
     pidfile.write(str(os.getpid()))
     pidfile.write("\n")
     pidfile.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     pidfile.flush()
     pidfile.close()
 
-logfile = open("crawler_log.txt", "w")
+logfile = open("crawler_log.txt", "w", encoding="utf-8")
 def print(text, text2=""):
     if print_method == "terminal":
         sys.stdout.write(str(text))
@@ -520,9 +520,9 @@ if __name__ == "__main__":
                         print("info: homepage found: {0}".format(homePage))
                         homePage_text = company_homepage_crawler(homePage)
                         if homePage_text != "":
-                            tags = jieba_tf_idf(homePage_text)
-                            for tag in tags:
-                                db.insert_tag(tag[0], tag[1], company, id)
+                            tf_idf_ttags = jieba_tf_idf(homePage_text)
+                            for tf_idf_tag in tf_idf_ttags:
+                                db.insert_tag(tf_idf_tag[0], tf_idf_tag[1], company, id)
                             print("info: tags for homepage inserted")
                             insert_part[2] = 1
                     else:
@@ -562,27 +562,32 @@ if __name__ == "__main__":
                         print("Unexpected error:", sys.exc_info()[0])
 
 
+                    # maimai
+                    try:
+                        ret = maimai.maimai(company)
                     
-                    ret = maimai.maimai(company)
-                    for contact in ret:
-                        contact = contact.get("contact", "")
-                        maimai_name = contact.get("name", "")
-                        maimai_position = contact.get("position", "")
-                        maimai_major = contact["user_pfmj"].get("mj_name1","")
-                        maimai_profession =  contact["user_pfmj"].get("pf_name1","")
-                        maimai_mmid = contact.get("mmid","")       
+                        for contact in ret:
+                            contact = contact.get("contact", "")
+                            maimai_name = contact.get("name", "")
+                            maimai_position = contact.get("position", "")
+                            maimai_major = contact["user_pfmj"].get("mj_name1","")
+                            maimai_profession =  contact["user_pfmj"].get("pf_name1","")
+                            maimai_mmid = contact.get("mmid","")       
 
-                        ret = db.insert_maimai(maimai_mmid, maimai_name, maimai_position, maimai_major, maimai_profession, company)
-                        if(ret == 0):
-                            print("info: maimai inserted {0} {1} {2}".format(maimai_name, maimai_position, company))
-                            insert_part[1] = 1
-                        elif (ret == -2):
-                            print("info: maimai existed {0} {1}".format(maimai_name, company))
-                        else:
-                            print("error: maimai insert fail")
-                            print("Unexpected error:", sys.exc_info()[0])
-                    if( insert_part[1] == 0):
-                        print("info: maimai not found")
+                            ret = db.insert_maimai(maimai_mmid, maimai_name, maimai_position, maimai_major, maimai_profession, company)
+                            if(ret == 0):
+                                print("info: maimai inserted {0} {1} {2}".format(maimai_name, maimai_position, company))
+                                insert_part[1] = 1
+                            elif (ret == -2):
+                                print("info: maimai existed {0} {1}".format(maimai_name, company))
+                            else:
+                                print("error: maimai insert fail")
+                                print("Unexpected error:", sys.exc_info()[0])
+                        if( insert_part[1] == 0):
+                            print("info: maimai not found")
+                    except:
+                        print("Unexpected error:", sys.exc_info()[0])
+                        print("error: error in maimai")
 
 
                     # 查找该公司的招聘信息
