@@ -108,7 +108,7 @@ if __name__ == "__main__":
     logfile = open("crawler_log.txt", "w")
     print_method = "terminal"
 
-    config = json.load(open("crawler_config.json"))
+    config = json.load(open("crawler_config.json",encoding="utf-8"))
 
 
     print_method = config["DEFAULT"]['print_method']
