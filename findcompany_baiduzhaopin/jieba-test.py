@@ -23,7 +23,7 @@ class mysql_union:
                                   charset='utf8')
         self.cursor = self.db.cursor()
 
-fo = open("tf_idf_test.csv", "w")
+fo = open("tf_idf_test.csv", "w", encoding="utf8")
 
 def jieba_tf_idf(content, company):
     topK = 20

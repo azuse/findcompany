@@ -26,14 +26,14 @@ def urlparse(url):
     return url
 
 def writePID():
-    pidfile = open("mainPID.txt", "w")
+    pidfile = open("mainPID.txt", "w", encoding="utf8")
     pidfile.write(str(os.getpid()))
     pidfile.write("\n")
     pidfile.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     pidfile.flush()
     pidfile.close()
 
-logfile = open("crawler_log.txt", "w")
+logfile = open("crawler_log.txt", "w", encoding="utf8")
 def print(text, text2=""):
     if print_method == "terminal":
         sys.stdout.write(str(text))
@@ -301,7 +301,7 @@ if __name__ == "__main__":
     (opt, args) = parser.parse_args()
 
     print('info: using config file: '+ opt.config_path)
-    config = json.load(open(opt.config_path))
+    config = json.load(open(opt.config_path, encoding="utf8"))
     print_method = config["DEFAULT"]['print_method']
     time_out = config['DEFAULT']['time_out']
     ######## HUAZHAN ##########

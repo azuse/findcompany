@@ -122,7 +122,7 @@ if __name__ == "__main__":
     parser.add_option("-c","--config", help="select a config file", metavar="crawler_config.json", default="crawler_config.json", dest="config_path")
     (opt, args) = parser.parse_args()
 
-    config = json.load(open(opt.config_path))
+    config = json.load(open(opt.config_path), encoding="utf8")
     time_out = config['DEFAULT']['time_out']
 
     db_username = config['MYSQL']['db_username']

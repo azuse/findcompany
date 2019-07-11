@@ -366,7 +366,7 @@ class huazhan:
 
 class maimai:
     def __init__(self, time_sleep=30, time_out=20,print_method="terminal", proxies = {"http": None, "https": None}, username="", password=""):
-        self.time_sleep = time_sleep
+        self.time_sleep = int(time_sleep)
         self.time_out = time_out
         self.print_method = print_method
         self.proxies = proxies
@@ -413,8 +413,8 @@ class maimai:
         jsondata = json.loads(r.text)
         if jsondata['result'] == "error":
             time.sleep(time_sleep)
-            jsondata = json.loads(r.text)
-            if jsondata['result'] == "error":
-                return []
-
-        return jsondata["data"]["contacts"]
+            print("error: maimai result error")
+            print(r.text)
+            return []
+        else:
+            return jsondata["data"]["contacts"]

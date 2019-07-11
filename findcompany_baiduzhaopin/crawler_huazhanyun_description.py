@@ -18,14 +18,14 @@ import pprint
 from crawler_main_head import baiduzhaopin
 
 def writePID():
-    pidfile = open("mainPID.txt", "w")
+    pidfile = open("mainPID.txt", "w", encoding="utf8")
     pidfile.write(str(os.getpid()))
     pidfile.write("\n")
     pidfile.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     pidfile.flush()
     pidfile.close()
 
-logfile = open("crawler_log.txt", "w")
+logfile = open("crawler_log.txt", "w", encoding="utf8")
 print_method = "terminal"
 
 def print(text, text2=""):
@@ -42,7 +42,7 @@ def print(text, text2=""):
 writePID()
 
 
-config = json.load(open("crawler_config.json"))
+config = json.load(open("crawler_config.json", encoding="utf8"))
 print_method = config["DEFAULT"]['print_method']
 time_out = config['DEFAULT']['time_out']
 time_sleep = int(config['BAIDU']['time_sleep'])
@@ -95,7 +95,7 @@ for item in data:
     id = item[0]
     company = item[1]
     location = item[2]
-    cities = json.load(open("cities.json"))
+    cities = json.load(open("cities.json", encoding="utf8"))
     for city in cities['cities']:
         if location.find(city['cityName']) != -1:
             location = city['cityName']
