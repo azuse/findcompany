@@ -415,7 +415,6 @@ class maimai:
             time.sleep(time_sleep)
             jsondata = json.loads(r.text)
             if jsondata['result'] == "error":
-                time.sleep(time_sleep * 10)
-                jsondata = json.loads(r.text)
-        
+                return []
+
         return jsondata["data"]["contacts"]

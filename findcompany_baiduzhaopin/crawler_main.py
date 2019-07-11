@@ -520,9 +520,9 @@ if __name__ == "__main__":
                         print("info: homepage found: {0}".format(homePage))
                         homePage_text = company_homepage_crawler(homePage)
                         if homePage_text != "":
-                            tags = jieba_tf_idf(homePage_text)
-                            for tag in tags:
-                                db.insert_tag(tag[0], tag[1], company, id)
+                            tags_jieba = jieba_tf_idf(homePage_text)
+                            for tag_jieba in tags_jieba:
+                                db.insert_tag(tag_jieba[0], tag_jieba[1], company, id)
                             print("info: tags for homepage inserted")
                             insert_part[2] = 1
                     else:
