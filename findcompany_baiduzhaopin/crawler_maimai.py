@@ -45,7 +45,7 @@ def maimai_login(session, username, password, time_out=20):
         "p": password
     }
     session.post(url=url, params=data, proxies=proxies, timeout=time_out)
-    return cookies
+    return cookies #it should return cookies of the session
 
 
 ####################################
