@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>更新数据库</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../css/materialize.min.css">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="../css/vue-material.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="../css/universal.css" />
+    <style>
+        html {
+
+            background-size: 100%;
+
+            background-attachment: fixed;
+            background-position: center;
+        }
+       
+        header,
+        main,
+        footer {
+            padding-left: 300px;
+        }
+        
+        .searchBox{
+            padding-left: 300px;
+
+        }
+
+        .companyLi {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        nav{
+            display: none;
+        }
+        
+        @media only screen and (max-width : 992px) {
+
+            header,
+            main,
+            footer {
+                padding-left: 0;
+            }
+
+            .searchBox{
+                padding-left: 0;
+
+            }
+
+            nav{
+                display: block  ;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+    <ul id="slide-out" class="side-nav fixed">
+        <img src="../res/bk.png" alt="" srcset="">
+        <li class="waves-effect "><a href="../">搜索公司</a></li>
+        <li class="waves-effect"><a href="../favorite/">收藏夹</a></li>
+        <li class="waves-effect"><a href="../junkcompany/">垃圾桶</a></li>
+        <li class="waves-effect "><a href="../recentupdate/">最近更新</a></li>
+
+        <label for="" style="padding:10px;">功能</label>
+        <li class="divider"></li>
+        <li class="bold waves-effect active"><a href="../update/">更新数据库</a></li>
+        <!-- <li class="bold waves-effect"><a href="#!">导出结果到表格</a></li> -->
+        <label for="" style="padding:10px;">收藏</label>
+        <li class="divider"></li>
+        <label for="" style="padding:10px;display: inline-block;padding-top: 0px;">收藏保存在浏览器缓存内，可能会随浏览器更新或垃圾清理而消失！</label>
+        <li class="bold waves-effect"><a href="../backup/">备份与恢复收藏</a></li>
+
+
+    </ul>
+    <nav>
+        <a href="#!" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+    </nav>
+
+
+    <div id="page" class="row searchBox">
+        <div class="col s12 left-align" style="margin-top:0px;">
+            <h5 class="left" style="display:inline-block;"><i class="material-icons" style="font-size:30px;vertical-align:text-bottom;">backup</i>
+                更新数据库</h5>
+        </div>
+
+
+        <div class="col s12 card" style="margin-top:10px;cursor:auto !important;">
+            <div class="card-content">
+                <span class="card-title">主更新脚本</span>
+                <p>上次执行：<label for="" id="last-execute-date"></label> </p>
+                <p>上次执行结果：<label for="" id="last-execute-result">更新2家公司</label><a id="updateDetail" href="#!" style="font-size:11px;"> 查看详细</a></p>
+                <div class="progress col s4 right" id="mainProgress" style="display:none;">
+                    <div class="indeterminate"></div>
+                </div>
+            </div>
+            <div class="card-action col s12">
+                <!-- <a class='dropdown-button-custom btn btn-flat' href='#' data-activates='dropdown1'>高级</a> -->
+                <a href="#!" class="btn btn-flat" onclick="$('#settings').modal('open')">设置</a>
+                <!-- <a href="#!" class="btn btn-flat">查看命令行输出</a> -->
+                <!-- <ul id='dropdown1' class='dropdown-content'>
+                    <li>
+                        <input class="with-gap" name="group1" type="radio" id="test1" value="true" checked onclick="exec_type='main'"/>
+                        <label for="test1">执行主更新脚本</label>
+                    </li>
+                    <li>
+                        <input class="with-gap" name="group1" type="radio" id="test2" onclick="exec_type='huazhan'" />
+                        <label for="test2">执行华展云单独更新脚本</label>
+                    </li>
+                    <li>
+                        <input class="with-gap" name="group1" type="radio" id="test3" onclick="exec_type='description'" />
+                        <label for="test3">执行更新公司简介脚本</label>
+                    </li>
+                    <li>
+                        <input class="with-gap" name="group1" type="radio" id="test4" onclick="exec_type='hireinfo'" />
+                        <label for="test4">执行更新公司招聘信息脚本</label>
+                    </li>
+                    <li>
+                        <input class="with-gap" name="group1" type="radio" id="test5" onclick="exec_type='maimai'" />
+                        <label for="test5">执行脉脉脚本</label>
+                    </li>
+                </ul> -->
+
+                <a id="btn-exec" href="#!" class="btn right" onclick="exec()">更新</a>
+            </div>
+        </div>
+
+        <div id="btn-kill" class="col s12 card" style="margin-top:10px;display:none;cursor: auto !important;">
+            <div class="card-content" style="display:flex;flex-direction: row;justify-content: flex-start;align-items: center;">
+                <div class="col s1">
+                    <div class="preloader-wrapper active">
+                        <div class="spinner-layer spinner-blue-only">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="gap-patch">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s11" style="display:inline-block;height: 100%;margin-left: 20px;">
+                    <span class="card-title">更新正在运行</span>
+                    <a href="#!" class="btn right" onclick="kill()">停止</a>
+                    <div class="right" style="display:inline-block;margin-right: 20px;">
+                        <label for="">已运行时间: <span id="runtime"></span></label><br>
+                        <label for="">PID: <span id="runpid"></span></label>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+
+            </div>
+        </div>
+
+        
+
+        <div class="col s12 card" style="cursor: auto !important;display: none;">
+            <div class="card-content">
+                <span  class="card-title" style="display:inline-block">执行结果</span>
+                <p>已更新10家公司</p>
+                <p>已跳过40家公司</p>
+            </div>
+        </div>
+
+        <div class="col s12 card" id="outputCard" style="cursor: auto !important;display:none;">
+            <div class="card-content">
+                <span class="card-title" style="display:inline-block">输出</span>
+                <a href="#!" style="display:inline-block;position:relative" class="btn btn-flat right" onclick="getLog()">刷新</a>
+                <textarea style="height:300px;" name="" id="log" cols="30" rows="10"></textarea>
+            </div>
+
+        </div>
+
+        <div class="col s12 card" style="cursor: auto !important;">
+            <div class="card-content">
+                <span class="card-title" style="display:inline-block">历史记录</span>
+                <table>
+                    <thead>
+                        <th>执行脚本</th>
+                        <th>执行结果</th>
+                        <th>执行时间</th>
+                        <th>操作</th>
+                    </thead>
+                    <tbody id="updateHistoryTbody">
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div id="settings" class="modal container">
+            <div class="modal-content">
+                <h4>设置</h4>
+                <div class="container">
+                    <div class="col s12">
+                        <div class="row">
+                            <a href="" class="right" style="display:inline;font-size: 12px; "> 不同脚本的区别</a>
+                            <p style="font-size:20px;">选择要执行的脚本</p>
+                            <ul style="margin-left:20px;">
+                                <li>
+                                    <input class="with-gap" name="group1" type="radio" id="main" value="true" checked
+                                        onclick="exec_type='main'" />
+                                    <label for="main">执行主更新脚本</label>
+                                </li>
+                                <li>
+                                    <input class="with-gap" name="group1" type="radio" id="huazhan" onclick="exec_type='huazhan'" />
+                                    <label for="huazhan">执行华展云单独更新脚本</label>
+                                </li>
+                                <li>
+                                    <input class="with-gap" name="group1" type="radio" id="description" onclick="exec_type='description'" />
+                                    <label for="description">执行更新公司简介脚本</label>
+                                </li>
+                                <li>
+                                    <input class="with-gap" name="group1" type="radio" id="hireinfo" onclick="exec_type='hireinfo'" />
+                                    <label for="hireinfo">执行更新公司招聘信息脚本</label>
+                                </li>
+                                <li>
+                                    <input class="with-gap" name="group1" type="radio" id="maimai" onclick="exec_type='maimai'" />
+                                    <label for="maimai">执行脉脉脚本</label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="divider col s12"></div>
+                    <div class="col s12" style="margin-top:20px;">
+                        <div class="row">
+                            <p style="display:inline;font-size:20px;">显示调试输出</p>
+                            <div class="switch right" style="display:inline">
+                                <label>
+                                    关
+                                    <input type="checkbox" id="displayOutput">
+                                    <span class="lever"></span>
+                                    开
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="divider col s12"></div>
+                    <div class="col s12" style="margin-top:20px;">
+                        <div class="row">
+                                <p class="inline" style="font-size:20px">脚本搜索关键词</p>
+                                <input id="keywords" type="text" class="right inline" style="width:250px;" value='物联网,计算机视觉'>
+                        </div>
+                    </div>
+                    <div class="col s12">
+                        <div class="row">
+                                <p class="inline" style="font-size:20px">脚本搜索延时（秒）</p>
+                                <input id="time_sleep" type="text" class="right inline" style="width:250px;" value='60'>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="btn left red" onclick="$('#wipe-database-confirm').modal('open')">重新建立数据库</a>
+                <a href="#!" class="btn" onclick="saveSettings()">保存</a>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <div class="modal container" id="do-you-want-to-wipe-database">
+        <div class="modal-content container center">
+            <p>您似乎修改了脚本搜索关键词,需要清除现在的所有公司数据来重新建立数据库吗?</p>
+            <div>
+                <a class="btn red" href="#!" style="display:inline-block" onclick="$('#wipe-database-confirm').modal('open');$('#do-you-want-to-wipe-database').modal('close')">清除数据库</a>
+                <a class="btn" href="#!" style="display:inline-block" onclick="$('#update-databse-confirm').modal('open');$('#do-you-want-to-wipe-database').modal('close')">保留数据库</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal container" id="wipe-database-confirm">
+        <div class="modal-content container center">
+            <p>您真的要清空现在所有的数据来重新建立数据库吗?</p>
+            <div>
+                <a href="#!" class="btn red" onclick="wipedatabase();$('#wipe-database-confirm').modal('close');$('#update-databse-confirm').modal('open')">清空数据库</a>
+                <a href="#!" class="btn" onclick="$('#wipe-database-confirm').modal('close')">取消</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal container" id="update-databse-confirm" >
+        <div class="modal-content container center">
+            <p>现在立刻开始爬取新数据吗</p>
+            <div>
+                <a href="#!" class="btn" onclick="exec();$('#update-databse-confirm').modal('close');$('.modal').modal('close');">是</a>
+                <a href="#!" class="btn-flat" onclick="$('#update-databse-confirm').modal('close')">否</a>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="../js/jquery-3.3.1.js"></script>
+    <script src="../js/materialize.min.js"></script>
+    <script src="../js/vue.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

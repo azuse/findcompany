@@ -1,0 +1,7 @@
+{
+    "mysql":{
+        "username":"root",
+        "password":"misakaxindex",
+        "databasename":"findcompany"
+    }
+}

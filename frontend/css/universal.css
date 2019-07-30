@@ -1,0 +1,104 @@
+.contect-name{
+    font-size: 18px;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.contect-Header{
+    display: inline-block;
+    /* margin-left: 10px; */
+    color: rgba(0, 0, 0, 0.87);
+    font-size: 12px;
+}
+
+.contect-Number{
+    display: inline-block;
+    color: rgba(0, 0, 0, 0.87);
+    font-size: 12px;
+}
+
+.favorite-label-modal{
+    position:absolute;
+    top:-25px;
+    right:-40px;
+    width: 100px;
+    height: 70px;
+    display: inline-block;
+    background: red;
+    transform: rotate(45deg);
+}
+
+.modal-content{
+    overflow-x: hidden;
+}
+
+.favor-modal-ul li{
+    display: inline-block;
+    width: 40%;
+}
+
+.card{
+    cursor: pointer !important;
+}
+
+.overflowHidden{
+    overflow: hidden !important;
+}
+
+.overflowScroll{
+    overflow: scroll !important;
+}
+
+.colorSquare{
+    cursor: pointer; 
+}
+
+.anchorBL{
+    display: none !important;
+}
+
+.displaynone{
+    display: none !important;
+
+}
+
+.flex{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.excelTable{
+    overflow-x: scroll;
+    width: max-content
+}
+
+.excelTable tr{
+    display: block;
+}
+
+.excelTable thead tr th{
+    display: inline-block;
+    width: 100px;
+}
+
+.excelTable tbody tr td{
+    display: inline-block;
+    width: 100px;
+}
+
+tr:nth-child(even) {
+	background: #f0f0f0
+}
+tr:nth-child(odd) {
+	background-color: #ffffff;
+}
+
+.font-passage{
+    color: black;
+    font-size: 14px;
+}
+
+.inline{
+    display: inline-block !important;
+}

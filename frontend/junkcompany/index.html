@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>垃圾桶</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../css/materialize.min.css">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="../css/vue-material.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" />
+    <style>
+        html {
+
+            background-size: 100%;
+
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        header,
+        main,
+        footer {
+            padding-left: 300px;
+        }
+
+        .searchBox {
+            padding-left: 300px;
+
+        }
+
+        .companyLi {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        nav {
+            display: none;
+        }
+
+        @media only screen and (max-width : 992px) {
+
+            header,
+            main,
+            footer {
+                padding-left: 0;
+            }
+
+            .searchBox {
+                padding-left: 0;
+
+            }
+
+            nav {
+                display: block;
+            }
+        }
+
+        body {
+            background: gainsboro
+        }
+
+        a {
+            vertical-align: bottom;
+        }
+    </style>
+</head>
+
+<body>
+    <ul id="slide-out" class="side-nav fixed">
+        <img src="../res/bk.png" alt="" srcset="">
+        <li class="waves-effect "><a href="../">搜索公司</a></li>
+        <li class="waves-effect"><a href="../favorite/">收藏夹</a></li>
+        <li class="waves-effect active"><a href="../junkcompany/">垃圾桶</a></li>
+        <li class="waves-effect "><a href="../recentupdate/">最近更新</a></li>
+
+        <label for="" style="padding:10px;">功能</label>
+        <li class="divider"></li>
+        <li class="bold waves-effect"><a href="../update/">更新数据库</a></li>
+        <!-- <li class="bold waves-effect"><a href="#!">导出结果到表格</a></li> -->
+        <label for="" style="padding:10px;">收藏</label>
+        <li class="divider"></li>
+        <label for="" style="padding:10px;display: inline-block;padding-top: 0px;">收藏保存在浏览器缓存内，可能会随浏览器更新或垃圾清理而消失！</label>
+        <li class="bold waves-effect"><a href="../backup/">备份与恢复收藏</a></li>
+
+    </ul>
+    <nav>
+        <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+    </nav>
+
+
+    <div id="page" class="row searchBox">
+        <div class="col s12 left-align" style="margin-top:0px;vertical-align:bottom;" id="topCompanyHeader">
+            <h5 class="left" style="display:inline-block;vertical-align:text-bottom;"><i class="material-icons" style="font-size:30px;vertical-align:text-bottom;">delete_outline</i>垃圾桶</h5>
+            <a href="#!" class="right btn" onclick="restoreAll()">恢复全部</a>
+        </div>
+        <div class="col s12 divider" id="topCompanyDivider"></div>
+
+        <div class="col s12" id="topCompanyContainer" style="padding:0px;">
+            <ul>
+                <li class="companyLi" style="display:block;" v-for="company, key in companies">
+                    <div class="card white darken-1 col s12 hoverable" style="position:relative;overflow: visible;">
+                        <div class="card-content" style="margin-left: 10px;">
+                            <label for="" class="companyName card-title">{{company.company}}</label>
+                            <label for="" class="right left-align">Location: {{company.location}}</label><br>
+                            <label for="" class="right left-align">Tags: {{company.tag}}</label>
+                            <p>{{company.detail}}</p>
+                            <p>电话： {{company.contectName}} {{company.contectPosition}} {{company.contectPhone}}
+                                &nbsp
+                                {{company.contectTel}} &nbsp
+                            </p>
+                            <p>地址： {{company.address}}</p>
+                            <p>网站： <a v-bind:href="'http://'+company.homePage"  target="_blank">{{company.homePage}}</a></p>
+
+                        </div>
+                        <div class="card-action right transparent widthAvaliable">
+                            <label for="" class="left left-align">更新时间: {{company.addDate}}</label><br>
+                            <a href="#!" class="right blue-grey-text transparent dropdown-button-custom2 " v-on:click="restore(company.id)"><i
+                                    class="material-icons">undo</i> 恢复</a>
+
+
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="../js/jquery-3.3.1.js"></script>
+    <script src="../js/materialize.min.js"></script>
+    <script src="../js/vue.js"></script>
+    <script src="js/function.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>COMPANY DATABASE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/materialize.min.css">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="css/vue-material.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="css/universal.css" />
+    <style>
+        html {
+
+            background-size: 100%;
+
+            background-attachment: fixed;
+            background-position: center;
+        }
+       
+        header,
+        main,
+        footer {
+            padding-left: 300px;
+        }
+        
+        .searchBox{
+            padding-left: 300px;
+
+        }
+
+        .companyLi {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        nav{
+            display: none;
+        }
+        
+        @media only screen and (max-width : 992px) {
+
+            header,
+            main,
+            footer {
+                padding-left: 0;
+            }
+
+            .searchBox{
+                padding-left: 0;
+
+            }
+
+            nav{
+                display: block  ;
+            }
+
+            .headerCol{
+                position: absolute;
+                top: 100px;
+            }
+        }
+    </style>
+</head>
+
+<body class="overflowHidden">
+    <ul id="slide-out" class="side-nav fixed">
+        <img src="res/bk.png" alt="" srcset="">
+
+        <li class="waves-effect active"><a href="./">搜索公司</a></li>
+        <li class="waves-effect"><a href="./favorite/">收藏夹</a></li>
+        <li class="waves-effect"><a href="./junkcompany/">垃圾桶</a></li>
+        <li class="waves-effect"><a href="./recentupdate/">最近更新</a></li>
+
+        <label for="" style="padding:10px;">功能</label>
+        <li class="divider"></li>
+        <li class="bold waves-effect"><a href="./update/">更新数据库</a></li>
+        <!-- <li class="bold waves-effect"><a href="#!">导出结果到表格</a></li> -->
+        <label for="" style="padding:10px;">收藏</label>
+        <li class="divider"></li>
+        <label for="" style="padding:10px;display: inline-block;padding-top: 0px;">收藏保存在浏览器缓存内，可能会随浏览器更新或垃圾清理而消失！</label>
+        <li class="bold waves-effect"><a href="./backup/">备份与恢复收藏</a></li>
+
+
+    </ul>
+    <nav>
+        <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+    </nav>
+
+
+    <div id="page" class="row searchBox">
+
+        <!-- Head line -->
+        <div class="col s12 center headerCol" id="header">
+            <h2 style="font-weight:200;">Company Database</h2>
+        </div>
+
+
+
+        <!-- Search input -->
+        <div class="container">
+            <div class="row widthAvaliable searchCol" style="margin:0px;" id="searchInputContainer">
+                <div class="col s8 m9">
+                    <div class="input-field searchInput" style="">
+                        <i class="material-icons prefix">search</i>
+                        <input id="search" type="text" class="validate">
+                        <label for="search">关键词</label>
+                    </div>
+    
+                </div>
+                <div class="col s4 m3">
+                    <a href="#!" class="btn waves-effect" id="searchBtn">搜索</a>
+                </div>
+            </div>
+        </div>
+        
+
+
+        <!-- Carouse of the front page -->
+        <div class="col l8 s10 carouselCol" id="carouselContainer">
+            <h5 style="display:inline-block;">最近更新</h5>
+            <a href="./recentupdate/" class="btn btn-flat right">查看更多</a>
+            <div class="divider"></div>
+            
+            <div id="carousel" class="carousel carousel-slider" data-indicators="true">
+                <div class="carousel-item" href="#one!"  v-for="company,key in companies" v-if="!nodata">
+                    <div class="card white darken-1 col s12" style="position:relative;overflow: visible;margin-left:20px;margin-right:20px;width: 90%;" v-on:click="openModal(key)">
+                        <div class="card-content" style="margin-left: 10px;">
+                            <label for="" class="companyName card-title truncate">{{company.company}}</label>
+                            <label for="" class="right left-align truncate" style="max-width:100%;">Tags: {{company.tag}}</label><br>
+                            <p class="truncate">{{company.detail}}</p>
+                            <p class="truncate">电话： {{company.contectName}} <label for="" v-if="company.contectPosition!=0">{{company.contectPosition}}</label>
+                                {{company.contectPhone}} &nbsp
+                                {{company.contectTel}} &nbsp
+                            </p>
+                            <p class="truncate">地址： {{company.address}}</p>
+                            <p class="truncate">网站： <a v-bind:href="'http://'+company.homePage"  target="_blank">{{company.homePage}}</a></p>
+
+                        </div>
+                        <div class="card-action right transparent widthAvaliable">
+                            <label for="" class="left left-align">更新时间: {{company.addDate}}</label><br>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item" href="#one!" v-if="nodata">
+                        <div class="card white darken-1 col s12" style="position:relative;overflow: visible;margin-left:20px;margin-right:20px;width: 90%;" v-on:click="openModal(key)">
+                            <div class="card-content" style="margin-left: 10px;">
+                                无数据
+                            </div>
+                            <div class="card-action right transparent widthAvaliable">
+    
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+            <div class="left-carousel"  onclick="$('.carousel').carousel('prev');">
+                    <i class="material-icons">keyboard_arrow_left</i>
+            </div>
+            <div class="right-carousel" onclick="$('.carousel').carousel('next');">
+                    <i class="material-icons">keyboard_arrow_right</i>
+            </div>
+        </div>
+
+
+        <!-- Search options -->
+        <div class="col s12 left-align searchResult" id="searchOptionHeader"  style="z-index:1;">
+            <h6  style="display:inline-block">共计：<span id="resultCount"></span>个结果 &nbsp&nbsp&nbsp 每页显示<a href="#!" class="btn btn-flat dropdown-button" id="resultSelectBtn" data-activates="resultSelectUL">20</a> 个</h6>
+            <a href="#!" class="btn btn-flat right" style="display:inline-block;top: 10px;position: relative;" onclick="openExcelModal()"><i class="material-icons" style="position:relative;top:3px;">insert_chart_outlined</i>导出当前结果到表格</a>
+            <a href="#!" class="btn btn-flat right" style="display:inline-block;top: 10px;position: relative;"><i class="material-icons" style="position:relative;top:3px;">done</i>多选</a>
+            <ul id="resultSelectUL" class="dropdown-content" style="z-index:1;">
+                <li class="flex" onclick="change_result_display_number(20)"><span>20</span></li>
+                <li class="flex" onclick="change_result_display_number(40)"><span>40</span></li>
+                <li class="flex" onclick="change_result_display_number(60)"><span>60</span></li>
+                <li class="flex" onclick="change_result_display_number(80)"><span>80</span></li>
+                <li class="flex" onclick="change_result_display_number(100)"><span>100</span></li>
+            </ul>
+            <h6>筛选选项</h6>
+        </div>
+        <div class="col s12 searchResult" id="searchOptionContainer" style="display:block;">
+            <div class="col s12">
+                <label class="bold black-text" for="">排序：</label>
+                <ul style="display:inline-block;margin-top: 5px;">
+                    <li class="chip-custom chip-custom-selected" onclick="set_my_parents_children_class_to_not(event);set_my_class_to_selected(event);filterOptionSearch['sort']='timeDESC';setOptionSearch()">更新时间倒序</li>
+                    <li class="chip-custom" onclick="set_my_parents_children_class_to_not(event);set_my_class_to_selected(event);filterOptionSearch['sort']='timeASC';setOptionSearch()">更新时间顺序</li>
+
+                </ul>
+            </div>
+            <div class="col s12">
+                <label class="bold black-text" for="">筛选：</label>
+                <ul style="display:inline-block;margin-top:5px;">
+                    <li class="chip-custom chip-custom-selected" onclick="change_my_class(event);filterOptionSearch['hasContect'] = !filterOptionSearch['hasContect'];setOptionSearch()">有联系方式</li>
+                    <li class="chip-custom chip-custom-selected" onclick="change_my_class(event);filterOptionSearch['notLeagal'] = !filterOptionSearch['notLeagal'];setOptionSearch()">联系人不是法人</li>
+                    <li class="chip-custom chip-custom-selected" onclick="change_my_class(event);filterOptionSearch['hasAddress'] = !filterOptionSearch['hasAddress'];setOptionSearch()">有公司详细地址</li>
+                    <li class="chip-custom chip-custom-selected" onclick="change_my_class(event);filterOptionSearch['hasHomePage'] = !filterOptionSearch['hasHomePage'];setOptionSearch()">有公司网址</li>
+                </ul>
+            </div>
+            <div class="col s12">
+                <label class="bold black-text" for="">城市：</label>
+                <ul style="display:inline-block;margin-top:5px;">
+                    <li class="chip-custom chip-custom-selected" onclick="set_my_parents_children_class_to_not(event);set_my_class_to_selected(event);filterOptionSearch['shanghai'] = 1;filterOptionSearch['guangzhou'] = 1;filterOptionSearch['shenzhen'] = 1;filterOptionSearch['beijing'] = 1;filterOptionSearch['otherCities'] = 1;setOptionSearch()">全部城市</li>
+                    <li class="chip-custom" onclick="set_my_parents_children_class_to_not(event);set_my_class_to_selected(event);set_all_filter_cities_to_none(filterOptionSearch);filterOptionSearch['shanghai'] = !filterOptionSearch['shanghai'];setOptionSearch()">上海</li>
+                    <li class="chip-custom" onclick="set_my_parents_children_class_to_not(event);set_my_class_to_selected(event);set_all_filter_cities_to_none(filterOptionSearch);filterOptionSearch['beijing'] = !filterOptionSearch['beijing'];setOptionSearch()">北京</li>
+                    <li class="chip-custom" onclick="set_my_parents_children_class_to_not(event);set_my_class_to_selected(event);set_all_filter_cities_to_none(filterOptionSearch);filterOptionSearch['guangzhou'] = !filterOptionSearch['guangzhou'];setOptionSearch()">广州</li>
+                    <li class="chip-custom" onclick="set_my_parents_children_class_to_not(event);set_my_class_to_selected(event);set_all_filter_cities_to_none(filterOptionSearch);filterOptionSearch['shenzhen'] = !filterOptionSearch['shenzhen'];setOptionSearch()">深圳</li>
+                    <li class="chip-custom" onclick="set_my_parents_children_class_to_not(event);set_my_class_to_selected(event);set_all_filter_cities_to_none(filterOptionSearch);filterOptionSearch['otherCities'] = !filterOptionSearch['otherCities'];setOptionSearch()">其他城市</li>
+                </ul>
+            </div>
+            <!-- <div class="col s12">
+                <label for="" class="bold black-text">收藏：</label>
+                <ul style="display:inline-block;margin-top:5px;">
+                    <li class="chip-custom" v-bind:class="{'chip-custom-selected':filterOptionSearch['inFavorite']&&filterOptionSearch['notFavorite']}"
+                        onclick="filterOptionSearch['inFavorite'] = 1;filterOptionSearch['notFavorite'] = 1;setOptionSearch()">全部</li>
+                    <li class="chip-custom" v-bind:class="{'chip-custom-selected':filterOptionSearch['inFavorite']&&!filterOptionSearch['notFavorite']}"
+                        onclick="filterOptionSearch['inFavorite'] = 1;filterOptionSearch['notFavorite'] = 0;setOptionSearch()">在收藏夹中</li>
+                    <li class="chip-custom" v-bind:class="{'chip-custom-selected':filterOptionSearch['notFavorite']&&!filterOptionSearch['inFavorite']}"
+                        onclick="filterOptionSearch['notFavorite'] = 1;filterOptionSearch['inFavorite'] = 0;setOptionSearch()">不在收藏夹中</li>
+                </ul>
+            </div> -->
+            
+        </div>
+
+
+
+
+
+
+
+
+
+        <!-- Search result -->
+        <div class="col s12 searchResult" id="searchContainer" style="padding:0px;">
+
+            <!-- Loding animation -->
+            <div class="col s12 center" v-if="companies.length == 0" style="margin-top:20px;" id="preloader">
+                <div class="preloader-wrapper active">
+                    <div class="spinner-layer spinner-blue-only">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Company data list -->
+            <ul>
+                <li class="companyLi" style="display:block;" v-for="company, key in companies"   v-bind:class="{displaynone : company.junk==1}">
+                    <div class="card white darken-1 col s12 hoverable" style="position:relative;overflow: visible;"
+                        v-on:click="openModal(key)">
+                        <div class="card-content" style="margin-left: 10px;">
+                            <label for="" class="companyName card-title">{{company.company}}</label>
+                            <label for="" class="right left-align">Location: {{company.location}}</label><br>
+                            <label for="" class="right left-align">Tags: {{company.tag}}</label>
+                            <p class="truncate">{{company.description}}</p>
+                            <p>电话： {{company.contectName}} <label for="" v-if="company.contectPosition!=0">{{company.contectPosition}}</label>
+                                {{company.contectPhone}} &nbsp
+                                {{company.contectTel}} &nbsp
+                            </p>
+                            <p>地址： {{company.address}}</p>
+                            <p>网站： <a v-bind:href="'http://'+company.homePage" target="_blank">{{company.homePage}}</a></p>
+
+                        </div>
+                        <div class="card-action right transparent widthAvaliable">
+                            <label for="" class="left left-align">更新时间: {{company.addDate}}</label><br>
+                            <label for="" class="left left-align" v-if="isFavorite(company.id)">收藏时间:
+                                {{formatDate(favoriteTime[company.id])}}</label>
+                            <a href="#!" class="right blue-grey-text transparent dropdown-button-custom2 tooltipped"
+                                data-position="bottom" data-delay="50" data-tooltip="备注" v-bind:data-activates='"dropdown-note"+company.id'
+                                onclick="event.stopPropagation()">
+                                <i class="material-icons">notes</i>
+                            </a>
+                            <a href="#!" class="right blue-grey-text transparent tooltipped" v-on:click="junkCompany(company.id, key)"
+                                data-position="bottom" data-delay="50" data-tooltip="标记为无效信息" onclick="event.stopPropagation()">
+                                <i class="material-icons">delete_outline</i>
+                            </a>
+                            <a href="#!" class="right blue-grey-text transparent dropdown-button-custom2 tooltipped"
+                                data-position="bottom" data-delay="50" data-tooltip="加入收藏" v-bind:data-activates='"dropdown-favor-color"+company.id'
+                                onclick="event.stopPropagation()">
+                                <i v-if="company.favorite == 0" class="material-icons">favorite_border</i>
+                                <i v-if="company.favorite != 0" class="material-icons">favorite</i>
+                            </a>
+
+
+                        </div>
+
+
+                        <label v-if="company.favorite != 0" for="" v-bind:class="{red: company.favorite==1, yellow: company.favorite==2, green: company.favorite==3, blue: company.favorite==4, purple: company.favorite==5, grey: company.favorite==6}"
+                            style="position: absolute;height: 100%;width: 16px;top:0px;"></label>
+                    </div>
+
+
+
+                    <ul v-bind:id='"dropdown-favor-color"+company.id' class='dropdown-content' onclick="event.stopPropagation();">
+                        <h5 style="margin:10px;">收藏夹</h5>
+                        <label for="" style="padding:2px;">使用不同颜色区分收藏</label>
+                        <li class="divider"></li>
+                        <li class="waves-effect" v-bind:class="{active: company.favorite==1}" v-on:click="switchFavorite(company.id, company.favorite, key, 1)"><a
+                                href="#!" class="red-text"><label for="" class="colorSquare red"></label> 红色</a></li>
+                        <li class="waves-effect" v-bind:class="{active: company.favorite==2}" v-on:click="switchFavorite(company.id, company.favorite, key, 2)"><a
+                                href="#!" class="yellow-text text-darken-1"><label for="" class="colorSquare yellow"></label>
+                                黄色</a></li>
+                        <li class="waves-effect" v-bind:class="{active: company.favorite==3}" v-on:click="switchFavorite(company.id, company.favorite, key, 3)"><a
+                                href="#!" class="green-text text-darken-1"><label for="" class="colorSquare green"></label>
+                                绿色</a></li>
+                        <li class="waves-effect" v-bind:class="{active: company.favorite==4}" v-on:click="switchFavorite(company.id, company.favorite, key, 4)"><a
+                                href="#!" class="blue-text text-darken-1"><label for="" class="colorSquare blue"></label>
+                                蓝色</a></li>
+                        <li class="waves-effect" v-bind:class="{active: company.favorite==5}" v-on:click="switchFavorite(company.id, company.favorite, key, 5)"><a
+                                href="#!" class="deep-purple-text text-darken-1"><label for="" class="colorSquare deep-purple darken-4"></label>
+                                紫色</a></li>
+                        <li class="waves-effect" v-bind:class="{active: company.favorite==6}" v-on:click="switchFavorite(company.id, company.favorite, key, 6)"><a
+                                href="#!" class="grey-text text-darken-1"><label for="" class="colorSquare grey"></label>
+                                灰色</a></li>
+                        <li class="waves-effect" v-on:click="switchFavorite(company.id, company.favorite, key, 0)"><a
+                                href="#!" class="grey-text text-darken-3">
+                                移出收藏</a></li>
+
+                    </ul>
+
+
+                    <ul v-bind:id='"dropdown-note"+company.id' class='dropdown-content'>
+                        <div onclick="event.stopPropagation();">
+                            <h6 style="margin:10px;display: inline-block">备注</h6>
+                            <a href="#!" class="btn right" style="display:inline-block;margin: 10px;height: 30px;"
+                                onclick="event.stopPropagation();" v-on:click="saveNote(company.note, company.id)"> 保存</a>
+                        </div>
+                        <textarea type="text" style="width:300px;height:150px;margin: 10px;" onclick="event.stopPropagation();"
+                            v-model="company.note"></textarea>
+                    </ul>
+
+
+                </li>
+            </ul>
+
+            <!-- Load more -->
+            <div class="col s12" v-if="companies.length != 0"><a href="#!" class="btn" onclick="loadMore()">加载更多</a></div>
+            <div class="col s12 center"  v-if="companies.length != 0"><label for="">请到"最近更新"中查看最近更新的公司信息</label></div>
+        </div>
+
+
+
+
+
+
+
+
+        <div id="companyModal" class="modal">
+            <div class="modal-content" style="position:relative;">
+
+
+                <label for="" class="favorite-label-modal" v-bind:class="{red: company.favorite==1, yellow: company.favorite==2, green: company.favorite==3, blue: company.favorite==4, purple: company.favorite==5, grey: company.favorite==6, transparent: company.favorite==0,  'z-depth-1': company.favorite!=0}"></label>
+                <h4 style="display:inline-block;">{{company.company}}</h4>
+                <div class="divider" style="margin-bottom:5px;"></div>
+
+
+                <label for="">{{company.tag}}</label>
+                <label v-on:click="junkCompany(company.id)" for="" class="right tooltipped" style="padding-left:5px;cursor: pointer;"
+                    data-position="bottom" data-delay="50" data-tooltip="标记为无效信息"><i class="material-icons">delete_outline</i></label>
+
+
+                <div class="row">
+                    <div class="col s12"  v-if="company.description">
+                        <h6>公司介绍</h6>
+                        <p>{{company.description}} </p>
+                    </div>
+
+
+                    <div class="col s12">
+                        <h5>联系人</h5>
+                        <div class="divider"></div>
+                    </div>
+                    <div class="col s12">
+                        <ul v-for="contect,key in contects">
+                            <li class="col s6" style="margin-bottom:10px;">
+                                <label for="" class="contect-name">{{contect.name}}</label>
+                                <label for="" class="contect-position" v-if="contect.position != 0">{{contect.position}}</label>
+                                <label for="" v-if="contect.phone"><br></label>
+                                <label for="" class="contect-Header" v-if="contect.phone">手机号码：</label>
+                                <label for="" class="contect-Number" v-if="contect.phone">{{contect.phone}}</label>
+                                <label for="" v-if="contect.tel"><br></label>
+                                <label for="" class="contect-Header" v-if="contect.tel">固定电话：</label>
+                                <label for="" class="contect-Number" v-if="contect.tel">{{contect.tel}}</label>
+                                <label for="" v-if="contect.qq"><br></label>
+                                <label for="" class="contect-Header" v-if="contect.qq">QQ：</label>
+                                <label for="" class="contect-Number" v-if="contect.qq">{{contect.qq}}</label>
+                                <label for="" v-if="contect.email"><br></label>
+                                <label for="" class="contect-Header" v-if="contect.email">电子邮件：</label>
+                                <label for="" class="contect-Number" v-if="contect.email">{{contect.email}}</label>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col s12" v-if="maimai">
+                        <h5>脉脉</h5>
+                        <div class="divider"></div>
+                    </div>
+                    <div class="col s12">
+                        <ul v-for="person in maimai">
+                            <li class="col s12">
+                                <h6 style="display:inline-block;">{{person.name}}</h6>
+                                <label for="" style="margin-left:10px;">{{person.position}}</label>
+                                <label for="" style="margin-left:10px;">{{person.major}}</label>
+                                <label for="" style="margin-left:10px;">{{person.profession}}</label>
+                                <a v-bind:href="'https://maimai.cn/contact/detail/'+person.mmid" target="_blank"><i class="material-icons" style="font-size:15px;margin-left:10px;top:5px;position: relative;">open_in_new</i></a>
+                            </li>
+                        </ul>
+                    </div>
+
+
+                    <div class="col m6 s12">
+                        <h5 style="display: inline-block">网站</h5>
+                        <div class="divider"></div>
+                        <a v-bind:href="'http://'+company.homePage"  target="_blank">{{company.homePage}}</a>
+                    </div>
+
+
+                    <div class="col m6 s12">
+                        <h5>地址</h5>
+                        <div class="divider"></div>
+                        <p>{{company.address}}</p>
+                        <a href="#!" class="btn right" v-on:click="showMap()">查看地图</a>
+                    </div>
+                    <div class="col s12" id="map" style="height:300px;margin-top: 20px;margin-bottom: 20px;display: none;"></div>
+
+                    <div class="col m6 s12">
+                        <h5>备注</h5>
+                        <div class="divider"></div>
+                        <textarea name="" id="" cols="30" rows="10" style="margin-top:10px;" v-model="company.note"></textarea>
+                        <a href="#!" class="btn waves-effect right" v-on:click="saveNote()">保存</a>
+                    </div>
+
+
+                    <div class="col m6 s12">
+                        <h5>收藏</h5>
+                        <div class="divider"></div>
+                        <label for="">使用不同的颜色区分收藏</label>
+                        <ul class="favor-modal-ul">
+                            <li v-on:click="switchFavorite(company.id, company.favorite, 1)">
+                                <input name="favor-modal" type="radio" id="favorite-modal-red" />
+                                <label for="favorite-modal-red"><label for="favorite-modal-red" class="colorSquare red"></label>
+                                    红色</label>
+                            </li>
+                            <li v-on:click="switchFavorite(company.id, company.favorite, 2)">
+                                <input name="favor-modal" type="radio" id="favorite-modal-yellow" v-bind:value="company.favorite==2" />
+                                <label for="favorite-modal-yellow"><label for="favorite-modal-yellow" class="colorSquare yellow"></label>
+                                    黄色</label>
+                            </li>
+                            <br>
+                            <li v-on:click="switchFavorite(company.id, company.favorite, 3)">
+                                <input name="favor-modal" type="radio" id="favorite-modal-green" v-bind:value="company.favorite==3" />
+                                <label for="favorite-modal-green"><label for="favorite-modal-green" class="colorSquare green"></label>
+                                    绿色</label>
+                            </li>
+                            <li v-on:click="switchFavorite(company.id, company.favorite, 4)">
+                                <input name="favor-modal" type="radio" id="favorite-modal-blue" v-bind:value="company.favorite==4" />
+                                <label for="favorite-modal-blue"><label for="favorite-modal-blue" class="colorSquare blue"></label>
+                                    蓝色</label>
+                            </li>
+                            <br>
+                            <li v-on:click="switchFavorite(company.id, company.favorite, 5)">
+                                <input name="favor-modal" type="radio" id="favorite-modal-purple" v-bind:value="company.favorite==5" />
+                                <label for="favorite-modal-purple"><label for="favorite-modal-purple" class="colorSquare purple"></label>
+                                    紫色</label>
+                            </li>
+                            <li v-on:click="switchFavorite(company.id, company.favorite, 6)">
+                                <input name="favor-modal" type="radio" id="favorite-modal-grey" v-bind:value="company.favorite==6" />
+                                <label for="favorite-modal-grey"><label for="favorite-modal-grey" class="colorSquare grey"></label>
+                                    灰色</label>
+                            </li>
+                            <br>
+                            <li v-on:click="switchFavorite(company.id, company.favorite, 0)">
+                                <input name="favor-modal" type="radio" id="favorite-modal-no" v-bind:value="company.favorite==0" />
+                                <label for="favorite-modal-no">移出收藏</label>
+                            </li>
+                        </ul>
+                    </div>
+
+
+                    <div class="divider col s12" style="margin-top:20px;"></div>
+                    <div class="col s12">
+                        <label for="">更新时间: {{company.addDate}}</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+
+
+        <div class="modal" id="excelModal" style="max-width:95%;width:max-content;">
+            <div class="container" style="margin-top:20px;">
+                    <h5  style="display:inline-block;">表格预览</h5>
+                    <a href="#!" class="btn right" style="display:inline-block;position: relative;top: 5px;" onclick="exportResult()">下载</a>
+                    <h6>仅导出目前加载的搜索结果，<a href="#!" onclick="loadAllResult()">点此导出所有搜索结果</a> </h6>
+            </div>
+            
+            <div class="" id="excelTable" style="margin-top:20px;">
+                <table  class="excelTable">
+                    <div class="container">
+                            <h6>共{{length(companies)}}条数据</h6>
+                    </div>
+                    <thead>
+                        <tr>
+                            <th  style="width:200px;">公司名称</th>
+                            <th>标签</th>
+                            <th>公司官网</th>
+                            <th>联系人1</th>
+                            <th>手机1</th>
+                            <th>固话1</th>
+                            <th>QQ1</th>
+                            <th>电子邮件1</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="company in companies">
+                            <td class="truncate" style="width:200px;">{{company.company}}</td>
+                            <td class="truncate">{{company.tag}}</td>
+                            <td class="truncate">{{company.homePage}}</td>
+                            <td class="truncate">{{company.contectName}}</td>
+                            <td class="truncate">{{company.contectPhone}}</td>
+                            <td class="truncate">{{company.contectTel}}</td>
+                            <td class="truncate">{{company.contectQq}}</td>
+                            <td class="truncate">{{company.contectEmail}}</td>
+                        </tr>
+                    </tbody>                    
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <div id="gotoupdate" class="modal">
+            <div class="modal-content center">
+                <div class="row">
+                        数据库中似乎没有数据,是否立刻去更新数据?
+    
+                </div>
+                <a href="./update/" class="btn" style="display:inline-block;">更新</a>
+                <a href="#!" class="btn btn-flat" style="display:inline-block;" onclick="$('.modal').modal('close')">取消</a>
+            </div>
+        </div>
+
+        <script src="js/jquery-3.3.1.js"></script>
+        <!-- add the shim first -->
+        <script type="text/javascript" src="js/shim.min.js"></script>
+        <!-- after the shim is referenced, add the library -->
+        <script type="text/javascript" src="js/xlsx.full.min.js"></script>
+        <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=33X0NsFGdzK75bVRULnf3zGt4Os450GW"></script>
+        <script src="js/materialize.min.js"></script>
+        <script src="js/vue.js"></script>
+        <script src="js/function.js"></script>
+        <script src="js/main.js"></script>
+</body>
+
+</html>

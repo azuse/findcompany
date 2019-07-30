@@ -1,6 +1,2 @@
-findcompany_baiduzhaopin/mainPID.txt
-mainPID.txt
-crawler_log.txt
-findcompany_baiduzhaopin/.vscode/settings.json
-lib/python2.7/sre.py
-findcompany_baiduzhaopin/.vscode/settings.json
+crawler/mainPID.txt
+crawler/__pycache__/
