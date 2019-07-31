@@ -1,0 +1,193 @@
+
+.companyName {
+    font-size: 20px;
+    color: black;
+
+}
+
+.pullDownBtn {
+    font-size: 20px;
+
+    width: 20px !important;
+    height: 20px !important;
+
+    text-align: center;
+    color: gray;
+}
+
+.pullDown {
+    padding-top: 20px;
+}
+
+.companyDetailSmall {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@keyframes searchContainer {
+    from {
+        position: relative;
+        ;
+        top: 100;
+
+    }
+
+    to {
+        position: relative;
+    }
+}
+
+.searchBox {
+    margin-top: 20px;
+    margin-left: 5%;
+    margin-right: 5%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.searchCol{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.searchInput{
+    margin-left:0;
+    width:-webkit-fill-available;
+    width:-moz-available;
+    margin-right:10px;
+}
+
+.widthAvaliable{
+    width:-webkit-fill-available;
+    width:-moz-available;
+}
+
+.citySelect{
+    color: rgba(0, 0, 0, 0.87);
+    height: 48px !important;;
+}
+
+.companyLi{
+    overflow: visible;
+}
+
+.colorSquare{
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+}
+
+.chip{
+    font-size: 12px !important;
+}
+
+.dropdown-content li{
+    
+    display: block !important;
+    
+}
+
+.waves-effect{
+    display: block !important;
+}
+
+
+.dropdown-content li a{
+    padding: 0px !important;
+    margin-top: 15px;
+    display: flex !important;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-decoration-line: none !important;
+}
+
+.dropdown-content li a label{
+    margin-right:5px; 
+    display: flex !important;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center
+}
+.dropdown-content li a label::after{
+    margin: 10px !important;
+    display: flex !important;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center
+}
+.dropdown-content li a label::before{
+    margin: 10px !important;
+    display: flex !important;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center
+}
+
+a{
+    text-decoration-line: none !important;
+}
+
+.chip-custom{
+    display: inline;
+    font-size: 0.8rem;
+    color: black;
+    cursor: pointer;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 5px;
+    user-select: none;
+    margin-right: 5px;
+}
+
+.chip-custom-selected{
+    background-color: #0d47a1;
+    color: white;
+}
+
+.chip-custom-colorful{
+    background: linear-gradient(to right, red , blue);
+    color: white;
+}
+
+.chip-custom-red{
+    background: linear-gradient(45deg, #ffcdd2  , red);
+    color: white;
+}
+
+.chip-custom-yellow{
+    background: linear-gradient(45deg, #fff176  , #f57f17);
+    color: white;
+}
+
+.chip-custom-green{
+    background: linear-gradient(45deg, #a5d6a7  , #1b5e20);
+    color: white;
+}
+
+.chip-custom-blue{
+    background: linear-gradient(45deg, #81d4fa  , #01579b);
+    color: white;
+}
+
+.chip-custom-purple{
+    background: linear-gradient(45deg, #b39ddb  , #311b92);
+    color: white;
+}
+
+.chip-custom-grey{
+    background: linear-gradient(45deg, #bdbdbd   , #424242);
+    color: white;
+}
+
+.card{
+    cursor: pointer;
+}
+
